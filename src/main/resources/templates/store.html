@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" th:href="@{/favicon.png}">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title th:text="${store != null} ? ${store.name} : 'Black Space Store'">Black Space Store</title>
+
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        /* Banner */
+        .banner-img {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+        }
+
+        /* Store logo */
+        .store-logo {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-top: -60px;
+            background: #fff;
+            border: 4px solid #fff;
+        }
+
+        /* Products grid */
+        .products-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: space-between;
+        }
+
+        .product-card {
+            flex: 1 1 200px;
+            max-width: 220px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .product-card.hide {
+            display: none;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+
+        .card-body h6 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .card-body p {
+            margin-bottom: 0;
+            color: #555;
+        }
+
+        @media (max-width: 768px) {
+            .product-card { flex: 1 1 45%; }
+        }
+
+        @media (max-width: 576px) {
+            .product-card { flex: 1 1 100%; }
+        }
+
+        /* Search input */
+        #productSearch {
+            max-width: 400px;
+            width: 100%;
+            margin: 20px auto;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Include navbar -->
+<div th:replace="fragments/navbar :: topbar"></div>
+
+<!-- ================= BANNER ================= -->
+<div class="container-fluid p-0 position-relative">
+    <img class="banner-img"
+         th:if="${store != null and store.storebanner != null and store.storebanner != ''}"
+         th:src="@{'/uploads/stores/' + ${store.storebanner}}"
+         alt="Store Banner">
+
+    <img class="banner-img"
+         th:unless="${store != null and store.storebanner != null and store.storebanner != ''}"
+         th:src="@{/store/banner/banner.jpeg}"
+         alt="Store Banner">
+
+    <!-- Call & Email Icons -->
+    <div class="banner-contact position-absolute top-0 end-0 p-2 d-flex gap-3"
+         style="background: rgba(0,0,0,0.5); border-top-right-radius:4px;">
+        <!-- Phone -->
+        <a th:href="'tel:' + ${store.contactNumber}"
+           class="btn btn-sm btn-outline-light d-flex align-items-center">
+            <i class="bi bi-telephone me-1"></i>
+            <span th:text="${store.contactNumber}">+260 97 000 0000</span>
+        </a>
+        <!-- Email -->
+        <a th:href="'mailto:' + ${store.email}"
+           class="btn btn-sm btn-outline-light d-flex align-items-center">
+            <i class="bi bi-envelope me-1"></i>
+            <span th:text="${store.email}">info@blackspace.com</span>
+        </a>
+    </div>
+
+</div>
+
+
+
+
+
+<!-- ================= STORE HEADER ================= -->
+<div class="container mt-3 p-0 position-relative">
+
+    <div class="d-flex align-items-center">
+        <img class="store-logo me-3"
+             th:if="${store != null and store.storelogo != null and store.storelogo != ''}"
+             th:src="@{'/uploads/stores/' + ${store.storelogo}}"
+             alt="Store Logo">
+        <img class="store-logo me-3"
+             th:unless="${store != null and store.storelogo != null and store.storelogo != ''}"
+             th:src="@{/store/logo/logo.jpeg}"
+             alt="Store Logo">
+
+        <div class="flex-grow-1 d-flex justify-content-between align-items-center">
+            <h2 class="mb-0" th:text="${store != null} ? ${store.name} : 'Store'">Store</h2>
+
+
+            <button type="button" class="btn btn-sm btn-outline-primary ms-3" data-bs-toggle="modal" data-bs-target="#storeDescModal">
+                About
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<!-- ================= BREADCRUMB ================= -->
+<div class="container mt-3">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-light p-2 rounded">
+            <li class="breadcrumb-item">
+                <a th:href="@{/}">
+                    <i class="bi bi-house-door-fill me-1"></i>
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a th:href="@{/stores}">Stores</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page" th:text="${store != null} ? ${store.name} : 'Store'">Store</li>
+        </ol>
+    </nav>
+</div>
+
+
+
+
+<!-- ================= SEARCH INPUT ================= -->
+<input type="text" id="productSearch" placeholder="Search products by name..." class="form-control">
+
+<!-- ================= PRODUCTS GRID ================= -->
+<div class="container mt-3">
+    <div class="products-wrapper" id="productsWrapper">
+
+            <div th:each="product : ${products}" class="card product-card store-card col-6 col-sm-6 col-md-3" >
+
+            <a th:href="@{'/product/' + ${product.id}}" class="text-decoration-none text-dark">
+                <img th:if="${product.imageurls != null and product.imageurls != ''}"
+                     th:src="@{'/uploads/products/images/' + ${#strings.arraySplit(product.imageurls, ',')[0]}}"
+                     class="card-img-top"
+                     alt="Product Image"
+                     style="height:180px; object-fit:contain;">
+
+
+                <img th:unless="${product.imageurls != null and product.imageurls != ''}"
+                     th:src="@{/product/images/default-product.jpeg}"
+                     class="card-img-top"
+                     alt="Product Image"
+                     style="height:180px; object-fit:contain;">
+
+
+                <div class="card-body text-center mx-2">
+                    <h6 th:text="${product.name}">Product Name</h6>
+                    <p th:text="${product.currency + ' ' + #numbers.formatDecimal(product.price, 1, 'COMMA', 2, 'POINT')}">0.00</p>
+                </div>
+
+
+                <div class="d-flex justify-content-center align-items-center gap-3">
+                    <p class="text-muted mb-0">
+                        <i class="bi bi-eye-fill me-1"></i> <span th:text="${product.views}">0</span>
+                    </p>
+
+                    <div class="vr"></div> <!-- Vertical line -->
+
+                    <p class="text-muted mb-0">
+                        <i class="bi bi-hand-thumbs-up-fill text-success me-1"></i> <span th:text="${product.likes}">0</span>
+                    </p>
+
+                    <div class="vr"></div> <!-- Vertical line -->
+
+                    <p class="text-muted mb-0">
+                        <i class="bi bi-hand-thumbs-down-fill text-danger me-1"></i> <span th:text="${product.dislikes}">0</span>
+                    </p>
+                </div>
+
+            </a>
+        </div>
+    </div>
+
+    <!-- Load More Button -->
+    <div class="d-flex justify-content-center mt-4 mb-4">
+        <button id="loadMoreBtn" class="btn btn-primary">More</button>
+    </div>
+
+    <!-- NO PRODUCTS -->
+    <div class="text-center mt-4" th:if="${products == null or #lists.isEmpty(products)}">
+        <p class="text-muted">No products available.</p>
+    </div>
+</div>
+
+<!-- ================= STORE DESCRIPTION MODAL ================= -->
+<div class="modal fade" id="storeDescModal" tabindex="-1" aria-labelledby="storeDescModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="storeDescModalLabel" th:text="${store != null} ? ${store.name} : 'Store'">Store</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div style="white-space: pre-wrap;" th:text="${store != null and store.description != null} ? ${store.description} : 'Welcome to our store'">
+                    Welcome to our store
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ================= STORE SUBSCRIPTION ================= -->
+<div class="container mt-4 mb-4 ">
+    <div class="card border-0 shadow-sm mx-auto col-12 col-md-8 col-lg-6">
+        <div class="card-body ">
+
+            <div class="d-flex align-items-center mb-2">
+                <i class="bi bi-bell-fill text-primary fs-4 me-2"></i>
+                <h5 class="mb-0">Get Store Updates</h5>
+            </div>
+
+            <p class="text-muted mb-3">
+                Subscribe to this store and be the first to know when new products are uploaded,
+                special offers are added, or prices change.
+            </p>
+
+            <form th:action="@{/subscription/subscribe/{id}(id=${store.id})}" method="post">
+                <div class="input-group">
+                    <input
+                            type="email"
+                            name="email"
+                            class="form-control"
+                            placeholder="Enter your email address"
+                            required
+                    >
+                    <button class="btn btn-primary" type="submit">
+                        <i class="bi bi-envelope-check me-1"></i> Notify Me
+                    </button>
+                </div>
+            </form>
+
+            <small class="text-muted d-block mt-2">
+                <i class="bi bi-shield-check me-1"></i>
+                No spam. You’ll only receive notifications when new items are added.
+            </small>
+
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Search & Load More JS -->
+<script>
+    const searchInput = document.getElementById('productSearch');
+    const productCards = document.querySelectorAll('.product-card');
+    const loadMoreBtn = document.getElementById('loadMoreBtn');
+    let visibleCount = 10; // show first 8 products initially
+
+    function updateVisibility() {
+        const filter = searchInput.value.toLowerCase();
+        let shown = 0;
+
+        productCards.forEach(card => {
+            const productName = card.querySelector('h6').textContent.toLowerCase();
+            if (productName.includes(filter)) {
+                if (shown < visibleCount) {
+                    card.classList.remove('hide');
+                    shown++;
+                } else {
+                    card.classList.add('hide');
+                }
+            } else {
+                card.classList.add('hide');
+            }
+        });
+
+        const filteredCount = Array.from(productCards).filter(card =>
+            card.querySelector('h6').textContent.toLowerCase().includes(filter)
+        ).length;
+
+        loadMoreBtn.style.display = visibleCount >= filteredCount ? 'none' : 'block';
+    }
+
+    searchInput.addEventListener('keyup', function() {
+        visibleCount = 8; // reset
+        updateVisibility();
+    });
+
+    loadMoreBtn.addEventListener('click', function() {
+        visibleCount += 8;
+        updateVisibility();
+    });
+
+    // Initial display
+    updateVisibility();
+</script>
+
+
+<!-- FOOTER -->
+<div th:replace="fragments/footer :: footer"></div>
+
+</body>
+</html>

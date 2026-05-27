@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Store | BlackSpace</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        body { overflow-x: hidden; }
+        .sidebar { width: 250px; min-height: 100vh; background: #fff; border-right: 1px solid #e5e5e5;  flex-shrink: 0; }
+        .sidebar .nav-link { color: #333; font-weight: 500; }
+        .sidebar .nav-link.active, .sidebar .nav-link:hover { background-color: #f0f4ff; color: #0d6efd; }
+        .profile-avatar { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid #0d6efd; }
+        @media (max-width: 991px) { .sidebar { display: none; } }
+    </style></head>
+<body class="bg-light">
+<!-- Top Navbar (Mobile) -->
+<nav class="navbar navbar-light bg-white border-bottom d-lg-none">
+    <div class="container-fluid">
+        <button class="btn btn-outline-primary" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
+            <i class="bi bi-list"></i>
+        </button>
+        <span class="fw-bold">BlackSpace</span>
+    </div>
+</nav>
+<div class="d-flex">
+
+
+
+    <!-- Include Desktop Sidebar -->
+    <div th:replace="fragments/sidebar :: desktopSidebar(${user})"></div>
+    <!-- Include Mobile Sidebar -->
+    <div th:replace="fragments/sidebar :: mobileSidebar"></div>
+
+    <main class="flex-grow-1 p-4">
+
+
+        <div class="container-fluid">
+
+            <h2 class="text-center mb-4">Manage Subscription</h2>
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addSubscriptionModal">
+            <i class="bi bi-plus-circle"></i> Add Subscription
+        </button>
+        <div id="customSearch"></div>
+    </div>
+
+    <!-- TABLE -->
+            <table class="table display" id="myTable" style="width:100%">
+            <thead>
+        <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>description</th>
+            <th>Amount</th>
+            <th>Duration in Days</th>
+            <th>Number of Products</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="m, stat : ${subscriptions}">
+            <td th:text="${stat.count}"></td>
+            <td th:text="${m.name}"></td>
+            <td th:text="${m.description}"></td>
+            <td th:text="${m.amount}"></td>
+            <td th:text="${m.durationtime}"></td>
+            <td th:text="${m.numberofproducts}"></td>
+            <td>
+                <button class="btn btn-secondary btn-sm"
+                        th:attr="
+            data-id=${m.id},
+            data-name=${m.name},
+            data-description=${m.description},
+            data-amount=${m.amount},
+            data-durationtime=${m.durationtime},
+            data-numberofproducts=${m.numberofproducts}
+        "
+                        onclick="openEditModal(this)">
+                    <i class="bi bi-pencil-square"></i>
+                </button>
+
+
+                <a th:href="@{/admin/subscription/delete/{id}(id=${m.id})}"
+                   class="btn btn-danger btn-sm"
+                   onclick="return confirm('Delete this subscription?')">
+                    <i class="bi bi-trash"></i>
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+
+        </div>
+    </main>
+
+</div>
+
+
+<!-- ================= ADD MODAL ================= -->
+<div class="modal fade" id="addSubscriptionModal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <form th:action="@{/admin/subscription/add}" method="post">
+                <div class="modal-header">
+                    <h5>Add Subscription</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <label> Name</label>
+                    <input type="text" name="name" class="form-control mb-2" placeholder="Name" required>
+                    <label> Duration (Days)</label>
+                    <input type="text" name="durationtime" class="form-control mb-2" placeholder="Duration" required>
+                    <label> Number of Products</label>
+                    <input type="text" name="numberofproducts" class="form-control mb-2" placeholder="Number of Products" required>
+                    <label> Amount</label>
+                    <input type="text" name="amount" class="form-control mb-2" placeholder="Amount">
+                    <label> Description</label>
+                    <textarea name="description" class="form-control" placeholder="Description"></textarea>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-primary">Save</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<!-- ================= EDIT MODAL ================= -->
+<div class="modal fade" id="editsubscriptionModal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <form th:action="@{/admin/subscription/update}" method="post">
+                <input type="hidden" name="id" id="editId">
+
+                <div class="modal-header">
+                    <h5>Edit Subscription</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <label> Name</label>
+                    <input id="editName" name="name" class="form-control mb-2" required>
+                    <label> Duration (Days)</label>
+                    <input id="editdurationtime" name="durationtime" class="form-control mb-2" required>
+                    <label> Number of Products</label>
+                    <input id="editnumberofproducts" name="numberofproducts" class="form-control mb-2" required>
+                    <label> Amount</label>
+                    <input id="editAmount" name="amount" class="form-control mb-2">
+                    <label> Description</label>
+                    <textarea id="editDescription" name="description" class="form-control"></textarea>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-success">Update</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<!-- Include jQuery first, then DataTables JS -->
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.5/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+
+    $(document).ready(function () {
+     // Initialize DataTable without "Show entries" dropdown
+     var table = $('#myTable').DataTable({
+         responsive: true,
+         pageLength: 5, // default rows per page
+         lengthChange: false, // remove the "Show entries" dropdown
+         dom: '<"d-flex justify-content-between mb-2"f><"table-responsive"t><"d-flex justify-content-between mt-2"ip>', // only search (f) and pagination (ip)
+         language: {
+             search: "",
+             searchPlaceholder: "Search stores..."
+         }
+     });
+
+     // Move the search box to custom div
+     $("#customSearch").html($('.dataTables_filter'));
+
+     // Enable Bootstrap tooltips
+     $('[data-bs-toggle="tooltip"]').tooltip();
+ });
+
+
+
+
+
+   $(document).ready(function () {
+       const table = $('#subscriptionTable').DataTable({
+           pageLength: 5,
+           lengthChange: false
+       });
+       $('#subscriptionTable_filter').appendTo('#customSearch');
+   });
+
+  function openEditModal(btn) {
+    editId.value = btn.dataset.id;
+    editName.value = btn.dataset.name;
+    editdurationtime.value = btn.dataset.durationtime;
+    editnumberofproducts.value = btn.dataset.numberofproducts;
+    editAmount.value = btn.dataset.amount;
+    editDescription.value = btn.dataset.description;
+
+    new bootstrap.Modal(editsubscriptionModal).show();
+}
+
+</script>
+
+</body>
+</html>

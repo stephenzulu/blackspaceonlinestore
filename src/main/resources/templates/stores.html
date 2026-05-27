@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" th:href="@{/favicon.png}">
+
+    <title>All Stores | Black Space Store</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+
+    <style>
+        .store-card {
+            border: 10px solid white;
+            border-radius: 5px;
+            overflow: hidden;
+            transition: transform 0.3s, opacity 0.3s;
+            flex-direction: column;
+            align-items: flex-start;
+            opacity: 1;
+            position: relative;
+        }
+        .store-card.hide {
+            opacity: 0;
+            display: none;
+        }
+        .store-card:hover {
+            transform: translateY(-5px);
+        }
+        .store-banner {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            display: block;
+        }
+        .store-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(255,255,255,0.7);
+            display: flex;
+            align-items: center;
+            padding: 5px 10px;
+        }
+        .store-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+        .store-name {
+            margin-left: 10px;
+            font-weight: 600;
+            font-size: 1rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        #storeSearch {
+            max-width: 400px;
+            width: 100%;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 576px) {
+            .store-banner {
+                height: 120px; /* smaller banner */
+            }
+            .store-logo {
+                width: 30px;
+                height: 30px;
+            }
+            .store-name {
+                font-size: 0.9rem;
+            }
+            .store-overlay {
+                padding: 3px 6px;
+            }
+        }
+    </style>
+
+
+</head>
+<body>
+
+<!-- Navbar -->
+<div th:replace="fragments/navbar :: topbar"></div>
+
+<!-- HERO SECTION -->
+<!-- HERO SECTION -->
+<section class="about-hero">
+    <div class="container">
+        <h1 class="fw-bold">Black Space Online Store</h1>
+        <p class="lead mt-2">
+            Connecting buyers with trusted local sellers
+        </p>
+    </div>
+</section>
+
+
+<!-- Breadcrumb -->
+<div class="container mt-3">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-light p-2 rounded">
+            <li class="breadcrumb-item">
+                <a th:href="@{/}">
+                    <i class="bi bi-house-door-fill me-1"></i>
+                </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">Stores</li>
+        </ol>
+    </nav>
+</div>
+
+<div class="container mt-4">
+    <h2 class="mb-4 text-center">All Stores</h2>
+
+    <!-- Search input -->
+    <!-- Search input with smaller buttons -->
+
+        <div class="mb-3 d-flex justify-content-center">
+            <form th:action="@{/stores}" method="get"
+                  class="d-flex w-100 gap-2 justify-content-center"
+                  style="max-width: 500px;"> <!-- increased max width -->
+
+                <!-- Search input -->
+                <input type="text"
+                       name="q"
+                       class="form-control form-control-sm flex-grow-1"
+                       placeholder="Search stores by name..."
+                       th:value="${q}">
+
+                <!-- Search button -->
+                <button type="submit" class="btn btn-primary btn-sm">
+                    Search
+                </button>
+
+                <!-- Reset button -->
+                <a th:href="@{/stores}" class="btn btn-secondary btn-sm">
+                    Reset
+                </a>
+
+            </form>
+        </div>
+
+
+
+
+
+
+
+    <!-- Stores wrapper -->
+    <div class="row gy-1 " id="storesWrapper"> <!-- g-4 adds spacing between columns and rows -->
+        <div th:each="store : ${stores}" class=" store-card col-6 col-sm-6 col-md-3  product-card ">
+                <a th:href="@{'/store/' + ${store.id}}" class="text-decoration-none text-dark d-block position-relative">
+                <!-- Banner -->
+                <img th:src="@{'/uploads/stores/' + ${store.storebanner}}" class="img-fluid store-banner" alt="Store Banner"
+                     style="height: 150px; object-fit: cover; border-radius: 10px;">
+
+                <!-- Logo & Name Overlay -->
+                <div class="store-overlay">
+                    <img th:src="@{'/uploads/stores/' + ${store.storelogo}}" class="store-logo" alt="Store Logo">
+                    <span class="store-name" th:text="${store.name}">Store Name</span>
+                </div>
+            </a>
+        </div>
+    </div>
+
+
+    <!-- Pagination -->
+    <nav class="mt-4" th:if="${totalPages > 1}">
+        <ul class="pagination justify-content-center">
+
+            <!-- Previous -->
+            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{/stores(page=${currentPage - 1})}">
+                    Previous
+                </a>
+            </li>
+
+            <!-- Page Numbers -->
+            <li class="page-item"
+                th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                th:classappend="${i == currentPage} ? 'active'">
+                <a class="page-link"
+                   th:text="${i + 1}"
+                   th:href="@{/stores(page=${i})}">
+                </a>
+            </li>
+
+            <!-- Next -->
+            <li class="page-item"
+                th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{/stores(page=${currentPage + 1})}">
+                    Next
+                </a>
+            </li>
+
+        </ul>
+    </nav>
+
+
+</div>
+
+
+<style>
+
+    .about-hero {
+        background: linear-gradient(rgba(0,0,0,.6), rgba(0,0,0,.6)),
+                    url('/store/banner/store_banner.png') center/cover no-repeat;
+        color: white;
+        padding: 80px 0;
+        text-align: center;
+    }
+
+    .icon-box i {
+        font-size: 2rem;
+        color: #0d6efd;
+    }
+</style>
+
+
+
+<style>
+    /* Product Card Hover Effect */
+.product-card {
+    border-radius: 12px;
+    transition: all 0.35s ease;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+/* Lift + shadow */
+.product-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* Image zoom on hover */
+.product-card img {
+    transition: transform 0.4s ease;
+}
+
+.product-card:hover img {
+    transform: scale(1.08);
+}
+
+/* Button emphasis on hover */
+.product-card:hover .btn {
+    background-color: #0d6efd;
+    color: #fff;
+    border-color: #0d6efd;
+}
+
+</style>
+
+
+
+<!-- FOOTER -->
+<div th:replace="fragments/footer :: footer"></div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

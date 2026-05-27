@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" th:href="@{/favicon.png}">
+
+    <title th:text="${categoryName} + ' Products | Black Space Store'">Category Products</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        .product-img {
+            height: 160px;
+            object-fit: cover;
+        }
+
+        .product-card {
+            transition: transform 0.3s, opacity 0.3s;
+            opacity: 1;
+        }
+
+        .product-card.hide {
+            opacity: 0;
+            display: none;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<div th:replace="fragments/navbar :: topbar"></div>
+
+<!-- HERO SECTION -->
+<section class="about-hero">
+    <div class="container">
+        <h1 class="fw-bold">Black Space Online Store</h1>
+        <p class="lead mt-2">
+            Connecting buyers with trusted local sellers
+        </p>
+    </div>
+</section>
+
+<!-- BREADCRUMB -->
+
+<div class="container mt-3">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-light p-2 rounded">
+            <li class="breadcrumb-item">
+                <a th:href="@{/}">
+                    <i class="bi bi-house-door-fill me-1"></i>
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a th:href="@{/stores}">Stores</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page" th:text="${categoryName}">Category</li>
+        </ol>
+    </nav>
+</div>
+
+
+
+
+<!-- CATEGORY TITLE -->
+<section class="py-4">
+    <div class="container text-center">
+        <h3 th:text="${categoryName}">Category</h3>
+    </div>
+</section>
+
+<!-- SEARCH BAR -->
+<!-- SEARCH BAR -->
+<div class="container mb-3">
+    <div class="d-flex justify-content-center">
+        <input type="text" id="productSearch" class="form-control" placeholder="Search products by name..." style="max-width: 400px; width:100%;">
+    </div>
+</div>
+
+<!-- PRODUCTS -->
+<section class="py-4">
+    <div class="container">
+        <div class="row g-3" id="productsWrapper">
+            <div th:each="product : ${products}" class="col-6 col-sm-6 col-md-3 product-card">
+                <a th:href="@{'/product/' + ${product.id}}" class="text-decoration-none text-dark">
+                    <div class="card h-100 shadow-sm overflow-hidden">
+                        <img th:src="@{'/uploads/products/images/' + ${#strings.arraySplit(product.imageurls, ',')[0]}}" class="img-fluid store-banner" alt="image"
+                             style="height:180px; object-fit:contain;">
+                        <div class="card-body">
+                            <p class="card-title" th:text="${product.name}">Product Name</p>
+                            <p class="card-text fw-bold" th:text="${product.currency + ' ' + product.price}">Price</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Pagination Controls -->
+        <nav aria-label="Page navigation" class="mt-4">
+            <ul class="pagination justify-content-center" id="pagination"></ul>
+        </nav>
+    </div>
+</section>
+
+
+<script>
+    const searchInput = document.getElementById('productSearch');
+    const productCards = document.querySelectorAll('.product-card');
+    const loadMoreBtn = document.getElementById('loadMoreBtn');
+
+    let visibleCount = 8; // show first 8 products initially
+
+    function updateVisibility() {
+        const filter = searchInput.value.toLowerCase();
+        let shown = 0;
+
+        productCards.forEach(card => {
+            const productName = card.querySelector('.card-body h6').textContent.toLowerCase();
+            if (productName.includes(filter)) {
+                if (shown < visibleCount) {
+                    card.classList.remove('hide');
+                    shown++;
+                } else {
+                    card.classList.add('hide');
+                }
+            } else {
+                card.classList.add('hide');
+            }
+        });
+
+        const filteredCount = Array.from(productCards).filter(card =>
+            card.querySelector('.card-body h6').textContent.toLowerCase().includes(filter)
+        ).length;
+
+        loadMoreBtn.style.display = visibleCount >= filteredCount ? 'none' : 'block';
+    }
+
+    // Search filter
+    searchInput.addEventListener('keyup', function() {
+        visibleCount = 8; // reset initial
+        updateVisibility();
+    });
+
+    // Load more functionality
+    loadMoreBtn.addEventListener('click', function() {
+        visibleCount += 8;
+        updateVisibility();
+    });
+
+    // Initial display
+    updateVisibility();
+</script>
+
+
+<style>
+
+    .about-hero {
+        background: linear-gradient(rgba(0,0,0,.6), rgba(0,0,0,.6)),
+                    url('/store/banner/banner.jpeg') center/cover no-repeat;
+        color: white;
+        padding: 80px 0;
+        text-align: center;
+    }
+
+    .icon-box i {
+        font-size: 2rem;
+        color: #0d6efd;
+    }
+</style>
+
+<style>
+    /* Product Card Hover Effect */
+.product-card {
+    border-radius: 12px;
+    transition: all 0.35s ease;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+/* Lift + shadow */
+.product-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* Image zoom on hover */
+.product-card img {
+    transition: transform 0.4s ease;
+}
+
+.product-card:hover img {
+    transform: scale(1.08);
+}
+
+/* Button emphasis on hover */
+.product-card:hover .btn {
+    background-color: #0d6efd;
+    color: #fff;
+    border-color: #0d6efd;
+}
+
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('productSearch');
+        const productCards = Array.from(document.querySelectorAll('.product-card'));
+        const paginationContainer = document.getElementById('pagination');
+        const pageSize = 8; // products per page
+        let currentPage = 1;
+
+        function renderPage(filteredCards, page) {
+            // Hide all cards
+            productCards.forEach(card => card.style.display = 'none');
+
+            // Calculate start/end indexes
+            const start = (page - 1) * pageSize;
+            const end = start + pageSize;
+
+            // Show cards for current page
+            filteredCards.slice(start, end).forEach(card => card.style.display = 'block');
+
+            // Render pagination
+            const totalPages = Math.ceil(filteredCards.length / pageSize);
+            paginationContainer.innerHTML = '';
+
+            for (let i = 1; i <= totalPages; i++) {
+                const li = document.createElement('li');
+                li.classList.add('page-item');
+                if (i === page) li.classList.add('active');
+
+                const a = document.createElement('a');
+                a.classList.add('page-link');
+                a.href = "#";
+                a.textContent = i;
+
+                a.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    currentPage = i;
+                    renderPage(filteredCards, currentPage);
+                });
+
+                li.appendChild(a);
+                paginationContainer.appendChild(li);
+            }
+        }
+
+        function filterProducts() {
+            const filter = searchInput.value.toLowerCase();
+            return productCards.filter(card =>
+                card.querySelector('.card-title').textContent.toLowerCase().includes(filter)
+            );
+        }
+
+        // Search input
+        searchInput.addEventListener('keyup', function () {
+            currentPage = 1;
+            renderPage(filterProducts(), currentPage);
+        });
+
+        // Initial render
+        renderPage(productCards, currentPage);
+    });
+</script>
+
+
+<!-- FOOTER -->
+<div th:replace="fragments/footer :: footer"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

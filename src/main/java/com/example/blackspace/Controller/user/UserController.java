@@ -1,0 +1,78 @@
+package com.example.blackspace.Controller.user;
+
+
+import com.example.blackspace.Model.User;
+import com.example.blackspace.Service.User.UserService;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.security.Principal;
+
+@Controller
+@RequestMapping("/admin/users")
+public class UserController {
+
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    // View all users
+    @GetMapping
+    public String viewUsers(Model model, HttpSession session) {
+        model.addAttribute("users", userService.getAllUsers());
+        model.addAttribute("user", new User());
+
+        // Get the username of logged-in user
+       // String username = principal.getName();
+
+        String username = (String) session.getAttribute("LOGGED_IN_USERNAME");
+
+        // Get the user with username "boo1"
+        User user = userService.findByUsername(username); // fetch User object
+        if (user == null) {
+            user = new User();           // create empty User
+            user.setFirstName("User Null");  // default value to prevent template errors
+        }
+
+        model.addAttribute("user", user);
+
+
+        return "admin/manageusers"; // manageusers.html
+    }
+
+    // Add or Update user
+    @PostMapping("/save")
+    public String saveUser(@ModelAttribute User user, RedirectAttributes redirectAttributes) {
+        userService.saveUser(user);
+        redirectAttributes.addFlashAttribute("success", "User saved successfully!");
+        return "redirect:/admin/users";
+    }
+
+    // Delete user
+    @GetMapping("/delete/{id}")
+    public String deleteUser(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        userService.deleteUser(id);
+        redirectAttributes.addFlashAttribute("success", "User deleted successfully!");
+        return "redirect:/admin/users";
+    }
+
+    // Edit user
+    @GetMapping("/edit/{id}")
+    public String editUser(@PathVariable Long id, Model model) {
+        User user = userService.getUserById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid user Id: " + id));
+
+        model.addAttribute("user", user);
+        model.addAttribute("users", userService.getAllUsers());
+        return "admin/users";
+    }
+
+
+
+}
+

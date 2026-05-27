@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Store | BlackSpace</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        body { overflow-x: hidden; }
+        .sidebar { width: 250px; min-height: 100vh; background: #fff; border-right: 1px solid #e5e5e5; flex-shrink: 0; }
+        .sidebar .nav-link { color: #333; font-weight: 500; }
+        .sidebar .nav-link.active, .sidebar .nav-link:hover { background-color: #f0f4ff; color: #0d6efd; }
+        .profile-avatar { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid #0d6efd; }
+        @media (max-width: 991px) { .sidebar { display: none; } }
+    </style></head>
+<body class="bg-light">
+<!-- Top Navbar (Mobile) -->
+<nav class="navbar navbar-light bg-white border-bottom d-lg-none">
+    <div class="container-fluid">
+        <button class="btn btn-outline-primary" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
+            <i class="bi bi-list"></i>
+        </button>
+        <span class="fw-bold">BlackSpace</span>
+    </div>
+</nav>
+<div class="d-flex">
+
+
+
+    <!-- Include Desktop Sidebar -->
+    <div th:replace="~{fragments/userbar :: desktopSidebar(${user})}"></div>
+    <!-- Include Mobile Sidebar -->
+    <div th:replace="~{fragments/userbar :: mobileSidebar}"></div>
+
+    <main class="flex-grow-1 p-4">
+
+
+        <div class="container-fluid">
+
+            <h2 class="text-center mb-4">Payments</h2>
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+
+    </div>
+
+
+
+            <!-- Search -->
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <input type="text" id="searchInput" class="form-control"
+                           placeholder="Search by username, method, or description">
+                </div>
+            </div>
+
+            <!-- Grid -->
+            <div class="row g-3" id="paymentGrid">
+
+                <div class="col-6  col-md-4 col-lg-3 payment-card"
+                     th:each="p, stat : ${payments}"
+                     th:attr="
+            data-username=${p.username},
+            data-method=${p.paymentMethod},
+            data-description=${p.paymentType} ">
+
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body">
+
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="fw-semibold" th:text="${p.username}">User</span>
+                                <span class="badge bg-success" th:text="${p.status}">SUCCESS</span>
+                            </div>
+
+                            <h5 class="text-primary mb-1">
+                                ZMK:
+                                <span th:text="${p.amount}">0.00</span>
+                            </h5>
+
+                            <small class="text-muted d-block">
+                                Method:
+                                <span th:text="${p.paymentMethod}"></span>
+                            </small>
+
+                            <small class="text-muted d-block">
+                                Type:
+                                <span th:text="${p.paymentType}"></span>
+                            </small>
+
+                            <small class="text-muted d-block mt-2">
+                                <i class="bi bi-calendar"></i>
+                                <span th:text="${#temporals.format(p.createdtime,'yyyy-MM-dd HH:mm')}"></span>
+                            </small>
+
+                            <small class="text-muted d-block">
+                                Details:
+                                <span th:text="${p.transactionReference}"></span>
+                            </small>
+
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Pagination -->
+            <nav class="mt-4">
+                <ul class="pagination justify-content-center" id="pagination"></ul>
+            </nav>
+
+
+
+
+        </div>
+    </main>
+
+</div>
+
+
+<!-- JS Scripts -->
+<!-- Include jQuery first, then DataTables JS -->
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.5/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    $(document).ready(function () {
+ // Initialize DataTable without "Show entries" dropdown
+ var table = $('#myTable').DataTable({
+     responsive: true,
+     pageLength: 5, // default rows per page
+     lengthChange: false, // remove the "Show entries" dropdown
+     dom: '<"d-flex justify-content-between mb-2"f><"table-responsive"t><"d-flex justify-content-between mt-2"ip>', // only search (f) and pagination (ip)
+     language: {
+         search: "",
+         searchPlaceholder: "Search payer name..."
+     }
+ });
+
+ // Move the search box to custom div
+ $("#customSearch").html($('.dataTables_filter'));
+
+ // Enable Bootstrap tooltips
+ $('[data-bs-toggle="tooltip"]').tooltip();
+});
+</script>
+
+
+
+<script>
+    const searchInput = document.getElementById("searchInput");
+    const cards = Array.from(document.querySelectorAll(".payment-card"));
+    const pagination = document.getElementById("pagination");
+
+    const ITEMS_PER_PAGE = 8;
+    let currentPage = 1;
+
+    function filterCards() {
+        const search = searchInput.value.toLowerCase();
+
+        return cards.filter(card => {
+            return card.dataset.username.toLowerCase().includes(search) ||
+                   card.dataset.method.toLowerCase().includes(search) ||
+                   card.dataset.description.toLowerCase().includes(search);
+        });
+    }
+
+    function renderCards() {
+        const filtered = filterCards();
+        const start = (currentPage - 1) * ITEMS_PER_PAGE;
+        const end = start + ITEMS_PER_PAGE;
+
+        cards.forEach(c => c.style.display = "none");
+        filtered.slice(start, end).forEach(c => c.style.display = "block");
+
+        renderPagination(filtered.length);
+    }
+
+    function renderPagination(totalItems) {
+        pagination.innerHTML = "";
+        const pages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+
+        for (let i = 1; i <= pages; i++) {
+            const li = document.createElement("li");
+            li.className = `page-item ${i === currentPage ? 'active' : ''}`;
+
+            li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+            li.onclick = e => {
+                e.preventDefault();
+                currentPage = i;
+                renderCards();
+            };
+
+            pagination.appendChild(li);
+        }
+    }
+
+    searchInput.addEventListener("input", () => {
+        currentPage = 1;
+        renderCards();
+    });
+
+    renderCards();
+</script>
+
+
+</body>
+</html>

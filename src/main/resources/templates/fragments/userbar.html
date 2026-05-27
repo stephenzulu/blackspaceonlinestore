@@ -1,0 +1,105 @@
+<!-- sidebar.html -->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <!-- Optional: Keep Bootstrap and Icons if not already included in main layout -->
+</head>
+<body>
+
+<!-- Desktop Sidebar -->
+<aside th:fragment="desktopSidebar(user)" class="sidebar d-none d-lg-flex flex-column p-3" style="width: 250px;">
+    <div class="text-center mb-4">
+        <img src="/store/logo/logo.jpeg" class="rounded-circle mb-2" width="80">
+        <h6 th:text="${user.firstName}">John</h6>
+        <small class="text-muted" th:text="${user.role}">USER</small>
+    </div>
+
+    <ul class="nav flex-column gap-1 flex-grow-1">
+        <li class="nav-item">
+            <a class="nav-link " href="/">
+                <i class="bi bi-house "></i>   Home
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link " href="/account/dashboard">
+                <i class="bi bi-person-circle"></i> Dashboard
+            </a>
+        </li>
+
+        <li class="nav-item" th:if="${user.status == '1'}">
+            <a class="nav-link" href="/account/products">
+                <i class="bi bi-box-seam"></i> Products
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="/account/subscription">
+                <i class="bi bi-card-checklist"></i> Subscriptions
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/account/payments">
+                <i class="bi bi-currency-dollar"></i> Payments
+            </a>
+        </li>
+
+
+    </ul>
+
+
+
+</aside>
+
+<!-- Mobile Sidebar -->
+<div th:fragment="mobileSidebar" class="offcanvas offcanvas-start" id="mobileSidebar" style="width: 220px;">
+
+    <div class="offcanvas-header d-flex align-items-center justify-content-start">
+        <img src="/store/logo/logo.jpeg" class="rounded-circle me-2" width="50" height="50" alt="Logo">
+        <div>
+            <h6 class="mb-0" th:text="${user.firstName}">John Doe</h6>
+            <small class="text-muted" th:text="${user.role}">USER</small>
+        </div>
+        <button class="btn-close ms-auto" data-bs-dismiss="offcanvas"></button>
+    </div>
+
+
+    <div class="offcanvas-body d-flex flex-column">
+        <ul class="nav flex-column gap-1 flex-grow-1">
+
+            <li class="nav-item">
+                <a class="nav-link " href="/">
+                    <i class="bi bi-house "></i>   Home
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link " href="/account/dashboard">
+                    <i class="bi bi-person-circle"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/account/products">
+                    <i class="bi bi-box-seam"></i> Products
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/account/subscription">
+                    <i class="bi bi-card-checklist"></i> Subscriptions
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/account/payments">
+                    <i class="bi bi-currency-dollar"></i> Payments
+                </a>
+            </li>
+
+
+
+        </ul>
+
+
+    </div>
+</div>
+
+</body>
+</html>

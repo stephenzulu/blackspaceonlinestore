@@ -1,0 +1,309 @@
+<!-- src/main/resources/templates/fragments/navbar.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
+
+<body>
+<div th:fragment="topbar">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- STICKY NAVBAR top -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm">
+
+        <div class="container">
+
+            <!-- Brand -->
+            <a class="navbar-brand fw-bold d-flex align-items-center" th:href="@{/}">
+                <!-- Logo -->
+                <img th:src="@{/uploads/logo/logo.jpeg}" alt="Black Space Logo"
+                     style="height:30px; width:auto; margin-right:8px;" class="d-inline-block align-text-top">
+                <!-- Brand Name -->
+                Black Space
+
+            </a>  </a>
+
+            <!-- Mobile toggle -->
+            <button style="display:none;" class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#mainNavbar" aria-controls="mainNavbar"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Navbar links -->
+            <div class="collapse navbar-collapse" id="mainNavbar">
+
+                <!-- Left links -->
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active view-details-btn" th:href="@{/}">
+                            <i class="bi bi-house me-1"></i> Home
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link active view-details-btn" th:href="@{/stores}">
+                            <i class="bi bi-shop me-1"></i> Stores
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link active view-details-btn" th:href="@{/categories}">
+                            <i class="bi bi-grid-3x3-gap-fill mb-1 "></i> Categories
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link active view-details-btn" th:href="@{/products}">
+                            <i class="bi bi-box-seam me-1"></i> Products
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link active view-details-btn" th:href="@{/about}">
+                            <i class="bi bi-info-circle me-1"></i> About
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link active view-details-btn" th:href="@{/help}">
+                            <i class="bi bi-question-circle mb-1"></i> Help
+                        </a>
+                    </li>
+
+
+
+
+
+                </ul>
+
+
+            </div>
+
+            <div  id="mainNavbar2">
+
+                <!-- actions -->
+                <div class="d-flex gap-2">
+
+                    <!-- MY ACCOUNT → ONLY SELLER -->
+                    <a th:if="${isSeller }"
+                       th:href="@{/account/dashboard}"
+                       class="btn btn-outline-light btn-sm view-details-btn">
+                        <i class="bi bi-person"></i> My Account
+                    </a>
+
+                    <!-- ADMIN → ONLY ADMIN -->
+                    <a th:if="${isAdmin}"
+                       th:href="@{/admin/dashboard}"
+                       class="btn btn-outline-light btn-sm view-details-btn">
+                        <i class="bi bi-shield-lock"></i> Admin
+                    </a>
+
+                    <!-- LOGIN → ONLY WHEN NOT LOGGED IN -->
+                    <a th:if="${!isLoggedIn}"
+                       th:href="@{/login}"
+                       class="btn btn-outline-light btn-sm view-details-btn">
+                        <i class="bi bi-box-arrow-in-right"></i> Login
+                    </a>
+
+                    <!-- LOGOUT → ONLY WHEN LOGGED IN -->
+                    <a th:if="${isLoggedIn}"
+                       href="#"
+                       onclick="confirmLogout(event)"
+                       class="btn btn-outline-light btn-sm text-danger ">
+                        <i class="bi bi-box-arrow-right"></i> Logout
+                    </a>
+
+                </div>
+
+
+
+            </div>
+
+
+        </div>
+
+
+    </nav>
+
+
+
+    <!-- Mobile-friendly text sizing -->
+    <style>
+        .nav-link {
+            font-size: 1rem;
+        }
+
+        @media (max-width: 576px) {
+            .nav-link {
+                font-size: 0.85rem; /* smaller text on mobile */
+            }
+            .btn {
+                font-size: 0.85rem; /* smaller button text on mobile */
+            }
+        }
+
+        /* Dropdown menu on mobile fits width */
+        .dropdown-menu {
+            min-width: 150px;
+        }
+    </style>
+
+    <!-- Rotating Loader -->
+    <div id="progressContainer" class="loader-overlay">
+        <div class="spinner"></div>
+    </div>
+
+
+
+
+    <!-- Bottom Buttons Container -->
+    <div class="bottom-button2 d-flex">
+        <!-- Home -->
+        <a th:href="@{/}" class="btn flex-fill d-flex flex-column align-items-center justify-content-center view-details-btn">
+            <i class="bi bi-house-door mb-1"></i>
+            Home
+        </a>
+
+        <!-- Stores -->
+        <a th:href="@{/stores}" class="btn flex-fill d-flex flex-column align-items-center justify-content-center view-details-btn">
+            <i class="bi bi-shop-window mb-1"></i>
+            Stores
+        </a>
+        <!-- categories -->
+        <a th:href="@{/categories}" class="btn flex-fill d-flex flex-column align-items-center justify-content-center view-details-btn">
+            <i class="bi bi-grid-3x3-gap-fill mb-1 "></i>
+            Categories
+        </a>
+
+        <!-- Products -->
+        <a th:href="@{/products}" class="btn flex-fill d-flex flex-column align-items-center justify-content-center view-details-btn">
+            <i class="bi bi-box-seam mb-1"></i>
+            Products
+        </a>
+
+        <!-- About -->
+        <a th:href="@{/about}" class="btn flex-fill d-flex flex-column align-items-center justify-content-center view-details-btn">
+            <i class="bi bi-info-circle mb-1"></i>
+            About
+        </a>
+
+        <!-- Account -->
+        <a th:href="@{/help}" class="btn flex-fill d-flex flex-column align-items-center justify-content-center view-details-btn">
+            <i class="bi bi-question-circle mb-1"></i>
+            Help
+        </a>
+    </div>
+
+    <script>
+        function confirmLogout(event) {
+            event.preventDefault();
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You will be logged out of your account",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, logout',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '/logout';
+                }
+            });
+        }
+    </script>
+
+
+
+    <style>
+        /* Bottom buttons container */
+        .bottom-button2 {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1050;
+            display: none; /* only show on mobile */
+            gap: 5px; /* space between buttons */
+            background-color: #f0f0f0; /* light grey background */
+            padding: 0.1rem 0; /* reduced top and bottom padding */
+            border-top: 1px solid #ccc;
+        }
+
+        /* Button styling */
+        .bottom-button2 .btn {
+            border-radius: 0;
+            background-color: transparent;
+            color: #333;
+            font-size: 0.7rem; /* slightly smaller text */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0.25rem 0; /* reduced top/bottom padding */
+        }
+
+        /* Icon styling */
+        .bottom-button2 .btn i {
+            font-size: 1.3rem; /* slightly smaller icon */
+            margin-bottom: 0.2rem;
+        }
+
+         /* Show ONLY on small screens (mobile) */
+        @media (min-width: 983px) {
+            .bottom-button2 {
+                display: none !important; /* show on mobile */
+            }
+        }
+    </style>
+
+
+
+
+    <!-- loader -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.view-details-btn').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const url = this.getAttribute('href');
+
+                    // Show SweetAlert loader with only the spinning icon
+                    Swal.fire({
+                        html: '<i class="fa fa-spinner fa-spin fa-3x"></i>', // spinner only
+                        showConfirmButton: false,
+                        allowOutsideClick: false,
+                        background: 'transparent',   // remove modal background
+                        backdrop: false,             // remove dark overlay
+                        didOpen: () => {
+                            // Remove the box-shadow on the modal
+                            const modal = Swal.getPopup();
+                            modal.style.boxShadow = 'none';
+                        }
+                    });
+
+                    // Redirect after short delay
+                    setTimeout(() => {
+                        window.location.href = url;
+                    }, 800);
+                });
+            });
+        });
+    </script>
+
+
+
+
+
+
+
+
+</div>
+</body>
+</html>

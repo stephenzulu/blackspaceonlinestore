@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Black Space Store</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" th:href="@{/favicon.png}">
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        .hero2 {
+          color: #000;
+          padding: 20px ;
+          text-align: center;
+      }
+
+
+      .category-card {
+          cursor: pointer;
+          transition: transform 0.2s;
+      }
+
+      .category-card:hover {
+          transform: translateY(-5px);
+      }
+
+
+    </style>
+</head>
+<body>
+
+<!-- Include navbar -->
+<div th:replace="fragments/navbar :: topbar"></div>
+
+
+<!-- HERO CAROUSEL -->
+<section >
+    <div id="storeBannerCarousel" class="carousel slide" data-bs-ride="carousel">
+
+        <div class="carousel-inner" >
+            <div class="carousel-item" th:each="store, iterStat : ${latestStores}" th:classappend="${iterStat.index == 0} ? ' active'">
+
+                <img th:if="${store.storebanner != null and store.storebanner != ''}"
+                     th:src="@{'/uploads/stores/' + ${store.storebanner}}"
+                     class="d-block w-100" style="height:300px; object-fit:cover;">
+
+                <div class="carousel-caption d-md-block" style="background: rgba(0,0,0,0.1);">
+                    <h3 th:text="${store.name}">
+                        <i class="bi bi-shop me-2"></i> <!-- Icon before store name -->
+                        Store Name
+                    </h3>
+                    <a th:href="@{'/store/' + ${store.id}}" class="btn btn-primary view-details-btn">
+                        Visit Shop   <i class="bi bi-arrow-right-circle me-1"></i> <!-- Icon inside button -->
+                    </a>
+                </div>
+
+
+            </div>
+
+        </div>
+
+        <button class="carousel-control-prev" type="button" data-bs-target="#storeBannerCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+
+        <button class="carousel-control-next" type="button" data-bs-target="#storeBannerCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+
+    </div>
+</section>
+
+
+<!-- HERO -->
+<section class="hero2 py-5 text-center">
+    <div class="container">
+        <h1 class="fw-bold">
+            <i class="bi bi-search-heart me-2 text-primary"></i>
+            Discover Products or Services Near You
+        </h1>
+
+        <p class="lead mt-2 text-muted">
+            <i class="bi bi-shop me-2 text-success"></i>
+            Shop directly from local stores
+        </p>
+    </div>
+</section>
+
+
+<!-- AI Platform Notice -->
+<div class="alert alert-info text-center my-3 py-2" role="alert">
+    <i class="bi bi-robot me-2"></i>
+    BlackSpace Online Store is the <strong>first Zambian AI-powered platform</strong>, that empowers business professionals to launch and run online stores with ease, transforming the way customers shop.
+</div>
+
+
+
+<!-- 🔍 Product Search -->
+<section class=" py-2">
+    <div class="container d-flex justify-content-center" >
+        <form th:action="@{/products/search}" method="get" style="width: 450px;">
+            <div class="input-group input-group-lg">
+                <input type="text"
+                       name="q"
+                       class="form-control"
+                       placeholder="Search items..."
+                       th:value="${q}">
+                <button class="btn btn-primary " type="submit">
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</section>
+
+
+<!-- CATEGORIES -->
+<section class="py-3 bg-light">
+    <div class="container">
+        <h4 class="text-center mb-4">Top Categories</h4>
+
+        <div class="row g-3">
+            <div th:each="cat : ${topcategories}" class="store-card col-6 col-sm-6 col-md-3 ">
+                <a th:href="@{'/category/' + ${cat}}" class="text-decoration-none text-dark">
+
+                    <div class="card category-card h-100  product-card text-center p-3 position-relative">
+                        <!-- Category Name -->
+                        <h6 th:text="${cat}">Category</h6>
+
+                        <!-- Icon at bottom-right -->
+                        <i class="bi bi-tag-fill fs-4 text-danger position-absolute "
+                           style="bottom: 10px; right: 1px;"></i>
+
+                    </div>
+
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- WHY CHOOSE US -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <h4 class="text-center mb-4">Why Sell With Black Space</h4>
+
+        <div class="row g-4 text-center">
+
+            <!-- Feature Card -->
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="feature-card p-3 h-100">
+                    <i class="bi bi-person-plus-fill fs-1 text-primary mb-2"></i>
+                    <h6>Create Account</h6>
+                    <small class="text-muted">
+                        Open an account 100% free and start selling instantly
+                    </small>
+                </div>
+            </div>
+
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="feature-card p-3 h-100">
+                    <i class="bi bi-box-seam fs-1 text-success mb-2"></i>
+                    <h6>Any Product or Service</h6>
+                    <small class="text-muted">
+                        Sell physical products or professional services
+                    </small>
+                </div>
+            </div>
+
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="feature-card p-3 h-100">
+                    <i class="bi bi-shop fs-1 text-warning mb-2"></i>
+                    <h6>All Business Sizes</h6>
+                    <small class="text-muted">
+                        Perfect for small and growing businesses
+                    </small>
+                </div>
+            </div>
+
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="feature-card p-3 h-100">
+                    <i class="bi bi-house-heart fs-1 text-danger mb-2"></i>
+                    <h6>Sell From Home</h6>
+                    <small class="text-muted">
+                        Run your store from the comfort of your home
+                    </small>
+                </div>
+            </div>
+
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="feature-card p-3 h-100">
+                    <i class="bi bi-shield-lock-fill fs-1 text-info mb-2"></i>
+                    <h6>Safe & Secure</h6>
+                    <small class="text-muted">
+                        Protected and secure payment system
+                    </small>
+                </div>
+            </div>
+
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="feature-card p-3 h-100">
+                    <i class="bi bi-headset fs-1 text-dark mb-2"></i>
+                    <h6>24/7 Support</h6>
+                    <small class="text-muted">
+                        We’re here to support you anytime
+                    </small>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- CALL TO ACTION -->
+        <div class="text-center mt-5 ">
+            <a th:href="@{/register}"
+               class="btn btn-lg btn-primary px-5 shadow-sm">
+                <i class="bi bi-shop me-2"></i>
+                Create Free Store
+            </a>
+        </div>
+
+    </div>
+</section>
+
+
+
+
+<!-- TOP PRODUCTS BY Views -->
+<section class="py-5">
+    <div class="container">
+        <h4 class="text-center mb-4">
+            <i class="bi bi-fire text-danger"></i> Trending
+        </h4>
+        <div class="row g-3">
+
+
+                <div th:each="product : ${topProducts}" class=" store-card col-6 col-sm-6 col-md-3">
+
+
+                <div class="card h-100 product-card">
+                    <!-- Trending Badge -->
+                    <span class="badge bg-danger position-absolute top-0 end-0 m-2">
+                    <i class="bi bi-graph-up-arrow"></i>
+                    </span>
+
+
+                    <img th:src="@{'/uploads/products/images/' + ${#strings.arraySplit(product.imageurls, ',')[0]}}" class="img-fluid store-banner" alt="image"
+                         style="height:180px; object-fit:contain;">
+
+                    <div class="card-body" >
+                        <h6 th:text="${product.name}">Product Name</h6>
+                        <p class="small text-muted" th:text="${product.category}"></p>
+
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="fw-bold text-primary"
+                                  th:text="${product.currency + ' ' + #numbers.formatDecimal(product.price, 1, 'COMMA', 2, 'POINT')}"></span>
+                            <a th:href="@{'/product/' + ${product.id}}"
+                               class="btn btn-sm btn-outline-primary view-details-btn">View</a>
+                        </div>
+
+                        <!-- Display views -->
+
+
+
+                        <div class="d-flex justify-content-center align-items-center gap-3">
+                            <p class="text-muted mb-0">
+                                <i class="bi bi-eye-fill me-1"></i> <span th:text="${product.views}">0</span>
+                            </p>
+
+                            <div class="vr"></div> <!-- Vertical line -->
+
+                            <p class="text-muted mb-0">
+                                <i class="bi bi-hand-thumbs-up-fill text-success me-1"></i> <span th:text="${product.likes}">0</span>
+                            </p>
+
+                            <div class="vr"></div> <!-- Vertical line -->
+
+                            <p class="text-muted mb-0">
+                                <i class="bi bi-hand-thumbs-down-fill text-danger me-1"></i> <span th:text="${product.dislikes}">0</span>
+                            </p>
+                        </div>
+
+
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <div class="mt-4 text-center">
+        <a th:href="@{/products}"
+           class="btn btn-primary btn-sm px-4 py-2 rounded-pill shadow-sm d-inline-flex align-items-center gap-2">
+            <span>View More</span>
+            <i class="bi bi-arrow-right-circle-fill"></i>
+        </a>
+    </div>
+
+</section>
+
+
+
+<!-- LATEST STORES -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <h4 class="text-center mb-4">
+            <i class="bi bi-shop me-2 text-primary"></i> Latest Stores
+        </h4>
+
+
+        <div class="row g-3">
+
+                <div th:each="store : ${latestStores}" class=" store-card col-6 col-sm-6 col-md-3">
+
+
+                <div class="card h-100 product-card shadow-sm overflow-hidden">
+
+                    <!-- STORE BANNER -->
+                    <div class="position-relative">
+
+                        <!-- Full-width banner -->
+                        <img class="w-100"
+                             th:if="${store != null and store.storebanner != null and store.storebanner != ''}"
+                             th:src="@{'/uploads/stores/' + ${store.storebanner}}"
+                             style="height:130px; object-fit:cover;">
+
+                        <!-- Store logo (LEFT) -->
+                        <img th:if="${store != null and store.storelogo != null and store.storelogo != ''}"
+                             th:src="@{'/uploads/stores/' + ${store.storelogo}}"
+                             class="position-absolute rounded-circle border bg-white"
+                             style="
+                                width:70px;
+                                height:70px;
+                                object-fit:contain;
+                                bottom:-35px;
+                                left:15px;
+                             ">
+                    </div>
+
+                    <!-- STORE DETAILS -->
+                    <div class="card-body text-start mt-4 ps-3">
+                        <h6 class="mb-1" th:text="${store.name}">Store Name</h6>
+
+                        <small class="text-muted d-block mb-2">
+                            New seller
+                        </small>
+
+                        <div class="text-end ">
+                            <a th:href="@{'/store/' + ${store.id}}"
+                               class="btn btn-sm btn-outline-dark">
+                                Visit Store
+                            </a>
+                        </div>
+
+
+
+
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="mt-4 text-center">
+        <a th:href="@{/stores}"
+           class="btn btn-primary btn-sm px-4 py-2 rounded-pill shadow-sm d-inline-flex align-items-center gap-2">
+            <span>View More</span>
+            <i class="bi bi-arrow-right-circle-fill"></i>
+        </a>
+    </div>
+
+
+
+</section>
+
+
+<section class="featured-products my-5" th:if="${products != null and !#lists.isEmpty(products)}">
+    <div class="container">
+        <h4 class="text-center mb-4">
+            <i class="bi bi-star-fill me-2 text-warning"></i> Featured Products
+        </h4>
+
+        <div class="row align-items-center">
+
+            <!-- Left: Product Carousel -->
+            <div class="col-md-4">
+                <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner product-card">
+                        <div th:each="product, iterStat : ${products}"
+                             th:classappend="${iterStat.index == 0} ? ' active' : ''"
+                             class="carousel-item"
+                             th:data-name="${product.name}"
+                             th:data-price="${product.currency + ' ' + #numbers.formatDecimal(product.price, 1, 'COMMA', 2, 'POINT')}"
+                             th:data-description="${product.description}"
+                             th:data-url="@{'/product/' + ${product.id}}">
+
+                            <img th:src="@{'/uploads/products/images/' + ${#strings.arraySplit(product.imageurls, ',')[0]}}"
+                                 class="img-fluid store-banner "
+                                 alt="Product Image"
+                                 style="height: 350px; object-fit: contain;">
+                        </div>
+                    </div>
+
+                    <!-- Carousel controls -->
+                    <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Right: Product Details for first product only -->
+            <div class="col-md-8">
+                <h3 id="productName"></h3>
+                <p class="text-muted mb-2" id="productPrice"></p>
+                <p id="productDescription"></p>
+
+                <a id="productLink" class="btn btn-primary mt-3 view-details-btn">
+                    View Details <i class="bi bi-arrow-right-circle me-1"></i> <!-- Icon for button -->
+                </a>
+
+            </div>
+
+
+        </div>
+    </div>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- PRODUCTS -->
+<section class="py-5">
+    <div class="container">
+        <h4 class="text-left mb-4">
+            <i class="bi bi-box-seam me-2 text-primary"></i> Latest Products
+        </h4>
+
+
+        <div class="row g-3">
+
+            <div th:each="product : ${products}" class=" store-card col-6 col-sm-6 col-md-3">
+
+
+                <div class="card h-100 product-card" >
+
+                    <img th:src="@{'/uploads/products/images/' + ${#strings.arraySplit(product.imageurls, ',')[0]}}" class="img-fluid store-banner" alt="image"
+                         style="height:180px; object-fit:contain;">
+
+                    <div class="card-body">
+                        <h6 th:text="${product.name}">Product Name</h6>
+
+                        <p class="small text-muted"
+                           th:text="${product.category}">
+                        </p>
+
+
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="fw-bold text-primary"
+                                  th:text="${product.currency + ' ' + #numbers.formatDecimal(product.price, 1, 'COMMA', 2, 'POINT')}">
+                            </span>
+                            <a th:href="@{'/product/' + ${product.id}}"
+                               class="btn btn-sm btn-outline-primary view-details-btn">
+                                View
+                            </a>
+                        </div>
+
+
+                        <div class="d-flex justify-content-center align-items-center gap-3">
+                            <p class="text-muted mb-0">
+                                <i class="bi bi-eye-fill me-1"></i> <span th:text="${product.views}">0</span>
+                            </p>
+
+                            <div class="vr"></div> <!-- Vertical line -->
+
+                            <p class="text-muted mb-0">
+                                <i class="bi bi-hand-thumbs-up-fill text-success me-1"></i> <span th:text="${product.likes}">0</span>
+                            </p>
+
+                            <div class="vr"></div> <!-- Vertical line -->
+
+                            <p class="text-muted mb-0">
+                                <i class="bi bi-hand-thumbs-down-fill text-danger me-1"></i> <span th:text="${product.dislikes}">0</span>
+                            </p>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="mt-4 text-center">
+        <a th:href="@{/products}"
+           class="btn btn-primary btn-sm px-4 py-2 rounded-pill shadow-sm d-inline-flex align-items-center gap-2">
+            <span>View More</span>
+            <i class="bi bi-arrow-right-circle-fill"></i>
+        </a>
+    </div>
+
+
+
+</section>
+
+
+
+<!-- WHY CHOOSE US -->
+<section class="py-5">
+    <div class="container">
+        <h3 class="text-center fw-bold mb-4">Why Choose Black Space Store?</h3>
+
+        <div class="row g-4">
+            <div class="col-md-3 col-sm-6">
+                <div class="card h-100 text-center p-3">
+                    <i class="bi bi-shop fs-2 text-primary mb-2"></i>
+                    <h6 class="fw-semibold">Local Stores</h6>
+                    <p class="text-muted small">
+                        Discover verified sellers near you.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-3 col-sm-6">
+                <div class="card h-100 text-center p-3">
+                    <i class="bi bi-shield-check fs-2 text-primary mb-2"></i>
+                    <h6 class="fw-semibold">Trusted Platform</h6>
+                    <p class="text-muted small">
+                        Secure and transparent marketplace.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-3 col-sm-6">
+                <div class="card h-100 text-center p-3">
+                    <i class="bi bi-phone fs-2 text-primary mb-2"></i>
+                    <h6 class="fw-semibold">Easy to Use</h6>
+                    <p class="text-muted small">
+                        Simple browsing and quick connections.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-3 col-sm-6">
+                <div class="card h-100 text-center p-3">
+                    <i class="bi bi-graph-up fs-2 text-primary mb-2"></i>
+                    <h6 class="fw-semibold">Grow Your Business</h6>
+                    <p class="text-muted small">
+                        Tools that help sellers reach more customers.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+<!-- FOOTER -->
+<div th:replace="fragments/footer :: footer"></div>
+
+
+
+
+
+
+<style>
+
+    .feature-card {
+    border-radius: 12px;
+    background: #ffffff;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.feature-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+}
+
+.feature-card i {
+    transition: transform 0.3s ease;
+}
+
+.feature-card:hover i {
+    transform: scale(1.15);
+}
+
+    #productDescription {
+    display: -webkit-box;
+    -webkit-line-clamp: 5;   /* number of lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+
+
+    /* Round background for carousel buttons */
+.carousel-control-prev,
+.carousel-control-next {
+    width: auto;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-color: rgba(0, 0, 0, 0.6); /* dark round bg */
+    border-radius: 50%;
+    width: 42px;
+    height: 42px;
+    background-size: 55% 55%;
+}
+
+/* Hover effect */
+.carousel-control-prev-icon:hover,
+.carousel-control-next-icon:hover {
+    background-color: rgba(0, 0, 0, 0.85);
+}
+
+
+</style>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const carousel = document.getElementById('productCarousel');
+
+        function updateDetails(activeItem) {
+            document.getElementById('productName').textContent =
+                activeItem.dataset.name;
+
+            document.getElementById('productPrice').textContent =
+                activeItem.dataset.price;
+
+            document.getElementById('productDescription').textContent =
+                activeItem.dataset.description;
+
+            document.getElementById('productLink').href =
+                activeItem.dataset.url;
+        }
+
+        // Set initial product
+        const firstActive = carousel.querySelector('.carousel-item.active');
+        if (firstActive) updateDetails(firstActive);
+
+        // Update on slide change
+        carousel.addEventListener('slid.bs.carousel', function () {
+            const activeItem = carousel.querySelector('.carousel-item.active');
+            if (activeItem) updateDetails(activeItem);
+        });
+    });
+
+
+</script>
+
+
+<style>
+    /* Product Card Hover Effect */
+.product-card {
+    border-radius: 12px;
+    transition: all 0.35s ease;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+/* Lift + shadow */
+.product-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* Image zoom on hover */
+.product-card img {
+    transition: transform 0.4s ease;
+}
+
+.product-card:hover img {
+    transform: scale(1.08);
+}
+
+/* Button emphasis on hover */
+.product-card:hover .btn {
+    background-color: #0d6efd;
+    color: #fff;
+    border-color: #0d6efd;
+}
+
+</style>
+
+
+
+
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

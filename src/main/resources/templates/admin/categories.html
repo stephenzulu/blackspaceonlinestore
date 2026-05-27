@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Store | BlackSpace</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        body { overflow-x: hidden; }
+        .sidebar { width: 250px; min-height: 100vh; background: #fff; border-right: 1px solid #e5e5e5;  flex-shrink: 0; }
+        .sidebar .nav-link { color: #333; font-weight: 500; }
+        .sidebar .nav-link.active, .sidebar .nav-link:hover { background-color: #f0f4ff; color: #0d6efd; }
+        .profile-avatar { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid #0d6efd; }
+        @media (max-width: 991px) { .sidebar { display: none; } }
+    </style></head>
+<body class="bg-light">
+<!-- Top Navbar (Mobile) -->
+<nav class="navbar navbar-light bg-white border-bottom d-lg-none">
+    <div class="container-fluid">
+        <button class="btn btn-outline-primary" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
+            <i class="bi bi-list"></i>
+        </button>
+        <span class="fw-bold">BlackSpace</span>
+    </div>
+</nav>
+<div class="d-flex">
+
+
+
+    <!-- Include Desktop Sidebar -->
+    <div th:replace="fragments/sidebar :: desktopSidebar(${user})"></div>
+    <!-- Include Mobile Sidebar -->
+    <div th:replace="fragments/sidebar :: mobileSidebar"></div>
+
+    <main class="flex-grow-1 p-4">
+
+
+        <div class="container-fluid">
+
+            <h2 class="text-center mb-4">Manage Categories</h2>
+
+    <!-- Search + Add button in same line -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+            <i class="bi bi-plus-circle"></i> Add Category
+        </button>
+        <div id="customSearch"></div>
+    </div>
+
+    <!-- Categories Table -->
+            <table class="table display" id="myTable" style="width:100%">
+            <thead>
+        <tr>
+            <th>#</th>
+            <th>Category Name</th>
+            <th>Image</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="cat, stat : ${categories}">
+            <td th:text="${stat.count}"></td>
+            <td th:text="${cat.name}"></td>
+            <td>
+                <img th:src="@{'/uploads/categories/' + ${cat.catimages}}"
+                     alt="Category Image"
+                     style="width: 50px; height: 50px; object-fit: cover; margin-right: 10px;">
+            </td>
+
+            <td>
+            <button class="btn btn-secondary btn-sm"
+                        type="button"
+                        th:data-id="${cat.id}"
+                        th:data-name="${cat.name}"
+                        th:data-catimages="${cat.catimages}"
+                        onclick="openEditModal(this)"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        title="Edit">
+                    <i class="bi bi-pencil-square"></i>
+                </button>
+
+                <button class="btn btn-danger btn-sm"
+                        type="button"
+                        th:data-id="${cat.id}"
+                        th:data-name="${cat.name}"
+                        th:data-catimages="${cat.catimages}"
+                        onclick="confirmDelete(this)"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        title="Delete">
+                    <i class="bi bi-trash-fill"></i>
+                </button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+
+        </div>
+    </main>
+
+</div>
+
+
+<!-- ================= ADD CATEGORY MODAL ================= -->
+<div class="modal fade" id="addCategoryModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title"><i class="bi bi-plus-circle me-2"></i>Add Category</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form th:action="@{/admin/categories/add}" method="post" enctype="multipart/form-data">
+
+                    <div class="mb-3">
+                        <label for="addCategoryName" class="form-label fw-medium">Primary Category</label>
+                        <select class="form-select" id="addCategoryName" name="name" required>
+                            <option value="" disabled selected>-- Select Primary Category --</option>
+                            <option value="Electronics">Electronics</option>
+                            <option value="Fashion & Apparel">Fashion & Apparel</option>
+                            <option value="Beauty & Personal Care">Beauty & Personal Care</option>
+                            <option value="Home & Living">Home & Living</option>
+                            <option value="Groceries & Food">Groceries & Food</option>
+                            <option value="Health & Wellness">Health & Wellness</option>
+                            <option value="Baby, Kids & Toys">Baby, Kids & Toys</option>
+                            <option value="Sports & Outdoors">Sports & Outdoors</option>
+                            <option value="Automotive">Automotive</option>
+                            <option value="Media">Media</option>
+                            <option value="Office, Books & Stationery">Office, Books & Stationery</option>
+                            <option value="Hardware & Tools">Hardware & Tools</option>
+                            <option value="Jewelry & Accessories">Jewelry & Accessories</option>
+                            <option value="Pets & Pet Supplies">Pets & Pet Supplies</option>
+                            <option value="Digital Products">Digital Products</option>
+                            <option value="Services">Services</option>
+                            <option value="Real Estate & Housing">Real Estate & Housing</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="addCategoryImage" class="form-label">Category Image</label>
+                        <input type="file" class="form-control" id="addCategoryImage" name="catimages" accept="image/*" required>
+                    </div>
+
+                    <div class="modal-footer border-top-0 pt-3">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                            <i class="bi bi-x-circle me-1"></i>Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle me-1"></i>Save
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ================= EDIT CATEGORY MODAL ================= -->
+
+<div class="modal fade" id="editCategoryModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title"><i class="bi bi-pencil-square me-2"></i>Edit Category</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form th:action="@{/admin/categories/update}" method="post" enctype="multipart/form-data">
+                    <!-- Hidden ID -->
+                    <input type="hidden" name="id" id="editCategoryId">
+
+                    <!-- Current Category Name (readonly) -->
+                    <div class="mb-3">
+                        <label for="editCategoryNameDisplay" class="form-label">Current Category Name</label>
+                        <input type="text" id="editCategoryNameDisplay" class="form-control" readonly>
+                    </div>
+
+                    <!-- New Category Name -->
+                    <div class="mb-3">
+                        <label class="form-label fw-medium">New Category Name</label>
+                        <select class="form-select" id="editCategoryName" name="name" required>
+                            <option value="" disabled>-- Select Primary Category --</option>
+                            <option value="Electronics">Electronics</option>
+                            <option value="Fashion & Apparel">Fashion & Apparel</option>
+                            <option value="Beauty & Personal Care">Beauty & Personal Care</option>
+                            <option value="Home & Living">Home & Living</option>
+                            <option value="Groceries & Food">Groceries & Food</option>
+                            <option value="Health & Wellness">Health & Wellness</option>
+                            <option value="Baby, Kids & Toys">Baby, Kids & Toys</option>
+                            <option value="Sports & Outdoors">Sports & Outdoors</option>
+                            <option value="Automotive">Automotive</option>
+                            <option value="Media">Media</option>
+                            <option value="Office, Books & Stationery">Office, Books & Stationery</option>
+                            <option value="Hardware & Tools">Hardware & Tools</option>
+                            <option value="Jewelry & Accessories">Jewelry & Accessories</option>
+                            <option value="Pets & Pet Supplies">Pets & Pet Supplies</option>
+                            <option value="Digital Products">Digital Products</option>
+                            <option value="Services">Services</option>
+                            <option value="Real Estate & Housing">Real Estate & Housing</option>
+                        </select>
+                    </div>
+
+                    <!-- Current Image Preview -->
+                    <div class="mb-3">
+                        <label class="form-label">Current Image</label>
+                        <img id="editCategoryImagePreview" src="" alt="Category Image"
+                             style="max-width:150px; display:block; margin-bottom:10px;">
+                    </div>
+
+                    <!-- Upload New Image -->
+                    <div class="mb-3">
+                        <label for="editCategoryImage" class="form-label">Change Category Image</label>
+                        <input type="file" class="form-control" id="editCategoryImage" name="catimages" accept="image/*">
+                    </div>
+
+                    <div class="modal-footer border-top-0 pt-3">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                            <i class="bi bi-x-circle me-1"></i>Cancel
+                        </button>
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-check-circle me-1"></i>Update
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JS Scripts -->
+<!-- Include jQuery first, then DataTables JS -->
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.5/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+
+    $(document).ready(function () {
+ // Initialize DataTable without "Show entries" dropdown
+ var table = $('#myTable').DataTable({
+     responsive: true,
+     pageLength: 5, // default rows per page
+     lengthChange: false, // remove the "Show entries" dropdown
+     dom: '<"d-flex justify-content-between mb-2"f><"table-responsive"t><"d-flex justify-content-between mt-2"ip>', // only search (f) and pagination (ip)
+     language: {
+         search: "",
+         searchPlaceholder: "Search stores..."
+     }
+ });
+
+ // Move the search box to custom div
+ $("#customSearch").html($('.dataTables_filter'));
+
+ // Enable Bootstrap tooltips
+ $('[data-bs-toggle="tooltip"]').tooltip();
+});
+
+
+
+
+
+    // Open edit modal and populate fields
+  // Open edit modal and populate fields
+function openEditModal(button) {
+    const categoryId = button.getAttribute('data-id');
+    const categoryName = button.getAttribute('data-name');
+    const categoryCatimages = button.getAttribute('data-catimages');
+
+    // Set hidden ID
+    document.getElementById('editCategoryId').value = categoryId;
+
+    // Set readonly display of current name
+    document.getElementById('editCategoryNameDisplay').value = categoryName;
+
+    // Set select to current category name
+    const select = document.getElementById('editCategoryName');
+    for (let i = 0; i < select.options.length; i++) {
+        if (select.options[i].value === categoryName) {
+            select.selectedIndex = i;
+            break;
+        }
+    }
+
+    // Show current image preview
+    const preview = document.getElementById('editCategoryImagePreview');
+    if (categoryCatimages) {
+        preview.src = '/uploads/categories/' + categoryCatimages;
+        preview.style.display = 'block';
+    } else {
+        preview.style.display = 'none';
+    }
+
+    // Show modal
+    const editModal = new bootstrap.Modal(document.getElementById('editCategoryModal'));
+    editModal.show();
+}
+
+
+
+
+    // SweetAlert delete confirmation
+function confirmDelete(button) {
+    const categoryId = button.getAttribute('data-id');
+    const categoryName = button.getAttribute('data-name');
+
+    Swal.fire({
+        title: 'Are you sure?',
+        html: `You are about to delete <b>${categoryName}</b>. This action cannot be undone.`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Use GET request to match controller
+            window.location.href = `/admin/categories/delete/${categoryId}`;
+        }
+    });
+}
+
+
+</script>
+
+</body>
+</html>

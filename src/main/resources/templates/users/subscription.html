@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Store | BlackSpace</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://checkout.flutterwave.com/v3.js"></script>
+
+
+    <style>
+        body { overflow-x: hidden; }
+        .sidebar { width: 250px; min-height: 100vh; background: #fff; border-right: 1px solid #e5e5e5;  flex-shrink: 0;}
+        .sidebar .nav-link { color: #333; font-weight: 500; }
+        .sidebar .nav-link.active, .sidebar .nav-link:hover { background-color: #f0f4ff; color: #0d6efd; }
+        .profile-avatar { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid #0d6efd; }
+        @media (max-width: 991px) { .sidebar { display: none; } }
+    </style></head>
+<body class="bg-light">
+<!-- Top Navbar (Mobile) -->
+<nav class="navbar navbar-light bg-white border-bottom d-lg-none">
+    <div class="container-fluid">
+        <button class="btn btn-outline-primary" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
+            <i class="bi bi-list"></i>
+        </button>
+        <span class="fw-bold">BlackSpace</span>
+    </div>
+</nav>
+<div class="d-flex">
+
+
+
+    <!-- Include Desktop Sidebar -->
+    <div th:replace="fragments/userbar :: desktopSidebar(${user})"></div>
+    <!-- Include Mobile Sidebar -->
+    <div th:replace="fragments/userbar :: mobileSidebar"></div>
+
+    <main class="flex-grow-1 p-4">
+
+
+        <div class="container-fluid">
+
+            <h2 class="text-center mb-4"> Subscription</h2>
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+
+        <div id="customSearch"></div>
+    </div>
+
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                <div class="col" th:each="m : ${subscriptions}">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body d-flex flex-column">
+
+                            <h5 class="card-title" th:text="${m.name}">Subscription Name</h5>
+
+                            <p class="card-text mb-1">
+                                <strong>Number Of Items:</strong>
+                                <span th:text="${m.numberofproducts}"></span>
+                            </p>
+
+                            <p class="card-text mb-1">
+                                <strong>Amount:</strong>
+                                <span th:text="${m.amount}"></span>
+                            </p>
+
+                            <p class="card-text mb-1">
+                                <strong>Description:</strong>
+                                <span th:text="${m.description}"></span>
+                            </p>
+
+                            <div class="mt-auto">
+
+                                <!-- IF USER HAS ACTIVE SUBSCRIPTION -->
+
+                                <div class="mt-auto">
+                                    <form th:action="@{/account/subscription/upgrade}" method="post">
+                                        <input type="hidden" name="subscriptionId" th:value="${m.id}" />
+                                        <button type="submit"
+                                                class="btn w-100"
+                                                th:classappend="${subscriptionActive} ? 'btn-warning' : 'btn-success'"
+                                                th:text="${subscriptionActive} ? 'Upgrade Package' : 'Buy Now'">
+                                        </button>
+
+                                    </form>
+                                </div>
+
+                                <!-- IF USER HAS NO ACTIVE SUBSCRIPTION -->
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
+        </div>
+    </main>
+
+</div>
+
+
+<!-- Include jQuery first, then DataTables JS -->
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.5/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+
+    $(document).ready(function () {
+     // Initialize DataTable without "Show entries" dropdown
+     var table = $('#myTable').DataTable({
+         responsive: true,
+         pageLength: 5, // default rows per page
+         lengthChange: false, // remove the "Show entries" dropdown
+         dom: '<"d-flex justify-content-between mb-2"f><"table-responsive"t><"d-flex justify-content-between mt-2"ip>', // only search (f) and pagination (ip)
+         language: {
+             search: "",
+             searchPlaceholder: "Search stores..."
+         }
+     });
+
+     // Move the search box to custom div
+     $("#customSearch").html($('.dataTables_filter'));
+
+     // Enable Bootstrap tooltips
+     $('[data-bs-toggle="tooltip"]').tooltip();
+ });
+
+
+
+
+
+   $(document).ready(function () {
+       const table = $('#subscriptionTable').DataTable({
+           pageLength: 5,
+           lengthChange: false
+       });
+       $('#subscriptionTable_filter').appendTo('#customSearch');
+   });
+
+</script>
+
+
+
+</body>
+</html>
