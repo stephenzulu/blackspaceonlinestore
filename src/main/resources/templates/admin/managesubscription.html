@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Store | BlackSpace</title>
+    <link rel="icon" type="image/png" th:href="@{/favicon.png}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Bootstrap 5 -->
@@ -11,38 +12,34 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
     <style>
-        body { overflow-x: hidden; }
-        .sidebar { width: 250px; min-height: 100vh; background: #fff; border-right: 1px solid #e5e5e5;  flex-shrink: 0; }
-        .sidebar .nav-link { color: #333; font-weight: 500; }
-        .sidebar .nav-link.active, .sidebar .nav-link:hover { background-color: #f0f4ff; color: #0d6efd; }
-        .profile-avatar { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid #0d6efd; }
-        @media (max-width: 991px) { .sidebar { display: none; } }
+        html, body { height: 100%; overflow: hidden; background: #f0f2f5; }
+        .sidebar { width: 250px; height: 100vh; position: sticky; top: 0; flex-shrink: 0; overflow-y: auto; }
+        .main-content { flex: 1; overflow-y: auto; height: 100vh; }
+        .page-header { background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); border-radius: 14px; padding: 20px 24px; color: #fff; margin-bottom: 20px; }
+        .page-header h4 { margin: 0; font-weight: 700; }
+        .page-header p { margin: 4px 0 0; color: rgba(255,255,255,.7); font-size: 0.85rem; }
+        .content-card { border: none; border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,.06); }
     </style></head>
-<body class="bg-light">
-<!-- Top Navbar (Mobile) -->
+<body>
 <nav class="navbar navbar-light bg-white border-bottom d-lg-none">
     <div class="container-fluid">
         <button class="btn btn-outline-primary" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
             <i class="bi bi-list"></i>
         </button>
-        <span class="fw-bold">BlackSpace</span>
+        <span class="fw-bold">BlackSpace Admin</span>
     </div>
 </nav>
 <div class="d-flex">
-
-
-
-    <!-- Include Desktop Sidebar -->
     <div th:replace="fragments/sidebar :: desktopSidebar(${user})"></div>
-    <!-- Include Mobile Sidebar -->
     <div th:replace="fragments/sidebar :: mobileSidebar"></div>
 
-    <main class="flex-grow-1 p-4">
-
-
+    <main class="main-content p-3 p-md-4">
         <div class="container-fluid">
 
-            <h2 class="text-center mb-4">Manage Subscription</h2>
+            <div class="page-header">
+                <h4><i class="bi bi-credit-card-2-front me-2"></i>Manage Subscriptions</h4>
+                <p>View and manage subscription plans</p>
+            </div>
 
             <div class="d-flex justify-content-between align-items-center mb-3">
         <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addSubscriptionModal">

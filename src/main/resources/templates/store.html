@@ -180,10 +180,10 @@
 
 <!-- ================= PRODUCTS GRID ================= -->
 <div class="container mt-3">
-    <div class="products-wrapper" id="productsWrapper">
+    <div class="row g-3" id="productsWrapper">
 
-            <div th:each="product : ${products}" class="card product-card store-card col-6 col-sm-6 col-md-3" >
-
+            <div th:each="product : ${products}" class="col-6 col-sm-6 col-md-3">
+            <div class="card h-100 product-card shadow-sm">
             <a th:href="@{'/product/' + ${product.id}}" class="text-decoration-none text-dark">
                 <img th:if="${product.imageurls != null and product.imageurls != ''}"
                      th:src="@{'/uploads/products/images/' + ${#strings.arraySplit(product.imageurls, ',')[0]}}"
@@ -201,7 +201,7 @@
 
                 <div class="card-body text-center mx-2">
                     <h6 th:text="${product.name}">Product Name</h6>
-                    <p th:text="${product.currency + ' ' + #numbers.formatDecimal(product.price, 1, 'COMMA', 2, 'POINT')}">0.00</p>
+                    <p th:text="${product.currency + ' ' + #numbers.formatDecimal(product.price, 1, 'COMMA', 0, 'POINT')}">0.00</p>
                 </div>
 
 
@@ -224,6 +224,7 @@
                 </div>
 
             </a>
+            </div>
         </div>
     </div>
 

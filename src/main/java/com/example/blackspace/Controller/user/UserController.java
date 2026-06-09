@@ -72,7 +72,27 @@ public class UserController {
         return "admin/users";
     }
 
+    // Block user
+    @GetMapping("/block/{id}")
+    public String blockUser(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        User user = userService.getUserById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid user Id: " + id));
+        user.setEnabled(false);
+        userService.saveUser(user);
+        redirectAttributes.addFlashAttribute("success", "User blocked successfully!");
+        return "redirect:/admin/users";
+    }
 
+    // Unblock user
+    @GetMapping("/unblock/{id}")
+    public String unblockUser(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        User user = userService.getUserById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid user Id: " + id));
+        user.setEnabled(true);
+        userService.saveUser(user);
+        redirectAttributes.addFlashAttribute("success", "User unblocked successfully!");
+        return "redirect:/admin/users";
+    }
 
 }
 

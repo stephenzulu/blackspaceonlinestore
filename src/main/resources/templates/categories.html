@@ -21,9 +21,9 @@
 <!-- HERO SECTION -->
 <section class="about-hero">
     <div class="container">
-        <h1 class="fw-bold">Discover Products or Services Near You</h1>
-        <p class="lead mt-2">
-            Buy directly from local stores
+        <h1 class="fw-bold"><i class="bi bi-grid-3x3-gap-fill me-2"></i>All Categories</h1>
+        <p class="lead mt-2" style="color:rgba(255,255,255,.8);">
+            Browse products by category
         </p>
     </div>
 </section>
@@ -44,14 +44,14 @@
 </div>
 
 <div class="container mt-4">
-    <h2 class="mb-4 text-center">All Categories</h2>
+    <h2 class="mb-4 text-center"><i class="bi bi-grid-3x3-gap-fill me-2 text-primary"></i>All Categories</h2>
 
 
     <!-- CATEGORIES -->
     <section class="py-5">
         <div class="container">
             <div class="row g-3 ">
-                <div th:each="cat : ${categories}" class="store-card col-6 col-sm-6 col-md-3">
+                <div th:each="cat : ${categories}" class="col-6 col-sm-6 col-md-3">
                     <a th:href="@{'/category/' + ${cat.name}}" class="text-decoration-none text-dark">
 
                         <div class="card h-100 text-center product-card" >
@@ -82,7 +82,7 @@
 <style>
 
     .about-hero {
-        background: linear-gradient(rgba(0,0,0,.6), rgba(0,0,0,.6)),
+        background: linear-gradient(135deg, rgba(15,12,41,.8), rgba(48,43,99,.8)),
                     url('/store/banner/store_banner.png') center/cover no-repeat;
         color: white;
         padding: 80px 0;
@@ -93,6 +93,8 @@
         font-size: 2rem;
         color: #0d6efd;
     }
+
+    body { background: linear-gradient(180deg, #f8f9fa, #e9ecef); }
 </style>
 
 

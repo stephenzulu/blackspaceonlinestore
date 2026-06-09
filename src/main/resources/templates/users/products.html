@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Store | BlackSpace</title>
+    <link rel="icon" type="image/png" th:href="@{/favicon.png}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Bootstrap 5 -->
@@ -125,7 +126,7 @@
                                th:text="${productstock.shortdescription}"></p>
 
                             <div class="fw-bold text-primary mb-2"
-                                 th:text="${productstock.currency + ' ' + productstock.price}">
+                                 th:text="${productstock.currency + ' ' + #numbers.formatDecimal(productstock.price, 1, 'COMMA', 0, 'POINT')}">
                             </div>
 
                             <div class="mt-auto d-flex justify-content-between">

@@ -80,13 +80,12 @@
 
 
 <!-- HERO -->
-<section class="hero2 py-5 text-center">
+<section class="py-5 text-center bg-white">
     <div class="container">
         <h1 class="fw-bold">
             <i class="bi bi-search-heart me-2 text-primary"></i>
             Discover Products or Services Near You
         </h1>
-
         <p class="lead mt-2 text-muted">
             <i class="bi bi-shop me-2 text-success"></i>
             Shop directly from local stores
@@ -94,41 +93,48 @@
     </div>
 </section>
 
-
 <!-- AI Platform Notice -->
-<div class="alert alert-info text-center my-3 py-2" role="alert">
-    <i class="bi bi-robot me-2"></i>
-    BlackSpace Online Store is the <strong>first Zambian AI-powered platform</strong>, that empowers business professionals to launch and run online stores with ease, transforming the way customers shop.
+<div class="text-center py-3 bg-white">
+    <div class="container">
+        <i class="bi bi-robot me-2 text-primary"></i>
+        BlackSpace Online Store is the <strong>first Zambian AI-powered platform</strong>, that empowers business professionals to launch and run online stores with ease, transforming the way customers shop.
+    </div>
 </div>
 
 
 
-<!-- 🔍 Product Search -->
-<section class=" py-2">
-    <div class="container d-flex justify-content-center" >
-        <form th:action="@{/products/search}" method="get" style="width: 450px;">
-            <div class="input-group input-group-lg">
-                <input type="text"
-                       name="q"
-                       class="form-control"
-                       placeholder="Search items..."
-                       th:value="${q}">
-                <button class="btn btn-primary " type="submit">
-                    <i class="bi bi-search"></i>
-                </button>
-            </div>
-        </form>
+<!-- Product Search -->
+<section class="py-2">
+    <div class="container d-flex justify-content-center">
+        <div style="width: 450px; position: relative;">
+            <form th:action="@{/products/search}" method="get">
+                <div class="input-group input-group-lg">
+                    <input type="text"
+                           name="q"
+                           id="searchInput"
+                           class="form-control"
+                           placeholder="Search items..."
+                           autocomplete="off"
+                           th:value="${q}">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+            </form>
+            <!-- Search Suggestions Dropdown -->
+            <div id="searchSuggestions" class="search-suggestions" style="display:none;"></div>
+        </div>
     </div>
 </section>
 
 
 <!-- CATEGORIES -->
-<section class="py-3 bg-light">
+<section class="py-3" style="background: linear-gradient(180deg, #f8f9fa, #e9ecef);">
     <div class="container">
         <h4 class="text-center mb-4">Top Categories</h4>
 
         <div class="row g-3">
-            <div th:each="cat : ${topcategories}" class="store-card col-6 col-sm-6 col-md-3 ">
+            <div th:each="cat : ${topcategories}" class="col-6 col-sm-6 col-md-3">
                 <a th:href="@{'/category/' + ${cat}}" class="text-decoration-none text-dark">
 
                     <div class="card category-card h-100  product-card text-center p-3 position-relative">
@@ -148,8 +154,8 @@
 </section>
 
 
-<!-- WHY CHOOSE US -->
-<section class="py-5 bg-light">
+<!-- WHY SELL WITH US -->
+<section class="py-5" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
     <div class="container">
         <h4 class="text-center mb-4">Why Sell With Black Space</h4>
 
@@ -234,7 +240,7 @@
 
 
 <!-- TOP PRODUCTS BY Views -->
-<section class="py-5">
+<section class="py-5" style="background: linear-gradient(180deg, #ffffff, #f0f4ff);">
     <div class="container">
         <h4 class="text-center mb-4">
             <i class="bi bi-fire text-danger"></i> Trending
@@ -242,7 +248,7 @@
         <div class="row g-3">
 
 
-                <div th:each="product : ${topProducts}" class=" store-card col-6 col-sm-6 col-md-3">
+                <div th:each="product : ${topProducts}" class="col-6 col-sm-6 col-md-3">
 
 
                 <div class="card h-100 product-card">
@@ -261,7 +267,7 @@
 
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <span class="fw-bold text-primary"
-                                  th:text="${product.currency + ' ' + #numbers.formatDecimal(product.price, 1, 'COMMA', 2, 'POINT')}"></span>
+                                  th:text="${product.currency + ' ' + #numbers.formatDecimal(product.price, 1, 'COMMA', 0, 'POINT')}"></span>
                             <a th:href="@{'/product/' + ${product.id}}"
                                class="btn btn-sm btn-outline-primary view-details-btn">View</a>
                         </div>
@@ -311,7 +317,7 @@
 
 
 <!-- LATEST STORES -->
-<section class="py-5 bg-light">
+<section class="py-5" style="background: linear-gradient(135deg, #e0eafc, #cfdef3);">
     <div class="container">
         <h4 class="text-center mb-4">
             <i class="bi bi-shop me-2 text-primary"></i> Latest Stores
@@ -320,7 +326,7 @@
 
         <div class="row g-3">
 
-                <div th:each="store : ${latestStores}" class=" store-card col-6 col-sm-6 col-md-3">
+                <div th:each="store : ${latestStores}" class="col-6 col-sm-6 col-md-3">
 
 
                 <div class="card h-100 product-card shadow-sm overflow-hidden">
@@ -405,7 +411,7 @@
                              th:classappend="${iterStat.index == 0} ? ' active' : ''"
                              class="carousel-item"
                              th:data-name="${product.name}"
-                             th:data-price="${product.currency + ' ' + #numbers.formatDecimal(product.price, 1, 'COMMA', 2, 'POINT')}"
+                             th:data-price="${product.currency + ' ' + #numbers.formatDecimal(product.price, 1, 'COMMA', 0, 'POINT')}"
                              th:data-description="${product.description}"
                              th:data-url="@{'/product/' + ${product.id}}">
 
@@ -464,7 +470,7 @@
 
 
 <!-- PRODUCTS -->
-<section class="py-5">
+<section class="py-5" style="background: linear-gradient(180deg, #fff, #f8f0fc);">
     <div class="container">
         <h4 class="text-left mb-4">
             <i class="bi bi-box-seam me-2 text-primary"></i> Latest Products
@@ -473,7 +479,7 @@
 
         <div class="row g-3">
 
-            <div th:each="product : ${products}" class=" store-card col-6 col-sm-6 col-md-3">
+            <div th:each="product : ${products}" class="col-6 col-sm-6 col-md-3">
 
 
                 <div class="card h-100 product-card" >
@@ -492,7 +498,7 @@
 
                         <div class="d-flex justify-content-between align-items-center">
                             <span class="fw-bold text-primary"
-                                  th:text="${product.currency + ' ' + #numbers.formatDecimal(product.price, 1, 'COMMA', 2, 'POINT')}">
+                                  th:text="${product.currency + ' ' + #numbers.formatDecimal(product.price, 1, 'COMMA', 0, 'POINT')}">
                             </span>
                             <a th:href="@{'/product/' + ${product.id}}"
                                class="btn btn-sm btn-outline-primary view-details-btn">
@@ -543,7 +549,7 @@
 
 
 <!-- WHY CHOOSE US -->
-<section class="py-5">
+<section class="py-5" style="background: linear-gradient(135deg, #fdfcfb, #e2d1c3);">
     <div class="container">
         <h3 class="text-center fw-bold mb-4">Why Choose Black Space Store?</h3>
 
@@ -605,15 +611,18 @@
 <style>
 
     .feature-card {
-    border-radius: 12px;
-    background: #ffffff;
+    border-radius: 16px;
+    background: rgba(255,255,255,.85);
+    backdrop-filter: blur(10px);
     transition: all 0.3s ease;
     cursor: pointer;
+    border: 1px solid rgba(0,0,0,.05);
 }
 
 .feature-card:hover {
     transform: translateY(-8px);
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+    background: #fff;
 }
 
 .feature-card i {
@@ -724,8 +733,105 @@
 
 </style>
 
+<!-- Search Suggestions Styles -->
+<style>
+    .search-suggestions {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-top: none;
+        border-radius: 0 0 8px 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,.15);
+        z-index: 1060;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+    .search-suggestions a {
+        display: flex;
+        align-items: center;
+        padding: 10px 14px;
+        text-decoration: none;
+        color: #333;
+        border-bottom: 1px solid #f0f0f0;
+        transition: background 0.2s;
+    }
+    .search-suggestions a:last-child { border-bottom: none; }
+    .search-suggestions a:hover { background: #f0f4ff; }
+    .search-suggestions img {
+        width: 40px;
+        height: 40px;
+        object-fit: cover;
+        border-radius: 6px;
+        margin-right: 12px;
+        flex-shrink: 0;
+    }
+    .search-suggestions .suggest-name { font-weight: 500; font-size: 0.9rem; }
+    .search-suggestions .suggest-price { font-size: 0.8rem; color: #0d6efd; }
+    body.dark-mode .search-suggestions { background: #16213e; border-color: #0f3460; }
+    body.dark-mode .search-suggestions a { color: #e0e0e0; border-bottom-color: #0f3460; }
+    body.dark-mode .search-suggestions a:hover { background: #1a1a2e; }
+</style>
 
+<!-- Search Suggestions Script -->
+<script>
+    (function() {
+        var input = document.getElementById('searchInput');
+        var suggestions = document.getElementById('searchSuggestions');
+        var debounceTimer;
 
+        input.addEventListener('input', function() {
+            clearTimeout(debounceTimer);
+            var query = input.value.trim();
+            if (query.length < 2) {
+                suggestions.style.display = 'none';
+                return;
+            }
+            debounceTimer = setTimeout(function() {
+                fetch('/api/products/suggest?q=' + encodeURIComponent(query))
+                    .then(function(res) { return res.json(); })
+                    .then(function(data) {
+                        if (data.length === 0) {
+                            suggestions.innerHTML = '<div style="padding:12px;text-align:center;color:#999;">No results found</div>';
+                            suggestions.style.display = 'block';
+                            return;
+                        }
+                        var html = '';
+                        data.forEach(function(item) {
+                            html += '<a href="/product/' + item.id + '">' +
+                                '<img src="' + item.image + '" alt="">' +
+                                '<div>' +
+                                    '<div class="suggest-name">' + item.name + '</div>' +
+                                    '<div class="suggest-price">' + item.currency + ' ' + Number(item.price).toLocaleString() + '</div>' +
+                                '</div>' +
+                            '</a>';
+                        });
+                        suggestions.innerHTML = html;
+                        suggestions.style.display = 'block';
+                    })
+                    .catch(function() {
+                        suggestions.style.display = 'none';
+                    });
+            }, 300);
+        });
+
+        // Hide suggestions when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!input.contains(e.target) && !suggestions.contains(e.target)) {
+                suggestions.style.display = 'none';
+            }
+        });
+
+        // Show suggestions again on focus if there's text
+        input.addEventListener('focus', function() {
+            if (input.value.trim().length >= 2 && suggestions.innerHTML) {
+                suggestions.style.display = 'block';
+            }
+        });
+    })();
+</script>
 
 
 

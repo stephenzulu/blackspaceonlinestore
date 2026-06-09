@@ -41,6 +41,15 @@ public class CategoryController {
         model.addAttribute("categoryName", categoryName);
         model.addAttribute("products", products);
 
+        // Get category image for banner
+        Category category = categoryService.getAllCategories().stream()
+                .filter(c -> c.getName().equalsIgnoreCase(categoryName))
+                .findFirst().orElse(null);
+        String categoryImage = (category != null && category.getCatimages() != null)
+                ? "/uploads/categories/" + category.getCatimages()
+                : "/store/banner/banner.jpeg";
+        model.addAttribute("categoryImage", categoryImage);
+
         String username = (String) session.getAttribute("LOGGED_IN_USERNAME");
 
         // Get the user with username "boo1"

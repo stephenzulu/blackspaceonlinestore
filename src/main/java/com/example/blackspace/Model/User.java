@@ -38,7 +38,7 @@ public class User {
     private String lastName;
 
 
-    @Column(name = "phone_number", unique = true, nullable = false)
+    @Column(name = "phone_number", unique = true)
     private String phoneNumber;
 
 

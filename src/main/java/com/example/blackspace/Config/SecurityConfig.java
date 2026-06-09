@@ -14,6 +14,9 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
 
+    @Autowired
+    private CustomLogoutHandler customLogoutHandler;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, RecaptchaFilter recaptchaFilter) throws Exception {
 
@@ -40,6 +43,7 @@ public class SecurityConfig {
                                 "/js/**",
                                 "/images/**",
                                 "/uploads/**",
+                                "/api/products/**",
                                 "/api/pesapal/**",
                                 "/pay/**",
                                 "/ipn/**",
@@ -64,7 +68,7 @@ public class SecurityConfig {
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("/")
+                        .logoutSuccessHandler(customLogoutHandler)
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
                 )

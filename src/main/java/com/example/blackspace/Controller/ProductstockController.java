@@ -466,6 +466,12 @@ public class ProductstockController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);
 
+        // Top stores for the products page
+        List<Store> topStores = storeService.getAllStores().stream()
+                .limit(4)
+                .toList();
+        model.addAttribute("topStores", topStores);
+
         return "all-products";
     }
 
@@ -554,6 +560,27 @@ public String users(Model model, Principal principal,HttpSession session) {
         return "search-results"; // Thymeleaf template
     }
 
+    @GetMapping("/api/products/suggest")
+    @ResponseBody
+    public List<Map<String, Object>> suggestProducts(@RequestParam(value = "q", required = false) String query) {
+        if (query == null || query.isBlank()) {
+            return List.of();
+        }
+        List<Productstock> results = productstockService.searchProducts(query);
+        return results.stream().limit(8).map(p -> {
+            Map<String, Object> item = new LinkedHashMap<>();
+            item.put("id", p.getId());
+            item.put("name", p.getName());
+            item.put("price", p.getPrice());
+            item.put("currency", p.getCurrency());
+            String image = "default.png";
+            if (p.getImageurls() != null && !p.getImageurls().isEmpty()) {
+                image = p.getImageurls().split(",")[0];
+            }
+            item.put("image", "/uploads/products/images/" + image);
+            return item;
+        }).toList();
+    }
 
 
     // VIEW SINGLE PRODUCT

@@ -35,11 +35,13 @@
 <div th:replace="fragments/navbar :: topbar"></div>
 
 <!-- HERO SECTION -->
-<section class="about-hero">
-    <div class="container">
-        <h1 class="fw-bold">Black Space Online Store</h1>
+<section class="about-hero" style="position: relative; overflow: hidden;">
+    <img th:src="@{${categoryImage}}" alt="banner" style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; z-index:0;">
+    <div style="position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,.5); z-index:1;"></div>
+    <div class="container" style="position:relative; z-index:2;">
+        <h1 class="fw-bold" th:text="${categoryName}">Category</h1>
         <p class="lead mt-2">
-            Connecting buyers with trusted local sellers
+            Browse products in this category
         </p>
     </div>
 </section>
@@ -91,7 +93,7 @@
                              style="height:180px; object-fit:contain;">
                         <div class="card-body">
                             <p class="card-title" th:text="${product.name}">Product Name</p>
-                            <p class="card-text fw-bold" th:text="${product.currency + ' ' + product.price}">Price</p>
+                            <p class="card-text fw-bold" th:text="${product.currency + ' ' + #numbers.formatDecimal(product.price, 1, 'COMMA', 0, 'POINT')}">Price</p>
                         </div>
                     </div>
                 </a>
@@ -158,8 +160,6 @@
 <style>
 
     .about-hero {
-        background: linear-gradient(rgba(0,0,0,.6), rgba(0,0,0,.6)),
-                    url('/store/banner/banner.jpeg') center/cover no-repeat;
         color: white;
         padding: 80px 0;
         text-align: center;

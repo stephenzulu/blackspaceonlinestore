@@ -1,14 +1,27 @@
 package com.example.blackspace.Config;
 
+import com.example.blackspace.Model.SiteSettings;
+import com.example.blackspace.Repository.SiteSettingsRepository;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 @ControllerAdvice
 public class GlobalModelAttributes {
+
+    private final SiteSettingsRepository siteSettingsRepository;
+
+    public GlobalModelAttributes(SiteSettingsRepository siteSettingsRepository) {
+        this.siteSettingsRepository = siteSettingsRepository;
+    }
+
+    @ModelAttribute("siteSettings")
+    public SiteSettings siteSettings() {
+        return siteSettingsRepository.findAll().stream().findFirst()
+                .orElse(new SiteSettings());
+    }
 
     @ModelAttribute("isLoggedIn")
     public boolean isLoggedIn() {

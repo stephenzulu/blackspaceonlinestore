@@ -11,14 +11,15 @@
 
     <style>
         .store-card {
-            border: 10px solid white;
-            border-radius: 5px;
+            border: none;
+            border-radius: 12px;
             overflow: hidden;
             transition: transform 0.3s, opacity 0.3s;
             flex-direction: column;
             align-items: flex-start;
             opacity: 1;
             position: relative;
+            padding: 6px;
         }
         .store-card.hide {
             opacity: 0;
@@ -26,6 +27,10 @@
         }
         .store-card:hover {
             transform: translateY(-5px);
+        }
+        .store-card > a {
+            border-radius: 10px;
+            overflow: hidden;
         }
         .store-banner {
             width: 100%;
@@ -93,9 +98,9 @@
 <!-- HERO SECTION -->
 <section class="about-hero">
     <div class="container">
-        <h1 class="fw-bold">Black Space Online Store</h1>
-        <p class="lead mt-2">
-            Connecting buyers with trusted local sellers
+        <h1 class="fw-bold"><i class="bi bi-shop me-2"></i>All Stores</h1>
+        <p class="lead mt-2" style="color:rgba(255,255,255,.8);">
+            Browse and discover trusted local sellers
         </p>
     </div>
 </section>
@@ -116,7 +121,7 @@
 </div>
 
 <div class="container mt-4">
-    <h2 class="mb-4 text-center">All Stores</h2>
+    <h2 class="mb-4 text-center"><i class="bi bi-shop me-2 text-primary"></i>All Stores</h2>
 
     <!-- Search input -->
     <!-- Search input with smaller buttons -->
@@ -153,7 +158,7 @@
 
 
     <!-- Stores wrapper -->
-    <div class="row gy-1 " id="storesWrapper"> <!-- g-4 adds spacing between columns and rows -->
+    <div class="row g-3" id="storesWrapper">
         <div th:each="store : ${stores}" class=" store-card col-6 col-sm-6 col-md-3  product-card ">
                 <a th:href="@{'/store/' + ${store.id}}" class="text-decoration-none text-dark d-block position-relative">
                 <!-- Banner -->
@@ -211,7 +216,7 @@
 <style>
 
     .about-hero {
-        background: linear-gradient(rgba(0,0,0,.6), rgba(0,0,0,.6)),
+        background: linear-gradient(135deg, rgba(15,12,41,.8), rgba(48,43,99,.8)),
                     url('/store/banner/store_banner.png') center/cover no-repeat;
         color: white;
         padding: 80px 0;
@@ -222,6 +227,8 @@
         font-size: 2rem;
         color: #0d6efd;
     }
+
+    body { background: linear-gradient(180deg, #f8f9fa, #e9ecef); }
 </style>
 
 
@@ -260,6 +267,44 @@
 </style>
 
 
+
+<!-- TOP PRODUCTS CAROUSEL -->
+<section class="py-4" style="background: linear-gradient(180deg, #fff, #f0f4ff);" th:if="${topProducts != null and !#lists.isEmpty(topProducts)}">
+    <div class="container">
+        <h4 class="text-center mb-4">
+            <i class="bi bi-fire text-danger me-2"></i>Trending Products
+        </h4>
+        <div id="topProductsCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
+            <div class="carousel-inner">
+                <div th:each="product, stat : ${topProducts}"
+                     class="carousel-item"
+                     th:classappend="${stat.index == 0} ? ' active'">
+                    <div class="d-flex justify-content-center px-3">
+                        <div style="max-width:240px; width:100%;">
+                            <a th:href="@{'/product/' + ${product.id}}" class="text-decoration-none text-dark">
+                                <div class="card shadow-sm mx-auto" style="border-radius:10px; overflow:hidden;">
+                                    <img th:src="@{'/uploads/products/images/' + ${#strings.arraySplit(product.imageurls, ',')[0]}}"
+                                         class="img-fluid" alt="product"
+                                         style="height:140px; object-fit:contain;">
+                                    <div class="card-body text-center p-2">
+                                        <p class="text-truncate mb-1 small fw-semibold" th:text="${product.name}">Product</p>
+                                        <small class="fw-bold text-primary"
+                                              th:text="${product.currency + ' ' + #numbers.formatDecimal(product.price, 1, 'COMMA', 0, 'POINT')}"></small>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-4 text-center">
+            <a th:href="@{/products}" class="btn btn-primary btn-sm px-4 py-2 rounded-pill shadow-sm">
+                <span>View All Products</span> <i class="bi bi-arrow-right-circle-fill ms-1"></i>
+            </a>
+        </div>
+    </div>
+</section>
 
 <!-- FOOTER -->
 <div th:replace="fragments/footer :: footer"></div>

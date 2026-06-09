@@ -2,7 +2,8 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>My Profile | BlackSpace</title>
+    <title>My Dashboard | BlackSpace</title>
+    <link rel="icon" type="image/png" th:href="@{/favicon.png}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Bootstrap 5 -->
@@ -11,16 +12,47 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
     <style>
-        body { overflow-x: hidden; }
-        .sidebar { width: 250px; min-height: 100vh; background: #fff; border-right: 1px solid #e5e5e5;  flex-shrink: 0;  }
+        html, body { height: 100%; overflow: hidden; background: #f0f2f5; }
+        .sidebar { width: 250px; height: 100vh; position: sticky; top: 0; flex-shrink: 0; overflow-y: auto; }
         .sidebar .nav-link { color: #333; font-weight: 500; }
         .sidebar .nav-link.active, .sidebar .nav-link:hover { background-color: #f0f4ff; color: #0d6efd; }
-        .profile-avatar { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid #0d6efd; }
         @media (max-width: 991px) { .sidebar { display: none; } }
+        .main-content { flex: 1; overflow-y: auto; height: 100vh; }
+
+        /* Stat cards */
+        .stat-card {
+            border: none; border-radius: 14px; padding: 18px; color: #fff;
+            transition: transform 0.2s;
+        }
+        .stat-card:hover { transform: translateY(-3px); }
+        .stat-card .stat-icon {
+            width: 44px; height: 44px; border-radius: 12px;
+            background: rgba(255,255,255,.2);
+            display: flex; align-items: center; justify-content: center; font-size: 1.3rem;
+        }
+        .stat-card .stat-value { font-size: 1.6rem; font-weight: 700; }
+        .stat-card .stat-label { font-size: 0.8rem; opacity: 0.85; }
+
+        /* Profile header */
+        .profile-header {
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            border-radius: 14px 14px 0 0;
+            padding: 24px; color: #fff;
+        }
+
+        /* Cards */
+        .dash-card {
+            border: none; border-radius: 14px;
+            box-shadow: 0 2px 12px rgba(0,0,0,.06);
+        }
+
+        /* Sub status */
+        .sub-active { border-left: 4px solid #198754; }
+        .sub-inactive { border-left: 4px solid #dc3545; }
     </style>
 </head>
 
-<body class="bg-light">
+<body>
 
 <!-- Top Navbar (Mobile) -->
 <nav class="navbar navbar-light bg-white border-bottom d-lg-none">
@@ -34,444 +66,316 @@
 
 <div class="d-flex">
 
-    <!-- Include Desktop Sidebar -->
+    <!-- Include Sidebars -->
     <div th:replace="fragments/userbar :: desktopSidebar(${user})"></div>
-    <!-- Include Mobile Sidebar -->
     <div th:replace="fragments/userbar :: mobileSidebar"></div>
 
-
-
     <!-- Main Content -->
-    <main class="flex-grow-1 p-4">
-
+    <main class="main-content p-3 p-md-4">
         <div class="container-fluid">
 
+            <!-- Welcome Header -->
+            <div class="mb-4">
+                <h4 class="fw-bold mb-0">My Dashboard</h4>
+                <small class="text-muted">Welcome, <span th:text="${user.firstName}">User</span></small>
+            </div>
 
+            <!-- Stat Cards -->
+            <div class="row g-3 mb-4">
+                <div class="col-6 col-md-4">
+                    <div class="stat-card" style="background: linear-gradient(135deg, #0f0c29, #302b63);">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <div class="stat-value" th:text="${productuserChart}">0</div>
+                                <div class="stat-label">My Products</div>
+                            </div>
+                            <div class="stat-icon"><i class="bi bi-box-seam"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4">
+                    <div class="stat-card" style="background: linear-gradient(135deg, #302b63, #24243e);">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <div class="stat-value" th:text="${store != null ? (store.shopviews ?: '0') : '0'}">0</div>
+                                <div class="stat-label">Store Views</div>
+                            </div>
+                            <div class="stat-icon"><i class="bi bi-eye"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <div class="stat-card" style="background: linear-gradient(135deg, #24243e, #0f0c29);">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <div class="stat-value">
+                                    <span class="badge fs-6"
+                                          th:classappend="${subscriptionActive} ? 'bg-light text-success' : 'bg-light text-danger'"
+                                          th:text="${subscriptionActive} ? 'Active' : 'Inactive'"></span>
+                                </div>
+                                <div class="stat-label">Subscription</div>
+                            </div>
+                            <div class="stat-icon"><i class="bi bi-credit-card"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-
-            <div class="card shadow-sm border-0">
-                <div class="card-body p-3">
-
-                    <!-- HEADER -->
-                    <div class="d-flex align-items-center mb-3">
+            <!-- Profile Card -->
+            <div class="card border-0 shadow-sm mb-4" style="border-radius:14px; overflow:hidden;">
+                <div class="profile-header">
+                    <div class="d-flex align-items-center">
                         <img src="/store/logo/logo.jpeg"
                              class="rounded-circle me-3"
-                             style="width:70px; height:70px; object-fit:cover; border:2px solid #0d6efd;">
-
-                        <div class="flex-grow-1">
-                                <h6 class="mb-1" th:text="${user.firstName + ' ' + user.lastName}">John Doe</h6>
-
-                            <div class="small text-muted">
-                                <i class="bi bi-person-badge"></i>
-                                <span th:text="${user.role}">USER</span>
-                            </div>
-
-                            <span class="badge mt-1"
-                                  th:classappend="${user.enabled} ? 'bg-success' : 'bg-danger'"
-                                  th:text="${user.enabled} ? 'Active' : 'Inactive'">
-                </span>
+                             style="width:55px; height:55px; object-fit:cover; border:3px solid rgba(255,255,255,.3);">
+                        <div>
+                            <h5 class="mb-0 text-white" th:text="${user.firstName + ' ' + user.lastName}">User</h5>
+                            <small style="color:rgba(255,255,255,.7);">
+                                <i class="bi bi-person-badge me-1"></i>
+                                <span th:text="${user.role}">SELLER</span>
+                            </small>
+                            <span class="badge ms-2"
+                                  th:classappend="${user.enabled} ? 'bg-light text-success' : 'bg-light text-danger'"
+                                  th:text="${user.enabled} ? 'Active' : 'Inactive'"></span>
                         </div>
                     </div>
-
-                    <!-- USER INFO -->
-                    <div class="row g-2 small">
-
-                        <div class="col-12 col-md-6">
-                            <strong>Username:</strong>
-                            <span th:text="${user.username}"></span>
-                        </div>
-
-                        <div class="col-12 col-md-6">
-                            <strong>Email:</strong>
-                            <span th:text="${user.email}"></span>
-                        </div>
-
-                        <div class="col-12 col-md-6">
-                            <strong>Phone:</strong>
-                            <span th:text="${user.phoneNumber}"></span>
-                        </div>
-
-                        <div class="col-12 col-md-6">
-                            <strong>ID No:</strong>
-                            <span th:text="${user.docidnumber}"></span>
-                        </div>
-
-                        <div class="col-12">
-                            <strong>Address:</strong>
-                            <span th:text="${user.address}"></span>
-                        </div>
-
-
-                    </div>
-
-
-
                 </div>
-            </div>
-
-
-
-
-            <!-- SUBSCRIPTION STATUS CARD -->
-            <div class="card shadow-sm border-0 mt-4"
-                 th:if="${store != null}">
                 <div class="card-body p-3">
-
-                    <h4>Subscription</h4>
-
-                    <!-- ACTIVE -->
-                    <div th:if="${subscriptionActive}">
-                        <p>
-                            <a>Expiry Date :</a>
-                            <span th:text="${store.durationtimeupdate != null
-                    ? #temporals.format(store.durationtimeupdate, 'dd/MM/yyyy')
-                    : 'N/A'}">
-                </span>
-                        </p>
-
-                        <p>
-                            <a>You have </a>
-                            <span th:text="${store.numberofproducts ?: '0'}"></span>
-                            <a> items in your current subscription, please upgrade your subscription to add more items</a>
-                        </p>
-
-                        <a th:href="@{/account/subscription}"
-                           class="btn btn-outline-warning btn-sm mt-2">
-                            Upgrade Subscription
-                        </a>
+                    <div class="row g-2 small">
+                        <div class="col-6 col-md-3">
+                            <i class="bi bi-person text-primary me-1"></i><strong>Username</strong>
+                            <div class="text-muted" th:text="${user.username}"></div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <i class="bi bi-envelope text-primary me-1"></i><strong>Email</strong>
+                            <div class="text-muted" th:text="${user.email}"></div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <i class="bi bi-telephone text-primary me-1"></i><strong>Phone</strong>
+                            <div class="text-muted" th:text="${user.phoneNumber}"></div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <i class="bi bi-geo-alt text-primary me-1"></i><strong>Address</strong>
+                            <div class="text-muted" th:text="${user.address}"></div>
+                        </div>
                     </div>
-
-                    <!-- INACTIVE -->
-                    <div th:if="${subscriptionActive == false}">
-                        <span class="badge bg-danger mb-2">Inactive</span>
-
-                        <p>
-                            Hello <b th:text="${username}"></b>, you do not have an active subscription.
-                            Please add a subscription in order to post any items.
-                        </p>
-
-
-                        <a th:href="@{/account/subscription}"
-                           class="btn btn-primary btn-sm mt-2">
-                            Subscribe Now
-                        </a>
-                    </div>
-
                 </div>
             </div>
 
+            <!-- Subscription Card -->
+            <div class="card dash-card mb-4" th:if="${store != null}"
+                 th:classappend="${subscriptionActive} ? 'sub-active' : 'sub-inactive'">
+                <div class="card-body p-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="fw-semibold mb-0"><i class="bi bi-credit-card me-2"></i>Subscription</h6>
+                        <a th:href="@{/account/subscription}" class="btn btn-sm btn-outline-primary">
+                            <span th:text="${subscriptionActive} ? 'Upgrade' : 'Subscribe'">Manage</span>
+                        </a>
+                    </div>
+                    <!-- Active -->
+                    <div th:if="${subscriptionActive}">
+                        <div class="row g-2 small">
+                            <div class="col-6">
+                                <span class="text-muted">Expiry:</span>
+                                <strong th:text="${store.durationtimeupdate != null ? #temporals.format(store.durationtimeupdate, 'dd/MM/yyyy') : 'N/A'}"></strong>
+                            </div>
+                            <div class="col-6">
+                                <span class="text-muted">Items allowed:</span>
+                                <strong th:text="${store.numberofproducts ?: '0'}"></strong>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Inactive -->
+                    <div th:if="${!subscriptionActive}">
+                        <p class="small text-muted mb-0">You don't have an active subscription. Subscribe to start posting products.</p>
+                    </div>
+                </div>
+            </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-            <div class="card shadow-sm border-0 mt-4">
+            <!-- Store Card -->
+            <div class="card dash-card mb-4" style="overflow:hidden;">
                 <div class="card-body p-0">
-
-
-
-                    <div class="p-4">
-
-                        <div th:if="${store != null}">
-
-                            <!-- STORE BANNER -->
-                            <div th:if="${store != null and store.storebanner != null}"
-                                 class="position-relative w-100"
-                                 style="height:200px; overflow:hidden;">
-
-                                <img th:src="@{/uploads/stores/{img}(img=${store.storebanner})}"
-                                     class="w-100 h-100"
-                                     style="object-fit:cover;">
-
-                                <!-- LOGO + NAME OVERLAY -->
-                                <div class="d-flex align-items-center position-absolute bottom-0 start-0 p-3"
-                                     style="background: rgba(0,0,0,0.5); border-top-right-radius:8px;">
-
-                                    <img th:if="${store.storelogo != null}"
-                                         th:src="@{/uploads/stores/{img}(img=${store.storelogo})}"
-                                         class="rounded-circle me-3"
-                                         style="width:60px; height:60px; object-fit:cover; border:2px solid #fff;">
-
-                                    <div class="text-white">
-                                        <h5 class="mb-0" th:text="${store.name}">Store Name</h5>
-                                        <span class="badge bg-success" th:if="${store.active}">Active</span>
-                                        <span class="badge bg-danger" th:unless="${store.active}">Inactive</span>
-                                    </div>
+                    <div th:if="${store != null}">
+                        <!-- Store Banner -->
+                        <div th:if="${store.storebanner != null}" class="position-relative" style="height:180px; overflow:hidden;">
+                            <img th:src="@{/uploads/stores/{img}(img=${store.storebanner})}"
+                                 class="w-100 h-100" style="object-fit:cover;">
+                            <div class="d-flex align-items-center position-absolute bottom-0 start-0 w-100 p-3"
+                                 style="background:linear-gradient(transparent, rgba(0,0,0,.7));">
+                                <img th:if="${store.storelogo != null}"
+                                     th:src="@{/uploads/stores/{img}(img=${store.storelogo})}"
+                                     class="rounded-circle me-3"
+                                     style="width:50px; height:50px; object-fit:cover; border:2px solid #fff;">
+                                <div class="text-white">
+                                    <h6 class="mb-0" th:text="${store.name}">Store</h6>
+                                    <span class="badge" th:classappend="${store.active} ? 'bg-success' : 'bg-danger'"
+                                          th:text="${store.active} ? 'Active' : 'Inactive'"></span>
                                 </div>
                             </div>
+                        </div>
 
-
-
-                            <!-- ACTIONS -->
-                            <div class="text-end mt-4" th:if="${store != null}">
-                                <a class="btn btn-outline-primary"
-                                   data-bs-toggle="modal"
-                                   data-bs-target="#editStoreModal">
-                                    <i class="bi bi-pencil"></i> Edit Store
-                                </a>
-                            </div>
-
-                            <!-- STORE DETAILS -->
-                            <div class="row g-3 mt-3">
-
-                                <div class="col-md-6">
-                                    <i class="bi bi-telephone"></i>
-                                    <strong> Contact:</strong>
+                        <!-- Store Info -->
+                        <div class="p-3">
+                            <div class="row g-2 small">
+                                <div class="col-6">
+                                    <i class="bi bi-telephone text-success me-1"></i>
                                     <span th:text="${store.contactNumber ?: 'N/A'}"></span>
                                 </div>
-
-                                <div class="col-md-6">
-                                    <i class="bi bi-whatsapp text-success"></i>
-                                    <strong> WhatsApp:</strong>
+                                <div class="col-6">
+                                    <i class="bi bi-whatsapp text-success me-1"></i>
                                     <a th:if="${store.whatsappNumber != null}"
                                        th:href="'https://wa.me/' + ${store.whatsappNumber}"
-                                       target="_blank"
-                                       th:text="${store.whatsappNumber}">
-                                    </a>
+                                       target="_blank" th:text="${store.whatsappNumber}"></a>
                                     <span th:if="${store.whatsappNumber == null}">N/A</span>
                                 </div>
-
-                                <div class="col-md-6">
-                                    <i class="bi bi-envelope"></i>
-                                    <strong> Email:</strong>
-                                    <a th:if="${store.email != null}"
-                                       th:href="'mailto:' + ${store.email}"
-                                       th:text="${store.email}">
-                                    </a>
-                                    <span th:if="${store.email == null}">N/A</span>
+                                <div class="col-6">
+                                    <i class="bi bi-envelope text-primary me-1"></i>
+                                    <span th:text="${store.email ?: 'N/A'}"></span>
                                 </div>
-
-                                <div class="col-md-6">
-                                    <i class="bi bi-eye"></i>
-                                    <strong> Store Views:</strong>
-                                    <span th:text="${store.shopviews ?: '0'}"></span>
+                                <div class="col-6">
+                                    <i class="bi bi-eye text-info me-1"></i>
+                                    <span th:text="${store.shopviews ?: '0'}"></span> views
                                 </div>
-
                             </div>
-
-                            <!-- DESCRIPTION -->
-                            <p th:text="${store != null ? store.description : ''}"> Store description</p>
-
-
-                        </div>
-
-                        <!-- NO STORE -->
-                        <div th:if="${store == null}" class="text-muted text-center">
-                            <p>No store found.</p>
-                            <a href="/store/create" class="btn btn-primary btn-sm"
-                               data-bs-toggle="modal"
-                               data-bs-target="#createStoreModal">
-                                <i class="bi bi-plus-circle"></i> Create Store
+                            <p class="small text-muted mt-2 mb-2" th:text="${store.description}"></p>
+                            <a class="btn btn-sm btn-outline-primary"
+                               data-bs-toggle="modal" data-bs-target="#editStoreModal">
+                                <i class="bi bi-pencil me-1"></i>Edit Store
                             </a>
                         </div>
+                    </div>
 
-
-
-
-
-
-
+                    <!-- No Store -->
+                    <div th:if="${store == null}" class="text-center p-4">
+                        <i class="bi bi-shop fs-1 text-muted"></i>
+                        <p class="text-muted mt-2 mb-3">No store found. Create one to get started.</p>
+                        <a class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#createStoreModal">
+                            <i class="bi bi-plus-circle me-1"></i>Create Store
+                        </a>
                     </div>
                 </div>
             </div>
 
-            <!-- edit  -->
+            <!-- Edit Store Modal -->
             <div class="modal fade" id="editStoreModal" tabindex="-1">
                 <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
-                    <div class="modal-content">
-
+                    <div class="modal-content" style="border-radius:14px; overflow:hidden;">
                         <form th:action="@{/store/update}" method="post" enctype="multipart/form-data">
                             <input type="hidden" name="id" th:value="${store != null ? store.id : ''}">
-
-                            <div class="modal-header">
-                                <h5 class="modal-title">Edit Store</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            <div class="modal-header" style="background:linear-gradient(135deg,#0f0c29,#302b63); color:#fff;">
+                                <h5 class="modal-title"><i class="bi bi-pencil me-2"></i>Edit Store</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                             </div>
-
                             <div class="modal-body" style="max-height:75vh; overflow-y:auto;">
-
-                                <!-- Banner with logo overlay -->
-                                <div class="position-relative mb-3" style="height:25vh; overflow:hidden;">
+                                <div class="position-relative mb-3" style="height:25vh; overflow:hidden; border-radius:10px;">
                                     <img th:if="${store != null and store.storebanner != null}"
                                          th:src="@{/uploads/stores/{img}(img=${store.storebanner})}"
-                                         class="w-100 h-100"
-                                         style="object-fit:cover;">
-
-
-                                    <!-- Logo at bottom-left of banner -->
-                                    <div class="position-absolute bottom-0 start-0 mb-2 ms-2
-                                          d-flex align-items-center justify-content-center
-                                          bg-white rounded-circle border">
-
+                                         class="w-100 h-100" style="object-fit:cover;">
+                                    <div class="position-absolute bottom-0 start-0 mb-2 ms-2 bg-white rounded-circle border">
                                         <img th:if="${store != null and store.storelogo != null}"
                                              th:src="@{/uploads/stores/{img}(img=${store.storelogo})}"
-                                             class="rounded-circle"
-                                             style="width:50px;height:50px;object-fit:cover;"
-                                             alt="Store Logo">
+                                             class="rounded-circle" style="width:50px;height:50px;object-fit:cover;">
                                     </div>
-
-
-
                                 </div>
-
-                                <!-- Upload Banner and Logo side by side -->
                                 <div class="d-flex flex-column flex-md-row gap-3 mb-3">
                                     <div class="flex-fill">
                                         <label class="form-label">Upload Logo</label>
                                         <input type="file" class="form-control" name="storelogo" accept="image/*" required>
                                     </div>
-
                                     <div class="flex-fill">
                                         <label class="form-label">Upload Banner</label>
                                         <input type="file" class="form-control" name="storebanner" accept="image/*" required>
                                     </div>
-
                                 </div>
-
                                 <div class="row g-2">
                                     <div class="col-md-6">
                                         <label class="form-label">Store Name</label>
                                         <input class="form-control bg-light" name="name" th:value="${store != null ? store.name : ''}" readonly>
-
                                     </div>
-
                                     <div class="col-md-6">
                                         <label class="form-label">Email</label>
-                                       <input class="form-control bg-light" name="email" th:value="${store != null ? store.email : ''}" readonly >
-
+                                        <input class="form-control bg-light" name="email" th:value="${store != null ? store.email : ''}" readonly>
                                     </div>
-
                                     <div class="col-md-6">
                                         <label class="form-label">Contact Number</label>
-                                      <input class="form-control  bg-light" name="contactNumber" th:value="${store != null ? store.contactNumber : ''}" readonly >
-
+                                        <input class="form-control bg-light" name="contactNumber" th:value="${store != null ? store.contactNumber : ''}" readonly>
                                     </div>
-
                                     <div class="col-md-6">
                                         <label class="form-label">WhatsApp Number</label>
-                                      <input class="form-control " name="whatsappNumber" th:value="${store != null ? store.whatsappNumber : ''}" required >
-
+                                        <input class="form-control" name="whatsappNumber" th:value="${store != null ? store.whatsappNumber : ''}" required>
                                     </div>
-
-                                    <!-- Description on left column, buttons on right column -->
                                     <div class="col-md-6">
                                         <label class="form-label">Description</label>
-
                                         <textarea name="description" class="form-control" rows="6"
                                                   th:text="${store != null ? store.description : ''}" required></textarea>
-
-
                                     </div>
-
                                     <div class="col-md-6 d-flex flex-column justify-content-end align-items-end gap-2">
                                         <button class="btn btn-primary w-50">Update Store</button>
                                     </div>
                                 </div>
-
                             </div>
-
                         </form>
-
                     </div>
                 </div>
             </div>
 
-
-            <!-- create -->
+            <!-- Create Store Modal -->
             <div class="modal fade" id="createStoreModal" tabindex="-1">
                 <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-                    <div class="modal-content">
-
-                        <div class="modal-content border-0 shadow-lg">
-
-                            <div class="modal-header bg-success text-white">
-                                <h5 class="modal-title fs-5 fw-semibold" id="addStoreModalLabel">
-                                    <i class="bi bi-plus-circle me-2"></i>Add Store
-                                </h5>
-                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                            </div>
-
-                            <form th:action="@{/store/create}"
-                                  method="post"
-                                  enctype="multipart/form-data">
-
-                                <div class="modal-body p-4">
-
-                                    <div class="row">
-                                        <div class="col-md-6 mb-3">
-                                            <label class="form-label">Store Name</label>
-                                            <input type="text" class="form-control" name="name" required>
-                                        </div>
-
-                                        <div class="col-md-6 mb-3">
-                                            <label class="form-label">Email</label>
-                                            <input type="email" class="form-control" name="email" required>
-                                        </div>
-
-                                        <div class="col-md-6 mb-3">
-                                            <label class="form-label">Contact Number</label>
-                                            <input type="text" class="form-control" name="contactNumber" required>
-                                        </div>
-
-                                        <div class="col-md-6 mb-3">
-                                            <label class="form-label">WhatsApp Number</label>
-                                            <input type="text" class="form-control" name="whatsappNumber" required>
-                                        </div>
-
-                                        <!-- LOGO -->
-                                        <div class="col-md-6 mb-3">
-                                            <label class="form-label">Store Logo</label>
-                                            <input type="file" class="form-control" name="logoFile" accept="image/*" required>
-                                        </div>
-
-                                        <!-- BANNER -->
-                                        <div class="col-md-6 mb-3">
-                                            <label class="form-label">Store Banner</label>
-                                            <input type="file" class="form-control" name="bannerFile" accept="image/*" required>
-                                        </div>
-
-                                        <div class="col-12 mb-3">
-                                            <label class="form-label">Description</label>
-                                            <textarea class="form-control" name="description" rows="3" required></textarea>
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                                <div class="modal-footer border-top-0">
-                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                                    <button type="submit" class="btn btn-success">
-                                        <i class="bi bi-check-circle me-1"></i>Save Store
-                                    </button>
-                                </div>
-
-                            </form>
-
+                    <div class="modal-content border-0 shadow-lg" style="border-radius:14px; overflow:hidden;">
+                        <div class="modal-header" style="background:linear-gradient(135deg,#0f0c29,#302b63); color:#fff;">
+                            <h5 class="modal-title"><i class="bi bi-plus-circle me-2"></i>Create Store</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                         </div>
+                        <form th:action="@{/store/create}" method="post" enctype="multipart/form-data">
+                            <div class="modal-body p-4">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Store Name</label>
+                                        <input type="text" class="form-control" name="name" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Email</label>
+                                        <input type="email" class="form-control" name="email" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Contact Number</label>
+                                        <input type="text" class="form-control" name="contactNumber" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">WhatsApp Number</label>
+                                        <input type="text" class="form-control" name="whatsappNumber" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Store Logo</label>
+                                        <input type="file" class="form-control" name="logoFile" accept="image/*" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Store Banner</label>
+                                        <input type="file" class="form-control" name="bannerFile" accept="image/*" required>
+                                    </div>
+                                    <div class="col-12 mb-3">
+                                        <label class="form-label">Description</label>
+                                        <textarea class="form-control" name="description" rows="3" required></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer border-top-0">
+                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="bi bi-check-circle me-1"></i>Save Store
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
 
-
-
-
-
-
-            <div class="card shadow-sm border-0 mt-4">
+            <!-- Products Overview Chart -->
+            <div class="card dash-card mb-4">
                 <div class="card-body">
-                    <h5>Products Overview</h5>
-                    <div style="position: relative;">
-                        <canvas id="productuserChart"></canvas>
-                    </div>
+                    <h6 class="fw-semibold mb-3"><i class="bi bi-box-seam me-2 text-warning"></i>Products by Category</h6>
+                    <canvas id="productuserChart"></canvas>
                 </div>
             </div>
 
@@ -482,42 +386,28 @@
                 const labels = [[${categoryLabels}]];
                 const values = [[${categoryValues}]];
 
-                const ctx = document.getElementById('productuserChart').getContext('2d');
-
-                new Chart(ctx, {
+                new Chart(document.getElementById('productuserChart').getContext('2d'), {
                     type: 'bar',
                     data: {
                         labels: labels,
                         datasets: [{
-                            label: 'Products per Category',
+                            label: 'Products',
                             data: values,
-                            backgroundColor: '#0d6efd'
+                            backgroundColor: 'rgba(48,43,99,.7)',
+                            borderRadius: 6
                         }]
                     },
                     options: {
                         responsive: true,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: { precision: 0 }
-                            }
-                        },
-                        plugins: {
-                            legend: { display: false }
-                        }
+                        scales: { y: { beginAtZero: true, ticks: { precision: 0 } } },
+                        plugins: { legend: { display: false } }
                     }
                 });
             </script>
 
-
-
-
         </div>
-
     </main>
 </div>
-
-
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 

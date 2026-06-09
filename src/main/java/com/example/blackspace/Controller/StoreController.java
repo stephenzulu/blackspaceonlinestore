@@ -29,10 +29,12 @@ public class StoreController {
 
     private final StoreService storeService;
 
+    private final ProductstockService productstockService;
 
-    public StoreController(UserService userService, StoreService storeService) {
+    public StoreController(UserService userService, StoreService storeService, ProductstockService productstockService) {
         this.userService = userService;
         this.storeService = storeService;
+        this.productstockService = productstockService;
     }
 
     // =========================
@@ -121,6 +123,13 @@ public class StoreController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("q", q); // keep search value
+
+        // Top products for the stores page
+        List<Productstock> topProducts = productstockService.getAllProductstock().stream()
+                .sorted((p1, p2) -> Integer.compare(p2.getViews(), p1.getViews()))
+                .limit(4)
+                .toList();
+        model.addAttribute("topProducts", topProducts);
 
         return "stores";
     }
