@@ -34,7 +34,7 @@ public class CategoryController {
     @GetMapping("/category/{categoryName}")
     public String productsByCategory(@PathVariable("categoryName") String categoryName, Model model, HttpSession session) {
 
-        List<Productstock> products = productstockService.getAllProductstock().stream()
+        List<Productstock> products = productstockService.getProductsFromActiveStores().stream()
                 .filter(p -> p.getCategory() != null && p.getCategory().equalsIgnoreCase(categoryName))
                 .collect(Collectors.toList());
 

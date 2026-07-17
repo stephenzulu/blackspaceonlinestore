@@ -41,6 +41,8 @@ public interface ProductstockService {
 
     List<Productstock> getAllProducts();
 
+    List<Productstock> getProductsFromActiveStores();
+
     // Add this method
     List<Productstock> searchProducts(String query);
 

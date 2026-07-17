@@ -261,8 +261,10 @@
                     </span>
 
 
-                    <img th:src="@{'/uploads/products/images/' + ${#strings.arraySplit(product.imageurls, ',')[0]}}" class="img-fluid store-banner" alt="image"
-                         style="height:180px; object-fit:contain;">
+                    <a th:href="@{'/product/' + ${product.id}}" class="d-flex justify-content-center align-items-center" style="height:180px;">
+                        <img th:src="@{'/uploads/products/images/' + ${#strings.arraySplit(product.imageurls, ',')[0]}}" class="img-fluid store-banner" alt="image"
+                             style="max-height:180px; object-fit:contain; cursor:pointer;">
+                    </a>
 
                     <div class="card-body" >
                         <h6 th:text="${product.name}">Product Name</h6>
@@ -501,8 +503,10 @@
 
                 <div class="card h-100 product-card" >
 
-                    <img th:src="@{'/uploads/products/images/' + ${#strings.arraySplit(product.imageurls, ',')[0]}}" class="img-fluid store-banner" alt="image"
-                         style="height:180px; object-fit:contain;">
+                    <a th:href="@{'/product/' + ${product.id}}" class="d-flex justify-content-center align-items-center" style="height:180px;">
+                        <img th:src="@{'/uploads/products/images/' + ${#strings.arraySplit(product.imageurls, ',')[0]}}" class="img-fluid store-banner" alt="image"
+                             style="max-height:180px; object-fit:contain; cursor:pointer;">
+                    </a>
 
                     <div class="card-body">
                         <h6 th:text="${product.name}">Product Name</h6>

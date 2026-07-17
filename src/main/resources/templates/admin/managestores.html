@@ -93,6 +93,7 @@
                  data-contact=${store.contactNumber},
                  data-whatsapp=${store.whatsappNumber},
                  data-description=${store.description},
+                 data-active=${store.active},
                  data-logo=${store.storelogo},
                  data-banner=${store.storebanner}"
                         onclick="openEditModal(this)"
@@ -266,6 +267,14 @@
                                       name="description"
                                       rows="3"></textarea>
                         </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Status</label>
+                            <select class="form-select" id="editStoreActive" name="active">
+                                <option value="true">Active</option>
+                                <option value="false">Inactive</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
@@ -321,6 +330,7 @@
     document.getElementById("editStoreContact").value = button.dataset.contact;
     document.getElementById("editStoreWhatsapp").value = button.dataset.whatsapp;
     document.getElementById("editStoreDescription").value = button.dataset.description;
+    document.getElementById("editStoreActive").value = button.dataset.active;
 
     document.getElementById("currentLogo").src =
         "/uploads/stores/" + button.dataset.logo;

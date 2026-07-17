@@ -22,6 +22,8 @@ public interface StoreService {
 
     List<Store> getAllStores();
 
+    List<Store> getActiveStores();
+
 
     Store getStoreById(Long id);
     void saveStore(Store store);

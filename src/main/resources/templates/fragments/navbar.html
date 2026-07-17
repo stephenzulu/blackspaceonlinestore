@@ -18,24 +18,22 @@
         body { font-family: [[${siteSettings.fontFamily}]]; }
     </style>
 
-    <!-- STICKY NAVBAR top -->
-    <nav class="navbar navbar-expand-lg navbar-dark sticky-top shadow"
-         th:style="'background: linear-gradient(135deg,' + ${siteSettings.primaryColor} + ',' + ${siteSettings.secondaryColor} + ');'">
+    <!-- STICKY NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top"
+         th:style="'background: linear-gradient(135deg,' + ${siteSettings.primaryColor} + ',' + ${siteSettings.secondaryColor} + ');'"
+         style="backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);">
 
         <div class="container">
 
             <!-- Brand -->
-            <a class="navbar-brand fw-bold d-flex align-items-center" th:href="@{/}">
-                <!-- Logo -->
+            <a class="navbar-brand fw-bold d-flex align-items-center gap-2" th:href="@{/}">
                 <img th:src="@{'/uploads/logo/' + ${siteSettings.siteLogo}}" alt="Logo"
-                     style="height:34px; width:auto; margin-right:10px; border-radius:6px;" class="d-inline-block align-text-top">
-                <!-- Brand Name -->
-                <span style="letter-spacing: 1px;" th:text="${siteSettings.siteName}">Black Space</span>
-
+                     style="height:36px; width:36px; object-fit:cover; border-radius:10px; border:2px solid rgba(255,255,255,.2);">
+                <span class="brand-text" th:text="${siteSettings.siteName}">Black Space</span>
             </a>
 
-            <!-- Mobile toggle -->
-            <button style="display:none;" class="navbar-toggler" type="button" data-bs-toggle="collapse"
+            <!-- Mobile toggle (hidden, bottom nav used instead) -->
+            <button style="display:none;" class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
                     data-bs-target="#mainNavbar" aria-controls="mainNavbar"
                     aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -44,122 +42,191 @@
             <!-- Navbar links -->
             <div class="collapse navbar-collapse" id="mainNavbar">
 
-                <!-- Left links -->
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-1">
                     <li class="nav-item">
                         <a class="nav-link view-details-btn" th:href="@{/}">
-                            <i class="bi bi-house me-1"></i> Home
+                            <i class="bi bi-house-door me-1"></i> Home
                         </a>
                     </li>
-
                     <li class="nav-item">
                         <a class="nav-link view-details-btn" th:href="@{/stores}">
                             <i class="bi bi-shop me-1"></i> Stores
                         </a>
                     </li>
-
                     <li class="nav-item">
                         <a class="nav-link view-details-btn" th:href="@{/categories}">
-                            <i class="bi bi-grid-3x3-gap-fill mb-1 "></i> Categories
+                            <i class="bi bi-grid-3x3-gap me-1"></i> Categories
                         </a>
                     </li>
-
                     <li class="nav-item">
                         <a class="nav-link view-details-btn" th:href="@{/products}">
                             <i class="bi bi-box-seam me-1"></i> Products
                         </a>
                     </li>
-
                     <li class="nav-item">
                         <a class="nav-link view-details-btn" th:href="@{/about}">
                             <i class="bi bi-info-circle me-1"></i> About
                         </a>
                     </li>
-
                     <li class="nav-item">
                         <a class="nav-link view-details-btn" th:href="@{/help}">
-                            <i class="bi bi-question-circle mb-1"></i> Help
+                            <i class="bi bi-question-circle me-1"></i> Help
                         </a>
                     </li>
-
-
-
-
-
                 </ul>
 
-
             </div>
 
-            <div  id="mainNavbar2">
+            <!-- Right actions -->
+            <div class="d-flex gap-2 align-items-center" id="mainNavbar2">
 
-                <!-- actions -->
-                <div class="d-flex gap-2 align-items-center">
+                <!-- Dark Mode Toggle -->
+                <button class="btn btn-icon" id="darkModeToggleNav" onclick="toggleDarkMode()" title="Toggle Dark Mode">
+                    <i class="bi bi-moon-fill"></i>
+                </button>
 
-                    <!-- Dark Mode Toggle -->
-                    <button class="btn btn-outline-light btn-sm" id="darkModeToggleNav" onclick="toggleDarkMode()" title="Toggle Dark Mode">
-                        <i class="bi bi-moon-fill"></i>
-                    </button>
+                <!-- MY ACCOUNT -->
+                <a th:if="${isSeller}"
+                   th:href="@{/account/dashboard}"
+                   class="btn btn-nav-action view-details-btn">
+                    <i class="bi bi-person-circle"></i>
+                    <span class="d-none d-xl-inline ms-1">Account</span>
+                </a>
 
-                    <!-- MY ACCOUNT → ONLY SELLER -->
-                    <a th:if="${isSeller }"
-                       th:href="@{/account/dashboard}"
-                       class="btn btn-outline-light btn-sm view-details-btn">
-                        <i class="bi bi-person"></i> My Account
-                    </a>
+                <!-- ADMIN -->
+                <a th:if="${isAdmin}"
+                   th:href="@{/admin/dashboard}"
+                   class="btn btn-nav-action view-details-btn">
+                    <i class="bi bi-shield-lock"></i>
+                    <span class="d-none d-xl-inline ms-1">Admin</span>
+                </a>
 
-                    <!-- ADMIN → ONLY ADMIN -->
-                    <a th:if="${isAdmin}"
-                       th:href="@{/admin/dashboard}"
-                       class="btn btn-outline-light btn-sm view-details-btn">
-                        <i class="bi bi-shield-lock"></i> Admin
-                    </a>
+                <!-- LOGIN -->
+                <a th:if="${!isLoggedIn}"
+                   th:href="@{/login}"
+                   class="btn btn-nav-login view-details-btn">
+                    <i class="bi bi-box-arrow-in-right me-1"></i> Login
+                </a>
 
-                    <!-- LOGIN → ONLY WHEN NOT LOGGED IN -->
-                    <a th:if="${!isLoggedIn}"
-                       th:href="@{/login}"
-                       class="btn btn-outline-light btn-sm view-details-btn">
-                        <i class="bi bi-box-arrow-in-right"></i> Login
-                    </a>
-
-                    <!-- LOGOUT → ONLY WHEN LOGGED IN -->
-                    <a th:if="${isLoggedIn}"
-                       href="#"
-                       onclick="confirmLogout(event)"
-                       class="btn btn-outline-light btn-sm text-danger ">
-                        <i class="bi bi-box-arrow-right"></i> Logout
-                    </a>
-
-                </div>
-
-
+                <!-- LOGOUT -->
+                <a th:if="${isLoggedIn}"
+                   href="#"
+                   onclick="confirmLogout(event)"
+                   class="btn btn-nav-logout">
+                    <i class="bi bi-box-arrow-right me-1"></i> Logout
+                </a>
 
             </div>
-
 
         </div>
-
-
     </nav>
 
 
 
     <!-- Navbar styling -->
     <style>
-        .nav-link {
-            font-size: 0.95rem;
-            padding: 8px 14px !important;
-            border-radius: 8px;
-            transition: background 0.2s;
+        /* Brand */
+        .brand-text {
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+            font-weight: 700;
         }
-        .nav-link:hover {
-            background: rgba(255,255,255,.15);
+
+        /* Nav links */
+        .navbar .nav-link {
+            font-size: 0.88rem;
+            font-weight: 500;
+            padding: 8px 16px !important;
+            border-radius: 10px;
+            color: rgba(255,255,255,.8);
+            transition: all 0.25s ease;
+            position: relative;
         }
-        .nav-link.active-page {
-            background: rgba(255,255,255,.2) !important;
+        .navbar .nav-link:hover {
+            background: rgba(255,255,255,.12);
+            color: #fff;
+            transform: translateY(-1px);
+        }
+        .navbar .nav-link.active-page {
+            background: rgba(255,255,255,.18);
             color: #fff !important;
             font-weight: 600;
+            box-shadow: 0 2px 8px rgba(0,0,0,.1);
         }
+
+        /* Icon button (dark mode) */
+        .btn-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,.1);
+            border: 1px solid rgba(255,255,255,.15);
+            color: rgba(255,255,255,.85);
+            transition: all 0.25s ease;
+            padding: 0;
+        }
+        .btn-icon:hover {
+            background: rgba(255,255,255,.2);
+            color: #fff;
+            transform: translateY(-1px);
+        }
+
+        /* Action buttons */
+        .btn-nav-action {
+            font-size: 0.85rem;
+            font-weight: 500;
+            padding: 6px 14px;
+            border-radius: 10px;
+            background: rgba(255,255,255,.1);
+            border: 1px solid rgba(255,255,255,.18);
+            color: rgba(255,255,255,.9);
+            transition: all 0.25s ease;
+        }
+        .btn-nav-action:hover {
+            background: rgba(255,255,255,.2);
+            color: #fff;
+            transform: translateY(-1px);
+        }
+
+        /* Login button */
+        .btn-nav-login {
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 6px 18px;
+            border-radius: 10px;
+            background: rgba(255,255,255,.95);
+            color: #1a1a2e;
+            border: none;
+            transition: all 0.25s ease;
+        }
+        .btn-nav-login:hover {
+            background: #fff;
+            color: #0f0c29;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,.15);
+        }
+
+        /* Logout button */
+        .btn-nav-logout {
+            font-size: 0.85rem;
+            font-weight: 500;
+            padding: 6px 14px;
+            border-radius: 10px;
+            background: rgba(220,53,69,.15);
+            border: 1px solid rgba(220,53,69,.3);
+            color: #ff6b6b;
+            transition: all 0.25s ease;
+        }
+        .btn-nav-logout:hover {
+            background: rgba(220,53,69,.25);
+            color: #ff4757;
+            transform: translateY(-1px);
+        }
+
+        /* Bottom mobile nav active */
         .bottom-button2 .btn.active-page {
             color: #0d6efd !important;
             font-weight: 700;
@@ -169,18 +236,11 @@
         }
 
         @media (max-width: 576px) {
-            .nav-link {
-                font-size: 0.85rem;
-            }
-            .btn {
-                font-size: 0.85rem;
-            }
+            .navbar .nav-link { font-size: 0.82rem; }
+            .btn-nav-action, .btn-nav-login, .btn-nav-logout { font-size: 0.8rem; }
         }
 
-        /* Dropdown menu on mobile fits width */
-        .dropdown-menu {
-            min-width: 150px;
-        }
+        .dropdown-menu { min-width: 150px; }
     </style>
 
     <!-- Rotating Loader -->
@@ -189,40 +249,28 @@
     </div>
 
 
-
-
-    <!-- Bottom Buttons Container -->
+    <!-- Bottom Mobile Nav -->
     <div class="bottom-button2 d-flex">
-        <!-- Home -->
         <a th:href="@{/}" class="btn flex-fill d-flex flex-column align-items-center justify-content-center view-details-btn">
             <i class="bi bi-house-door mb-1"></i>
             Home
         </a>
-
-        <!-- Stores -->
         <a th:href="@{/stores}" class="btn flex-fill d-flex flex-column align-items-center justify-content-center view-details-btn">
             <i class="bi bi-shop-window mb-1"></i>
             Stores
         </a>
-        <!-- categories -->
         <a th:href="@{/categories}" class="btn flex-fill d-flex flex-column align-items-center justify-content-center view-details-btn">
-            <i class="bi bi-grid-3x3-gap-fill mb-1 "></i>
+            <i class="bi bi-grid-3x3-gap mb-1"></i>
             Categories
         </a>
-
-        <!-- Products -->
         <a th:href="@{/products}" class="btn flex-fill d-flex flex-column align-items-center justify-content-center view-details-btn">
             <i class="bi bi-box-seam mb-1"></i>
             Products
         </a>
-
-        <!-- About -->
         <a th:href="@{/about}" class="btn flex-fill d-flex flex-column align-items-center justify-content-center view-details-btn">
             <i class="bi bi-info-circle mb-1"></i>
             About
         </a>
-
-        <!-- Account -->
         <a th:href="@{/help}" class="btn flex-fill d-flex flex-column align-items-center justify-content-center view-details-btn">
             <i class="bi bi-question-circle mb-1"></i>
             Help
@@ -232,7 +280,6 @@
     <script>
         function confirmLogout(event) {
             event.preventDefault();
-
             Swal.fire({
                 title: 'Are you sure?',
                 text: "You will be logged out of your account",
@@ -250,8 +297,6 @@
         }
     </script>
 
-
-
     <style>
         /* Bottom buttons container */
         .bottom-button2 {
@@ -260,48 +305,43 @@
             left: 0;
             width: 100%;
             z-index: 1050;
-            display: none; /* only show on mobile */
-            gap: 5px; /* space between buttons */
-            background-color: #f0f0f0; /* light grey background */
-            padding: 0.1rem 0; /* reduced top and bottom padding */
-            border-top: 1px solid #ccc;
+            display: none;
+            gap: 0;
+            background: rgba(255,255,255,.95);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 6px 0 env(safe-area-inset-bottom, 4px);
+            border-top: 1px solid rgba(0,0,0,.06);
+            box-shadow: 0 -2px 16px rgba(0,0,0,.06);
         }
 
-        /* Button styling */
         .bottom-button2 .btn {
             border-radius: 0;
             background-color: transparent;
-            color: #333;
-            font-size: 0.7rem; /* slightly smaller text */
+            color: #6c757d;
+            font-size: 0.65rem;
+            font-weight: 500;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 0.25rem 0; /* reduced top/bottom padding */
+            padding: 4px 0;
+            transition: color 0.2s;
         }
+        .bottom-button2 .btn:hover { color: #0d6efd; }
 
-        /* Icon styling */
         .bottom-button2 .btn i {
-            font-size: 1.3rem; /* slightly smaller icon */
-            margin-bottom: 0.2rem;
+            font-size: 1.25rem;
+            margin-bottom: 2px;
         }
 
-        /* Add bottom padding on mobile so content doesn't hide behind fixed nav */
         @media (max-width: 982px) {
-            body {
-                padding-bottom: 100px;
-            }
+            body { padding-bottom: 80px; }
         }
-
-         /* Show ONLY on small screens (mobile) */
         @media (min-width: 983px) {
-            .bottom-button2 {
-                display: none !important;
-            }
+            .bottom-button2 { display: none !important; }
         }
     </style>
-
-
 
 
     <!-- Dark mode styles -->
@@ -315,8 +355,10 @@
         body.dark-mode .text-dark { color: #fff !important; }
         body.dark-mode .table { color: #fff; }
         body.dark-mode .border-bottom { border-color: #0f3460 !important; }
-        body.dark-mode .bottom-button2 { background-color: #16213e; border-top-color: #0f3460; }
-        body.dark-mode .bottom-button2 .btn { color: #e0e0e0; }
+        body.dark-mode .bottom-button2 { background: rgba(22,33,62,.95); border-top-color: #0f3460; }
+        body.dark-mode .bottom-button2 .btn { color: #8899aa; }
+        body.dark-mode .bottom-button2 .btn.active-page { color: #4d94ff !important; }
+        body.dark-mode .bottom-button2 .btn.active-page i { color: #4d94ff; }
         body.dark-mode .form-control { background-color: #16213e; color: #e0e0e0; border-color: #0f3460; }
         body.dark-mode .list-group-item { background-color: #16213e; color: #e0e0e0; border-color: #0f3460; }
         body.dark-mode footer.bg-dark { background-color: #0f3460 !important; }
@@ -342,6 +384,10 @@
         body.dark-mode .text-primary { color: #4d94ff !important; }
         body.dark-mode .text-success { color: #5cb85c !important; }
         body.dark-mode .text-danger { color: #d9534f !important; }
+        body.dark-mode .btn-icon { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.12); }
+        body.dark-mode .btn-nav-action { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.12); }
+        body.dark-mode .btn-nav-login { background: rgba(255,255,255,.12); color: #fff; border: 1px solid rgba(255,255,255,.2); }
+        body.dark-mode .btn-nav-logout { background: rgba(220,53,69,.1); border-color: rgba(220,53,69,.2); }
     </style>
 
     <!-- Dark mode script -->
@@ -386,21 +432,18 @@
                     e.preventDefault();
                     const url = this.getAttribute('href');
 
-                    // Show SweetAlert loader with only the spinning icon
                     Swal.fire({
-                        html: '<i class="fa fa-spinner fa-spin fa-3x"></i>', // spinner only
+                        html: '<i class="fa fa-spinner fa-spin fa-3x"></i>',
                         showConfirmButton: false,
                         allowOutsideClick: false,
-                        background: 'transparent',   // remove modal background
-                        backdrop: false,             // remove dark overlay
+                        background: 'transparent',
+                        backdrop: false,
                         didOpen: () => {
-                            // Remove the box-shadow on the modal
                             const modal = Swal.getPopup();
                             modal.style.boxShadow = 'none';
                         }
                     });
 
-                    // Redirect after short delay
                     setTimeout(() => {
                         window.location.href = url;
                     }, 800);
@@ -408,12 +451,6 @@
             });
         });
     </script>
-
-
-
-
-
-
 
 
 <!-- Active nav highlight -->

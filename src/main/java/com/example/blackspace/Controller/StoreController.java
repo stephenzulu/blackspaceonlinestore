@@ -207,6 +207,7 @@ public class StoreController {
             existingStore.setContactNumber(store.getContactNumber());
             existingStore.setWhatsappNumber(store.getWhatsappNumber());
             existingStore.setDescription(store.getDescription());
+            existingStore.setActive(store.getActive());
 
             // ✅ Update logo ONLY if new file uploaded
             if (logoFile != null && !logoFile.isEmpty()) {

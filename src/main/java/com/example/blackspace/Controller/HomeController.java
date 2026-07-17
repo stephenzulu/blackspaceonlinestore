@@ -32,7 +32,7 @@ public class HomeController {
     @GetMapping("/")
     public String home(Model model, HttpSession session) {
 
-        List<Productstock> products = productstockService.getAllProductstock().stream()
+        List<Productstock> products = productstockService.getProductsFromActiveStores().stream()
                 .sorted((p1, p2) -> p2.getCreatedAt().compareTo(p1.getCreatedAt())) // newest first
                 .limit(8) // top 8 latest products
                 .toList();
@@ -46,7 +46,7 @@ public class HomeController {
                 .toList();
 
         // 🔹 LATEST STORES (top 6)
-        List<Store> latestStores = storeService.getAllStores().stream()
+        List<Store> latestStores = storeService.getActiveStores().stream()
                 .sorted(Comparator.comparing(Store::getCreatedAt).reversed())
                 .limit(6)
                 .toList();

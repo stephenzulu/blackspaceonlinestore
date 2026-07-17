@@ -203,6 +203,12 @@ public class ProductstockServiceImpl implements ProductstockService {
     public List<Productstock> getAllProducts() {
         return productsRepository.findAll();
     }
+
+    @Override
+    public List<Productstock> getProductsFromActiveStores() {
+        return productsRepository.findAllByActiveStore();
+    }
+
     @Override
     public List<Productstock> searchProducts(String query) {
         if (query == null || query.isBlank()) {

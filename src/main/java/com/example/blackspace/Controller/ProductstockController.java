@@ -433,7 +433,7 @@ public class ProductstockController {
         int pageSize = 12;
 
         // Filter + sort
-        List<Productstock> filtered = productstockService.getAllProductstock().stream()
+        List<Productstock> filtered = productstockService.getProductsFromActiveStores().stream()
                 .filter(p -> name == null || name.isEmpty()
                         || p.getName().toLowerCase().contains(name.toLowerCase()))
                 .filter(p -> category == null || category.isEmpty()
@@ -451,7 +451,7 @@ public class ProductstockController {
                 fromIndex >= totalProducts ? List.of() : filtered.subList(fromIndex, toIndex);
 
         // Categories
-        List<String> categories = productstockService.getAllProductstock().stream()
+        List<String> categories = productstockService.getProductsFromActiveStores().stream()
                 .map(Productstock::getCategory)
                 .filter(c -> c != null && !c.isEmpty())
                 .distinct()
@@ -467,7 +467,7 @@ public class ProductstockController {
         model.addAttribute("totalPages", totalPages);
 
         // Top stores for the products page
-        List<Store> topStores = storeService.getAllStores().stream()
+        List<Store> topStores = storeService.getActiveStores().stream()
                 .limit(4)
                 .toList();
         model.addAttribute("topStores", topStores);

@@ -66,8 +66,10 @@
 
             <div class="card h-100 product-card shadow-sm">
 
-                <img th:src="@{'/uploads/products/images/' + ${#strings.arraySplit(product.imageurls, ',')[0]}}" class="img-fluid" alt="image"
-                     style="height:150px; object-fit:contain;">
+                <a th:href="@{'/product/' + ${product.id}}" class="d-flex justify-content-center align-items-center" style="height:150px;">
+                    <img th:src="@{'/uploads/products/images/' + ${#strings.arraySplit(product.imageurls, ',')[0]}}" class="img-fluid" alt="image"
+                         style="max-height:150px; object-fit:contain; cursor:pointer;">
+                </a>
 
 
                 <div class="card-body">

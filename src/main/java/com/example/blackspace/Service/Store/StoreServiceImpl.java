@@ -38,6 +38,11 @@ public class StoreServiceImpl implements StoreService {
         return storeRepository.findAll();
     }
 
+    @Override
+    public List<Store> getActiveStores() {
+        return storeRepository.findByActiveTrue();
+    }
+
 
     @Override
     public Store getStoreByStoreid(String storeid) {

@@ -31,6 +31,9 @@ public interface ProductsRepository extends JpaRepository<Productstock, Long> {
 
     List<Productstock> findByCategoryIgnoreCase(String category);
 
+    @Query("SELECT p FROM Productstock p WHERE p.username IN (SELECT s.username FROM Store s WHERE s.active = true)")
+    List<Productstock> findAllByActiveStore();
+
 
 
 
