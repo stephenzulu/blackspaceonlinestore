@@ -192,18 +192,37 @@
                 </div>
             </div>
 
+            <!-- Product Limit Notice -->
+            <div th:if="${productLimitReached}" class="alert alert-warning mb-4 d-flex align-items-center justify-content-between" style="border-radius:12px;">
+                <div>
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <strong>Product limit reached!</strong>
+                    You've used all <span th:text="${maxProducts}">0</span> products allowed by your current plan.
+                    Upgrade your subscription to add more products.
+                </div>
+                <a th:href="@{/account/subscription}" class="btn btn-sm btn-primary ms-3" style="white-space:nowrap;">Upgrade Now</a>
+            </div>
+
             <!-- Store Card -->
             <div class="card dash-card mb-4" style="overflow:hidden;">
                 <div class="card-body p-0">
                     <div th:if="${store != null}">
                         <!-- Store Banner -->
-                        <div th:if="${store.storebanner != null}" class="position-relative" style="height:180px; overflow:hidden;">
-                            <img th:src="@{/uploads/stores/{img}(img=${store.storebanner})}"
+                        <div class="position-relative" style="height:180px; overflow:hidden;">
+                            <img th:if="${store.storebanner != null and store.storebanner != ''}"
+                                 th:src="@{/uploads/stores/{img}(img=${store.storebanner})}"
+                                 class="w-100 h-100" style="object-fit:cover;">
+                            <img th:unless="${store.storebanner != null and store.storebanner != ''}"
+                                 th:src="@{/store/banner/banner.jpeg}"
                                  class="w-100 h-100" style="object-fit:cover;">
                             <div class="d-flex align-items-center position-absolute bottom-0 start-0 w-100 p-3"
                                  style="background:linear-gradient(transparent, rgba(0,0,0,.7));">
-                                <img th:if="${store.storelogo != null}"
+                                <img th:if="${store.storelogo != null and store.storelogo != ''}"
                                      th:src="@{/uploads/stores/{img}(img=${store.storelogo})}"
+                                     class="rounded-circle me-3"
+                                     style="width:50px; height:50px; object-fit:cover; border:2px solid #fff;">
+                                <img th:unless="${store.storelogo != null and store.storelogo != ''}"
+                                     th:src="@{/store/logo/logo.jpeg}"
                                      class="rounded-circle me-3"
                                      style="width:50px; height:50px; object-fit:cover; border:2px solid #fff;">
                                 <div class="text-white">
@@ -268,12 +287,18 @@
                             </div>
                             <div class="modal-body" style="max-height:75vh; overflow-y:auto;">
                                 <div class="position-relative mb-3" style="height:25vh; overflow:hidden; border-radius:10px;">
-                                    <img th:if="${store != null and store.storebanner != null}"
+                                    <img th:if="${store != null and store.storebanner != null and store.storebanner != ''}"
                                          th:src="@{/uploads/stores/{img}(img=${store.storebanner})}"
                                          class="w-100 h-100" style="object-fit:cover;">
+                                    <img th:unless="${store != null and store.storebanner != null and store.storebanner != ''}"
+                                         th:src="@{/store/banner/banner.jpeg}"
+                                         class="w-100 h-100" style="object-fit:cover;">
                                     <div class="position-absolute bottom-0 start-0 mb-2 ms-2 bg-white rounded-circle border">
-                                        <img th:if="${store != null and store.storelogo != null}"
+                                        <img th:if="${store != null and store.storelogo != null and store.storelogo != ''}"
                                              th:src="@{/uploads/stores/{img}(img=${store.storelogo})}"
+                                             class="rounded-circle" style="width:50px;height:50px;object-fit:cover;">
+                                        <img th:unless="${store != null and store.storelogo != null and store.storelogo != ''}"
+                                             th:src="@{/store/logo/logo.jpeg}"
                                              class="rounded-circle" style="width:50px;height:50px;object-fit:cover;">
                                     </div>
                                 </div>

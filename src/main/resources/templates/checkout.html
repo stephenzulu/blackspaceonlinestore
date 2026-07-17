@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Checkout</title>
+
+    <!-- Config the server knows about, handed to the browser.
+         The PUBLIC key is safe here; the secret key never leaves the server. -->
+    <script th:inline="javascript">
+        window.LENCO_CONFIG = {
+            publicKey: /*[[${publicKey}]]*/ 'pub-06ea4e5f889007ab8c14c7fc90fff761695de6107b774208',
+            currency:  /*[[${currency}]]*/ 'ZMW'
+        };
+    </script>
+
+    <!-- Lenco widget script (production or sandbox URL, from application.properties). -->
+    <script th:src="${inlineJsUrl}" src="https://pay.lenco.co/js/v1/inline.js"></script>
+</head>
+<body>
+<h1>Checkout</h1>
+
+<div>
+    <label>Email<br/><input id="email" type="email" value="customer@email.com"/></label>
+</div>
+<div>
+    <label>First name<br/><input id="firstName" type="text" value="John"/></label>
+</div>
+<div>
+    <label>Last name<br/><input id="lastName" type="text" value="Doe"/></label>
+</div>
+<div>
+    <label>Phone<br/><input id="phone" type="tel" value="0971111111"/></label>
+</div>
+<div>
+    <label>Amount<br/><input id="amount" type="number" step="0.01" min="0" value="10.75"/></label>
+</div>
+<div>
+    <label>Channel<br/>
+        <select id="channel">
+            <option value="mobile-money" selected>Mobile Money</option>
+            <option value="card">Card</option>
+            <option value="both">Card + Mobile Money</option>
+        </select>
+    </label>
+</div>
+
+<p>
+    <button id="payButton" type="button">Pay now</button>
+</p>
+
+<p id="status" role="status"></p>
+
+<!-- Payment logic, served as a static resource from src/main/resources/static/js/. -->
+<script src="/js/lenco-checkout.js"></script>
+</body>
+</html>

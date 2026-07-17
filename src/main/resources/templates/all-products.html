@@ -228,8 +228,15 @@
                                         <img th:if="${store.storebanner != null and store.storebanner != ''}"
                                              th:src="@{'/uploads/stores/' + ${store.storebanner}}"
                                              class="w-100" style="height:110px; object-fit:cover;">
+                                        <img th:unless="${store.storebanner != null and store.storebanner != ''}"
+                                             th:src="@{/store/banner/banner.jpeg}"
+                                             class="w-100" style="height:110px; object-fit:cover;">
                                         <img th:if="${store.storelogo != null and store.storelogo != ''}"
                                              th:src="@{'/uploads/stores/' + ${store.storelogo}}"
+                                             class="position-absolute rounded-circle border bg-white"
+                                             style="width:40px;height:40px;object-fit:contain;bottom:-20px;left:50%;transform:translateX(-50%);">
+                                        <img th:unless="${store.storelogo != null and store.storelogo != ''}"
+                                             th:src="@{/store/logo/logo.jpeg}"
                                              class="position-absolute rounded-circle border bg-white"
                                              style="width:40px;height:40px;object-fit:contain;bottom:-20px;left:50%;transform:translateX(-50%);">
                                     </div>

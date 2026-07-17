@@ -2,12 +2,15 @@ package com.example.blackspace.Controller.user;
 
 
 import com.example.blackspace.Model.Payment;
+import com.example.blackspace.Model.Products.Productstock;
 import com.example.blackspace.Model.Stores.Store;
+import com.example.blackspace.Model.Subscription;
 import com.example.blackspace.Model.User;
 import com.example.blackspace.Service.PageVisit.PageVisitService;
 import com.example.blackspace.Service.Payment.PaymentService;
 import com.example.blackspace.Service.Productstock.ProductstockService;
 import com.example.blackspace.Service.Store.StoreService;
+import com.example.blackspace.Service.Subscription.SubscriptionService;
 import com.example.blackspace.Service.User.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -28,13 +32,16 @@ public class DashboardController {
     private final ProductstockService productstockService;
     private final PaymentService paymentService;
     private final PageVisitService pageVisitService;
+    private final SubscriptionService subscriptionService;
 
     public DashboardController(UserService userService, ProductstockService productstockService,
-                               PaymentService paymentService, PageVisitService pageVisitService) {
+                               PaymentService paymentService, PageVisitService pageVisitService,
+                               SubscriptionService subscriptionService) {
         this.userService = userService;
         this.productstockService = productstockService;
         this.paymentService = paymentService;
         this.pageVisitService = pageVisitService;
+        this.subscriptionService = subscriptionService;
     }
 
 
@@ -159,11 +166,37 @@ public class DashboardController {
 
 
 
-        model.addAttribute("subscriptionActive", subscriptionActive); // primitive boolean
+        model.addAttribute("subscriptionActive", subscriptionActive);
         model.addAttribute("subscription", paymentOpt.orElse(null));
         model.addAttribute("username", username);
 
-        return "users/dashboard"; // managedashboard.html
+        // Product limit check
+        boolean productLimitReached = false;
+        long usedProducts = 0;
+        long maxProducts = 0;
+
+        Payment activePayment = paymentService.getActiveSubscription(username);
+        if (activePayment != null && activePayment.getSubscriptionid() != null) {
+            try {
+                Subscription sub = subscriptionService.getSubscriptionById(
+                        Long.valueOf(activePayment.getSubscriptionid()));
+                maxProducts = Integer.parseInt(sub.getNumberofproducts());
+                LocalDateTime subscriptionStart = activePayment.getCreatedtime();
+                List<Productstock> userProducts = productstockService.getProductsByUsername(username);
+                usedProducts = userProducts.stream()
+                        .filter(p -> p.getCreatedAt() != null)
+                        .filter(p -> !p.getCreatedAt().isBefore(subscriptionStart))
+                        .count();
+                productLimitReached = usedProducts >= maxProducts;
+            } catch (Exception ignored) {
+            }
+        }
+
+        model.addAttribute("productLimitReached", productLimitReached);
+        model.addAttribute("usedProducts", usedProducts);
+        model.addAttribute("maxProducts", maxProducts);
+
+        return "users/dashboard";
     }
 
 

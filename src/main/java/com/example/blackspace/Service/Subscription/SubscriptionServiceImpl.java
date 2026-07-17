@@ -123,6 +123,50 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
 
     @Override
+    @Transactional
+    public void upgradeUserSubscription(String username, Long subscriptionId, String transactionReference) {
+
+        List<Payment> activePayments =
+                paymentRepository.findByUsernameAndPaymentTypeAndEnabled(
+                        username,
+                        "SUBSCRIPTION",
+                        1
+                );
+
+        for (Payment p : activePayments) {
+            p.setEnabled(0);
+            p.setStatus("UPGRADED");
+            paymentRepository.save(p);
+        }
+
+        Subscription subscription = subscriptionRepository.findById(subscriptionId)
+                .orElseThrow(() -> new RuntimeException("Subscription not found"));
+
+        Payment newPayment = new Payment();
+        newPayment.setUsername(username);
+        newPayment.setPaymentType("SUBSCRIPTION");
+        newPayment.setSubscriptionid(subscription.getId().toString());
+        newPayment.setAmount(subscription.getAmount());
+        newPayment.setPaymentMethod("LENCO");
+        newPayment.setTransactionReference(transactionReference);
+        newPayment.setStatus("ACTIVE");
+        newPayment.setEnabled(1);
+        newPayment.setCreatedtime(LocalDateTime.now());
+
+        paymentRepository.save(newPayment);
+
+        Store store = storeRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Store not found"));
+
+        int durationDays = Integer.parseInt(subscription.getDurationtime());
+        store.setDurationindays(String.valueOf(durationDays));
+        store.setNumberofproducts(subscription.getNumberofproducts());
+        store.setDurationtimeupdate(LocalDateTime.now().plusDays(durationDays));
+
+        storeRepository.save(store);
+    }
+
+    @Override
     public Subscription getLatestSubscription() {
         return subscriptionRepository
                 .findTopByOrderByIdDesc()

@@ -1,9 +1,9 @@
 package com.example.blackspace.Controller;
 
 
+import com.example.blackspace.Lencopayment.LencoProperties;
 import com.example.blackspace.Model.Subscription;
 import com.example.blackspace.Model.User;
-import com.example.blackspace.PaymentConfig.FlutterwaveService;
 import com.example.blackspace.Service.Payment.PaymentService;
 import com.example.blackspace.Service.Subscription.SubscriptionService;
 import com.example.blackspace.Service.User.UserService;
@@ -21,13 +21,13 @@ public class SubscriptionController {
 
     private final SubscriptionService subscriptionService;
 
-    private final FlutterwaveService flutterwaveService;
+    private final LencoProperties lencoProperties;
 
-    public SubscriptionController(UserService userService, PaymentService paymentService, SubscriptionService subscriptionService, FlutterwaveService flutterwaveService) {
+    public SubscriptionController(UserService userService, PaymentService paymentService, SubscriptionService subscriptionService, LencoProperties lencoProperties) {
         this.userService = userService;
         this.paymentService = paymentService;
         this.subscriptionService = subscriptionService;
-        this.flutterwaveService = flutterwaveService;
+        this.lencoProperties = lencoProperties;
     }
 
 
@@ -120,54 +120,16 @@ public class SubscriptionController {
         model.addAttribute("subscriptions", subscriptionService.getAllSubscription());
         model.addAttribute("username", username);
 
-
+        // Lenco payment config for the inline widget
+        model.addAttribute("lencoPublicKey", lencoProperties.getPublicKey());
+        model.addAttribute("lencoInlineJsUrl", lencoProperties.getInlineJsUrl());
+        model.addAttribute("lencoCurrency", lencoProperties.getCurrency());
 
         return "users/subscription";
     }
 
 
 
-
-
-
-    @PostMapping("/account/subscription/upgrade")
-    public String upgradeSubscription(
-            @RequestParam("subscriptionId") Long subscriptionId,
-            RedirectAttributes redirectAttributes,HttpSession session) {
-
-        String username = (String) session.getAttribute("LOGGED_IN_USERNAME");
-
-
-
-        //  SAVE IN SESSION
-        session.setAttribute("SUBSCRIPTION_ID", subscriptionId);
-
-        try {
-            // Fetch the user
-            User user = userService.findByUsername(username);
-
-            // Fetch the subscription to get the price
-            Subscription subscription = subscriptionService.getSubscriptionById(subscriptionId);
-            double amount = Double.parseDouble(subscription.getAmount()); // assuming Subscription has a price field
-
-            // Create Flutterwave payment link
-            String paymentLink = flutterwaveService.createPaymentLink(
-                    user.getFirstName() + " " + user.getLastName(),
-                    user.getEmail(),
-                    user.getPhoneNumber(),
-                    amount,
-                    "ZMW"
-            );
-
-            // Redirect to Flutterwave payment page
-            return "redirect:" + paymentLink;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            redirectAttributes.addFlashAttribute("error", "Failed to initiate payment: " + e.getMessage());
-            return "redirect:/account/subscription";
-        }
-    }
 
 
 

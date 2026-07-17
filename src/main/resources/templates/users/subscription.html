@@ -87,15 +87,13 @@
                             </div>
 
                             <div class="mt-auto pt-3">
-                                <form th:action="@{/account/subscription/upgrade}" method="post">
-                                    <input type="hidden" name="subscriptionId" th:value="${m.id}">
-                                    <button type="submit"
-                                            class="btn w-100 fw-semibold"
-                                            style="border-radius:10px; padding:10px;"
-                                            th:classappend="${subscriptionActive} ? 'btn-outline-primary' : 'btn-primary'"
-                                            th:text="${subscriptionActive} ? 'Upgrade Plan' : 'Get Started'">
-                                    </button>
-                                </form>
+                                <button type="button"
+                                        class="btn w-100 fw-semibold"
+                                        style="border-radius:10px; padding:10px;"
+                                        th:classappend="${subscriptionActive} ? 'btn-outline-primary' : 'btn-primary'"
+                                        th:text="${subscriptionActive} ? 'Upgrade Plan' : 'Get Started'"
+                                        th:onclick="'selectPlan(' + ${m.id} + ')'">
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -107,5 +105,17 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="${lencoInlineJsUrl}"></script>
+<script th:inline="javascript">
+    window.LENCO_CONFIG = {
+        publicKey: /*[[${lencoPublicKey}]]*/ '',
+        currency: /*[[${lencoCurrency}]]*/ 'ZMW',
+        email: /*[[${user.email}]]*/ '',
+        firstName: /*[[${user.firstName}]]*/ '',
+        lastName: /*[[${user.lastName}]]*/ '',
+        phone: /*[[${user.phoneNumber}]]*/ ''
+    };
+</script>
+<script th:src="@{/js/lenco-subscription.js}"></script>
 </body>
 </html>

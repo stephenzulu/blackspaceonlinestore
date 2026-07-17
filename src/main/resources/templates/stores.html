@@ -162,12 +162,19 @@
         <div th:each="store : ${stores}" class=" store-card col-6 col-sm-6 col-md-3  product-card ">
                 <a th:href="@{'/store/' + ${store.id}}" class="text-decoration-none text-dark d-block position-relative">
                 <!-- Banner -->
-                <img th:src="@{'/uploads/stores/' + ${store.storebanner}}" class="img-fluid store-banner" alt="Store Banner"
+                <img th:if="${store.storebanner != null and store.storebanner != ''}"
+                     th:src="@{'/uploads/stores/' + ${store.storebanner}}" class="img-fluid store-banner" alt="Store Banner"
+                     style="height: 150px; object-fit: cover; border-radius: 10px;">
+                <img th:unless="${store.storebanner != null and store.storebanner != ''}"
+                     th:src="@{/store/banner/banner.jpeg}" class="img-fluid store-banner" alt="Store Banner"
                      style="height: 150px; object-fit: cover; border-radius: 10px;">
 
                 <!-- Logo & Name Overlay -->
                 <div class="store-overlay">
-                    <img th:src="@{'/uploads/stores/' + ${store.storelogo}}" class="store-logo" alt="Store Logo">
+                    <img th:if="${store.storelogo != null and store.storelogo != ''}"
+                         th:src="@{'/uploads/stores/' + ${store.storelogo}}" class="store-logo" alt="Store Logo">
+                    <img th:unless="${store.storelogo != null and store.storelogo != ''}"
+                         th:src="@{/store/logo/logo.jpeg}" class="store-logo" alt="Store Logo">
                     <span class="store-name" th:text="${store.name}">Store Name</span>
                 </div>
             </a>

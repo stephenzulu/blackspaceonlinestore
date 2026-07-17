@@ -49,6 +49,9 @@
                 <img th:if="${store.storebanner != null and store.storebanner != ''}"
                      th:src="@{'/uploads/stores/' + ${store.storebanner}}"
                      class="d-block w-100" style="height:300px; object-fit:cover;">
+                <img th:unless="${store.storebanner != null and store.storebanner != ''}"
+                     th:src="@{/store/banner/banner.jpeg}"
+                     class="d-block w-100" style="height:300px; object-fit:cover;">
 
                 <div class="carousel-caption d-md-block" style="background: rgba(0,0,0,0.1);">
                     <h3 th:text="${store.name}">
@@ -339,10 +342,24 @@
                              th:if="${store != null and store.storebanner != null and store.storebanner != ''}"
                              th:src="@{'/uploads/stores/' + ${store.storebanner}}"
                              style="height:130px; object-fit:cover;">
+                        <img class="w-100"
+                             th:unless="${store != null and store.storebanner != null and store.storebanner != ''}"
+                             th:src="@{/store/banner/banner.jpeg}"
+                             style="height:130px; object-fit:cover;">
 
                         <!-- Store logo (LEFT) -->
                         <img th:if="${store != null and store.storelogo != null and store.storelogo != ''}"
                              th:src="@{'/uploads/stores/' + ${store.storelogo}}"
+                             class="position-absolute rounded-circle border bg-white"
+                             style="
+                                width:70px;
+                                height:70px;
+                                object-fit:contain;
+                                bottom:-35px;
+                                left:15px;
+                             ">
+                        <img th:unless="${store != null and store.storelogo != null and store.storelogo != ''}"
+                             th:src="@{/store/logo/logo.jpeg}"
                              class="position-absolute rounded-circle border bg-white"
                              style="
                                 width:70px;

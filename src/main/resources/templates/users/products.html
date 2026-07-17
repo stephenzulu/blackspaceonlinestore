@@ -65,9 +65,21 @@
 
 
 
-            <div class="alert alert-info" th:if="${remainingProducts != null}">
+            <div class="alert alert-warning" th:if="${!showAddProductButton && remainingProducts == null}">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                You don't have an active subscription.
+                <a th:href="@{/account/subscription}" class="alert-link">Subscribe now</a> to start adding products.
+            </div>
+
+            <div class="alert alert-warning" th:if="${!showAddProductButton && remainingProducts != null && remainingProducts <= 0}">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                Product limit reached! You've used all <strong th:text="${maxProducts}"></strong> product slots.
+                <a th:href="@{/account/subscription}" class="alert-link">Upgrade your subscription</a> to add more products.
+            </div>
+
+            <div class="alert alert-info" th:if="${remainingProducts != null && remainingProducts > 0}">
                 You have <strong th:text="${remainingProducts}"></strong>
-                out of <strong th:text="${maxProducts}"></strong> item slots remaining,Please add a subscription in order to post more items.
+                out of <strong th:text="${maxProducts}"></strong> item slots remaining.
             </div>
 
 

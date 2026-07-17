@@ -45,10 +45,23 @@ public class UserController {
         return "admin/manageusers"; // manageusers.html
     }
 
-    // Add or Update user
+    // Update user
     @PostMapping("/save")
-    public String saveUser(@ModelAttribute User user, RedirectAttributes redirectAttributes) {
-        userService.saveUser(user);
+    public String saveUser(@RequestParam Long id,
+                           @RequestParam String username,
+                           @RequestParam String email,
+                           @RequestParam String role,
+                           @RequestParam(required = false) String status,
+                           @RequestParam Boolean enabled,
+                           RedirectAttributes redirectAttributes) {
+        User existing = userService.getUserById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid user Id: " + id));
+        existing.setUsername(username);
+        existing.setEmail(email);
+        existing.setRole(role);
+        existing.setStatus(status);
+        existing.setEnabled(enabled);
+        userService.saveUser(existing);
         redirectAttributes.addFlashAttribute("success", "User saved successfully!");
         return "redirect:/admin/users";
     }

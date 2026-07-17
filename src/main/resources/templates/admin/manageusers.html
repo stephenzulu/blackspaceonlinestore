@@ -79,6 +79,7 @@
                         th:data-username="${u.username}"
                         th:data-email="${u.email}"
                         th:data-role="${u.role}"
+                        th:data-status="${u.status}"
                         th:data-enabled="${u.enabled}"
                         onclick="openEditModal(this)">
                     <i class="bi bi-pencil-square"></i>
@@ -192,8 +193,17 @@
                         </select>
                     </div>
 
+                    <div class="mb-3">
+                        <label class="form-label">Status</label>
+                        <select name="status" id="editStatus" class="form-select">
+                            <option value="1">Active</option>
+                            <option value="0">Inactive</option>
+                        </select>
+                    </div>
+
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="editEnabled" name="enabled">
+                        <input type="hidden" name="enabled" value="false">
+                        <input class="form-check-input" type="checkbox" id="editEnabled" name="enabled" value="true">
                         <label class="form-check-label">Enabled</label>
                     </div>
 
@@ -289,6 +299,7 @@
         const username = button.getAttribute("data-username");
         const email = button.getAttribute("data-email");
         const role = button.getAttribute("data-role");
+        const status = button.getAttribute("data-status") || "Active";
         const enabled = button.getAttribute("data-enabled") === "true";
 
         // Fill form fields
@@ -296,6 +307,7 @@
         document.getElementById("editUsername").value = username;
         document.getElementById("editEmail").value = email;
         document.getElementById("editRole").value = role;
+        document.getElementById("editStatus").value = status;
         document.getElementById("editEnabled").checked = enabled;
 
         // Show modal

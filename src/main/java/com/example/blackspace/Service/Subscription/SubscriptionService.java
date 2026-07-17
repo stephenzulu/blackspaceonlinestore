@@ -20,6 +20,8 @@ public interface SubscriptionService {
 
     void upgradeUserSubscription(String username, Long subscriptionId);
 
+    void upgradeUserSubscription(String username, Long subscriptionId, String transactionReference);
+
 
     Subscription getLatestSubscription();
 
