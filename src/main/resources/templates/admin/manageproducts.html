@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Store | BlackSpace</title>
-    <link rel="icon" type="image/png" th:href="@{/favicon.png}">
+    <link rel="icon" type="image/png" th:href="@{'/uploads/favicon/' + ${siteSettings.siteFavicon}}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Bootstrap 5 -->
@@ -12,10 +12,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
     <style>
-        html, body { height: 100%; overflow: hidden; background: #f0f2f5; }
+        html, body { height: 100%; overflow: hidden; background: #F6F6F4; }
         .sidebar { width: 250px; height: 100vh; position: sticky; top: 0; flex-shrink: 0; overflow-y: auto; }
         .main-content { flex: 1; overflow-y: auto; height: 100vh; }
-        .page-header { background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); border-radius: 14px; padding: 20px 24px; color: #fff; margin-bottom: 20px; }
+        .page-header { background: linear-gradient(135deg, #0E0E11, #3A3A40); border-radius: 14px; padding: 20px 24px; color: #fff; margin-bottom: 20px; }
         .page-header h4 { margin: 0; font-weight: 700; }
         .page-header p { margin: 4px 0 0; color: rgba(255,255,255,.7); font-size: 0.85rem; }
         .content-card { border: none; border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,.06); }
@@ -44,8 +44,8 @@
             <div class="d-flex justify-content-between align-items-center mb-3">
         <div class="d-flex gap-2">
             <div id="customButtons"></div>
-            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addProductModal">
-                <i class="bi bi-plus-circle"></i> Add Products
+            <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#addProductModal" style="background:#0E0E11; color:#fff; border:none; border-radius:10px; padding:8px 18px; font-size:0.88rem;">
+                <i class="bi bi-plus-circle me-1"></i> Add Product
             </button>
         </div>
         <div id="customSearch"></div>
@@ -87,7 +87,7 @@
 
             <td>
                 <!-- Amend button as an icon -->
-                <button class="btn btn-secondary btn-sm"
+                <button class="btn btn-outline-warning btn-sm" style="border-radius:8px; width:34px; height:34px; padding:0; display:inline-flex; align-items:center; justify-content:center;"
                         type="button"
                         th:attr="data-id=${productstock.id},
                  data-name=${productstock.name},
@@ -106,7 +106,7 @@
                 </button>
 
                 <!-- Delete button as an icon -->
-                <button class="btn btn-danger btn-sm"
+                <button class="btn btn-outline-danger btn-sm" style="border-radius:8px; width:34px; height:34px; padding:0; display:inline-flex; align-items:center; justify-content:center;"
                         type="button"
                         th:attr="data-id=${productstock.id}, data-name=${productstock.name}"
                         onclick="confirmDelete(this)"
@@ -140,124 +140,127 @@
 
 <!-- Edit Product Modal -->
 <div class="modal fade" id="amendModal" tabindex="-1" aria-labelledby="amendModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-fullscreen modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title fs-5 fw-semibold" id="amendModalLabel">
-                    <i class="bi bi-pencil-square me-2"></i>Edit Product
-                </h5>
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content border-0" style="border-radius:16px; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,.15);">
+            <div class="modal-header px-4 py-3" style="background:linear-gradient(135deg,#0E0E11,#3A3A40); border-bottom:none;">
+                <div>
+                    <h5 class="modal-title fw-bold mb-0" id="amendModalLabel" style="color:#fff; font-size:1.1rem;">
+                        <i class="bi bi-pencil-square me-2" style="color:#E8611D;"></i>Edit Product
+                    </h5>
+                    <p class="mb-0" style="color:rgba(255,255,255,.5); font-size:0.78rem;">Update product information and media</p>
+                </div>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body p-4">
+            <div class="modal-body" style="background:#F6F6F4;">
                 <form id="amendForm" enctype="multipart/form-data" method="post" th:action="@{/adminupdateProductstock}">
                     <input type="hidden" id="amendFromId" name="id">
-                    <div class="row">
-                        <!-- Left Column -->
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="name" class="form-label fw-medium">Name</label>
-                                <input type="text" class="form-control form-control-sm" id="name" name="name" placeholder="Enter product name">
-                            </div>
-                            <div class="mb-3">
-                                <label for="category" class="form-label fw-medium">Category</label>
-                                <select class="form-select form-select-sm" id="category" name="category" required>
-                                    <option value="">-- Select Category --</option>
-                                    <th:block th:each="cat : ${categories}">
-                                        <option th:value="${cat.name}" th:text="${cat.name}"></option>
-                                    </th:block>
-                                </select>
-                            </div>
 
-                            <div class="row">
+                    <!-- Product Details Card -->
+                    <div class="card border-0 mb-3" style="border-radius:12px; box-shadow:0 1px 6px rgba(0,0,0,.04);">
+                        <div class="card-body p-3 p-md-4">
+                            <h6 class="fw-bold mb-3" style="font-size:0.85rem; color:#8A8A93; text-transform:uppercase; letter-spacing:0.5px;"><i class="bi bi-info-circle me-1"></i> Product Details</h6>
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <label for="name" class="form-label fw-medium" style="font-size:0.85rem;">Name</label>
+                                    <input type="text" class="form-control" id="name" name="name" placeholder="Enter product name" style="border-radius:10px;">
+                                </div>
+                                <div class="col-12">
+                                    <label for="category" class="form-label fw-medium" style="font-size:0.85rem;">Category</label>
+                                    <select class="form-select" id="category" name="category" required style="border-radius:10px;">
+                                        <option value="">-- Select Category --</option>
+                                        <th:block th:each="cat : ${categories}">
+                                            <option th:value="${cat.name}" th:text="${cat.name}"></option>
+                                        </th:block>
+                                    </select>
+                                </div>
                                 <div class="col-8">
-                                    <div class="mb-3">
-                                        <label for="price" class="form-label fw-medium">Price</label>
-                                        <input type="number" class="form-control form-control-sm" id="price" name="price" placeholder="0.00" step="0.01">
-                                    </div>
+                                    <label for="price" class="form-label fw-medium" style="font-size:0.85rem;">Price</label>
+                                    <input type="number" class="form-control" id="price" name="price" placeholder="0.00" step="0.01" style="border-radius:10px;">
                                 </div>
                                 <div class="col-4">
-                                    <div class="mb-3">
-                                        <label for="currency" class="form-label fw-medium">Currency</label>
-                                        <select class="form-select form-select-sm" id="currency" name="currency" required>
-                                            <option value="USD">(USD)Dollar</option>
-                                            <option value="EUR">(EUR)Euro</option>
-                                            <option value="GBP">(GBP)Pound</option>
-                                            <option value="ZMK">(ZMK)Kwacha</option>
-                                        </select>
-                                    </div>
+                                    <label for="currency" class="form-label fw-medium" style="font-size:0.85rem;">Currency</label>
+                                    <select class="form-select" id="currency" name="currency" required style="border-radius:10px;">
+                                        <option value="USD">(USD)Dollar</option>
+                                        <option value="EUR">(EUR)Euro</option>
+                                        <option value="GBP">(GBP)Pound</option>
+                                        <option value="ZMK">(ZMK)Kwacha</option>
+                                    </select>
+                                </div>
+                                <div class="col-12">
+                                    <label for="shortdescription" class="form-label fw-medium" style="font-size:0.85rem;">Short Description</label>
+                                    <input type="text" class="form-control" id="shortdescription" name="shortdescription" placeholder="Brief description" style="border-radius:10px;">
+                                </div>
+                                <div class="col-12">
+                                    <label for="description" class="form-label fw-medium" style="font-size:0.85rem;">Full Description</label>
+                                    <textarea class="form-control"
+                                              id="description"
+                                              name="description"
+                                              rows="5"
+                                              placeholder="Detailed product description"
+                                              required
+                                              style="border-radius:10px;"></textarea>
                                 </div>
                             </div>
-
-                            <div class="mb-3">
-                                <label for="shortdescription" class="form-label fw-medium">Short Description</label>
-                                <input type="text" class="form-control form-control-sm" id="shortdescription" name="shortdescription" placeholder="Brief description">
-                            </div>
-                            <div class="mb-3">
-                                <label for="description" class="form-label fw-medium">Full Description</label>
-
-                                <textarea class="form-control form-control-sm"
-                                          id="description"
-                                          name="description"
-                                          rows="9"
-                                          placeholder="Detailed product description"
-                                          required></textarea>
-                            </div>
                         </div>
+                    </div>
 
-                        <!-- Right Column - File Uploads -->
-                        <div class="col-md-6">
-                            <div class="card border-0 bg-light mb-3">
-                                <div class="card-body p-3">
-                                    <!-- Image Upload -->
-                                    <div class="mb-3">
-                                        <h6 class="card-title fw-medium mb-3">Cover Image</h6>
-                                        <div class="current-file-preview mb-2">
-                                            <small class="text-muted" id="currentImageInfo"></small>
-                                            <div id="currentImagePreview" class="mt-2 text-center" style="display: none;">
-                                                <img  id="imagePreview" src="" alt="Current Image"
-                                                     class="img-fluid rounded shadow-sm"
-                                                     style="max-height: 120px; border: 2px solid #dee2e6;">
-                                            </div>
+                    <!-- Media Card -->
+                    <div class="card border-0 mb-3" style="border-radius:12px; box-shadow:0 1px 6px rgba(0,0,0,.04);">
+                        <div class="card-body p-3 p-md-4">
+                            <h6 class="fw-bold mb-3" style="font-size:0.85rem; color:#8A8A93; text-transform:uppercase; letter-spacing:0.5px;"><i class="bi bi-images me-1"></i> Media</h6>
+                            <div class="row g-3">
+                                <!-- Image Upload -->
+                                <div class="col-12">
+                                    <label class="form-label fw-medium" style="font-size:0.85rem;">Cover Image</label>
+                                    <div class="current-file-preview mb-2">
+                                        <small class="text-muted" id="currentImageInfo"></small>
+                                        <div id="currentImagePreview" class="mt-2 text-center" style="display: none;">
+                                            <img id="imagePreview" src="" alt="Current Image"
+                                                 class="img-fluid rounded shadow-sm"
+                                                 style="max-height: 120px; border: 2px solid #dee2e6;">
                                         </div>
-                                        <!-- Add this inside the form, e.g., right after the form tag -->
-                                        <input type="hidden" id="existingImages" name="existingImages">
-
+                                    </div>
+                                    <input type="hidden" id="existingImages" name="existingImages">
+                                    <div class="upload-area p-3 text-center" style="border:2px dashed #E7E7EA; border-radius:12px; background:#FAFAFA; cursor:pointer;" onclick="this.querySelector('input[type=file]').click()">
+                                        <i class="bi bi-cloud-arrow-up" style="font-size:1.5rem; color:#8A8A93;"></i>
+                                        <p class="mb-0 mt-1" style="font-size:0.82rem; color:#8A8A93;">Click to upload images</p>
                                         <input type="file"
-                                               class="form-control form-control-sm"
+                                               class="d-none"
                                                name="imageurl"
                                                accept="image/*"
                                                multiple
                                                onchange="previewEditImages(event)">
-                                        <div id="editImagePreviewContainer" class="text-center"></div>
-
-                                        <div class="form-text">Select Image (JPG, PNG, GIF)</div>
                                     </div>
+                                    <div id="editImagePreviewContainer" class="text-center mt-2"></div>
+                                </div>
 
-                                    <!-- Audio Upload -->
-                                    <div class="mb-3">
-                                        <h6 class="card-title fw-medium mb-3">Audio File</h6>
-                                        <div class="current-file-preview mb-2">
-                                            <small class="text-muted" id="currentAudioInfo"></small>
-                                            <div id="currentAudioPreview" class="mt-2" style="display: none;">
-                                                <audio id="audioPlayer" controls class="w-100" style="height: 40px;">
-                                                    <source id="audioSource" src="" type="audio/mpeg">
-                                                </audio>
-                                            </div>
+                                <!-- Audio Upload -->
+                                <div class="col-12">
+                                    <label class="form-label fw-medium" style="font-size:0.85rem;">Audio File</label>
+                                    <div class="current-file-preview mb-2">
+                                        <small class="text-muted" id="currentAudioInfo"></small>
+                                        <div id="currentAudioPreview" class="mt-2" style="display: none;">
+                                            <audio id="audioPlayer" controls class="w-100" style="height: 40px;">
+                                                <source id="audioSource" src="" type="audio/mpeg">
+                                            </audio>
                                         </div>
-                                        <input type="file" name="audiourl" accept=".mp3">
-                                        <div class="form-text">Select Audio (MP3)</div>
+                                    </div>
+                                    <div class="upload-area p-3 text-center" style="border:2px dashed #E7E7EA; border-radius:12px; background:#FAFAFA; cursor:pointer;" onclick="this.querySelector('input[type=file]').click()">
+                                        <i class="bi bi-cloud-arrow-up" style="font-size:1.5rem; color:#8A8A93;"></i>
+                                        <p class="mb-0 mt-1" style="font-size:0.82rem; color:#8A8A93;">Click to upload audio</p>
+                                        <input type="file" class="d-none" name="audiourl" accept=".mp3">
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Modal Footer -->
-                    <div class="modal-footer border-top-0 pt-3">
-                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">
+                    <!-- Footer -->
+                    <div class="d-flex justify-content-end gap-2">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal" style="border-radius:10px; padding:8px 20px;">
                             <i class="bi bi-x-circle me-1"></i>Cancel
                         </button>
-                        <button type="submit" class="btn btn-primary btn-sm">
+                        <button type="submit" class="btn" style="background:#0E0E11; color:#fff; border:none; border-radius:10px; padding:8px 24px;">
                             <i class="bi bi-check-circle me-1"></i>Save Changes
                         </button>
                     </div>
@@ -269,109 +272,114 @@
 
 <!-- Add Product Modal -->
 <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-fullscreen modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title fs-5 fw-semibold" id="addProductModalLabel">
-                    <i class="bi bi-pencil-square me-2"></i>Add Product
-                </h5>
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content border-0" style="border-radius:16px; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,.15);">
+            <div class="modal-header px-4 py-3" style="background:linear-gradient(135deg,#0E0E11,#3A3A40); border-bottom:none;">
+                <div>
+                    <h5 class="modal-title fw-bold mb-0" id="addProductModalLabel" style="color:#fff; font-size:1.1rem;">
+                        <i class="bi bi-pencil-square me-2" style="color:#E8611D;"></i>Add Product
+                    </h5>
+                    <p class="mb-0" style="color:rgba(255,255,255,.5); font-size:0.78rem;">Create a new product listing</p>
+                </div>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body p-4">
+            <div class="modal-body" style="background:#F6F6F4;">
                 <form th:action="@{/adminaddProductstock}" method="post" enctype="multipart/form-data">
-                    <div class="row">
-                        <!-- Left Column -->
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="addname" class="form-label fw-medium">Name</label>
-                                <input type="text" class="form-control form-control-sm" id="addname" name="name" placeholder="Enter product name" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="addcategory" class="form-label fw-medium">Category</label>
-                                <select class="form-select form-select-sm" id="addcategory" name="category" required>
-                                    <option value="">-- Select Category --</option>
-                                    <option th:each="cat : ${categories}"
-                                            th:value="${cat.id}"
-                                            th:text="${cat.name}">
-                                    </option>
-                                </select>
-                            </div>
-                            <div class="row">
+
+                    <!-- Product Details Card -->
+                    <div class="card border-0 mb-3" style="border-radius:12px; box-shadow:0 1px 6px rgba(0,0,0,.04);">
+                        <div class="card-body p-3 p-md-4">
+                            <h6 class="fw-bold mb-3" style="font-size:0.85rem; color:#8A8A93; text-transform:uppercase; letter-spacing:0.5px;"><i class="bi bi-info-circle me-1"></i> Product Details</h6>
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <label for="addname" class="form-label fw-medium" style="font-size:0.85rem;">Name</label>
+                                    <input type="text" class="form-control" id="addname" name="name" placeholder="Enter product name" required style="border-radius:10px;">
+                                </div>
+                                <div class="col-12">
+                                    <label for="addcategory" class="form-label fw-medium" style="font-size:0.85rem;">Category</label>
+                                    <select class="form-select" id="addcategory" name="category" required style="border-radius:10px;">
+                                        <option value="">-- Select Category --</option>
+                                        <option th:each="cat : ${categories}"
+                                                th:value="${cat.id}"
+                                                th:text="${cat.name}">
+                                        </option>
+                                    </select>
+                                </div>
                                 <div class="col-8">
-                                    <div class="mb-3">
-                                        <label for="addprice" class="form-label fw-medium">Price</label>
-                                        <input type="number" class="form-control form-control-sm" id="addprice" name="price" placeholder="0.00" step="0.01" required>
-                                    </div>
+                                    <label for="addprice" class="form-label fw-medium" style="font-size:0.85rem;">Price</label>
+                                    <input type="number" class="form-control" id="addprice" name="price" placeholder="0.00" step="0.01" required style="border-radius:10px;">
                                 </div>
                                 <div class="col-4">
-                                    <div class="mb-3">
-                                        <label for="addcurrency" class="form-label fw-medium">Currency</label>
-                                        <select class="form-select form-select-sm" id="addcurrency" name="currency" required>
-                                            <option value="USD">(USD)Dollar</option>
-                                            <option value="EUR">(EUR)Euro</option>
-                                            <option value="GBP">(GBP)Pound</option>
-                                            <option value="ZMK">(ZMK)Kwacha</option>
-                                        </select>
-                                    </div>
+                                    <label for="addcurrency" class="form-label fw-medium" style="font-size:0.85rem;">Currency</label>
+                                    <select class="form-select" id="addcurrency" name="currency" required style="border-radius:10px;">
+                                        <option value="USD">(USD)Dollar</option>
+                                        <option value="EUR">(EUR)Euro</option>
+                                        <option value="GBP">(GBP)Pound</option>
+                                        <option value="ZMK">(ZMK)Kwacha</option>
+                                    </select>
+                                </div>
+                                <div class="col-12">
+                                    <label for="addshortdescription" class="form-label fw-medium" style="font-size:0.85rem;">Short Description</label>
+                                    <input type="text" class="form-control" id="addshortdescription" name="shortdescription" placeholder="Brief description" required style="border-radius:10px;">
+                                </div>
+                                <div class="col-12">
+                                    <label for="adddescription" class="form-label fw-medium" style="font-size:0.85rem;">Full Description</label>
+                                    <textarea class="form-control"
+                                              id="adddescription"
+                                              name="description"
+                                              rows="5"
+                                              placeholder="Detailed product description"
+                                              required
+                                              style="border-radius:10px;"></textarea>
                                 </div>
                             </div>
-
-                            <div class="mb-3">
-                                <label for="addshortdescription" class="form-label fw-medium">Short Description</label>
-                                <input type="text" class="form-control form-control-sm" id="addshortdescription" name="shortdescription" placeholder="Brief description" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="adddescription" class="form-label fw-medium">Full Description</label>
-                                <textarea class="form-control form-control-sm"
-                                          id="adddescription"
-                                          name="description"
-                                          rows="9"
-                                          placeholder="Detailed product description"
-                                          required></textarea>
-
-                            </div>
                         </div>
+                    </div>
 
-                        <!-- Right Column -->
-                        <div class="col-md-6">
-                            <div class="card border-0 bg-light mb-3">
-                                <div class="card-body p-3">
-                                    <!-- Image Upload -->
-                                    <!-- Image Upload -->
-                                    <div class="mb-3">
-                                        <h6 class="card-title fw-medium mb-2">Cover Images</h6>
+                    <!-- Media Card -->
+                    <div class="card border-0 mb-3" style="border-radius:12px; box-shadow:0 1px 6px rgba(0,0,0,.04);">
+                        <div class="card-body p-3 p-md-4">
+                            <h6 class="fw-bold mb-3" style="font-size:0.85rem; color:#8A8A93; text-transform:uppercase; letter-spacing:0.5px;"><i class="bi bi-images me-1"></i> Media</h6>
+                            <div class="row g-3">
+                                <!-- Image Upload -->
+                                <div class="col-12">
+                                    <label class="form-label fw-medium" style="font-size:0.85rem;">Cover Images</label>
+                                    <div class="upload-area p-3 text-center" style="border:2px dashed #E7E7EA; border-radius:12px; background:#FAFAFA; cursor:pointer;" onclick="this.querySelector('input[type=file]').click()">
+                                        <i class="bi bi-cloud-arrow-up" style="font-size:1.5rem; color:#8A8A93;"></i>
+                                        <p class="mb-0 mt-1" style="font-size:0.82rem; color:#8A8A93;">Click to upload images</p>
                                         <input type="file"
-                                               class="form-control form-control-sm"
+                                               class="d-none"
                                                id="addimageurl"
                                                name="imageurl"
                                                accept="image/*"
                                                multiple
                                                onchange="previewAddImages(event)">
-                                        <div id="addImagePreviewContainer" class="text-center mt-2"></div>
-                                        <div class="form-text mb-2">Select Image(s) (JPG, PNG, GIF)</div>
                                     </div>
+                                    <div id="addImagePreviewContainer" class="text-center mt-2"></div>
+                                </div>
 
-
-                                    <!-- Audio Upload -->
-                                    <div class="mb-3">
-                                        <h6 class="card-title fw-medium mb-2">Audio File</h6>
-                                        <input type="file" class="form-control form-control-sm" id="addaudiourl" name="audiourl" accept=".mp3" onchange="previewAddAudio(event)">
-                                        <div class="form-text mb-2">Select Audio (MP3)</div>
-                                        <div id="addAudioPreviewContainer" style="display:none;">
-                                            <audio id="addAudioPreview" controls class="w-100" style="height: 40px;"></audio>
-                                        </div>
+                                <!-- Audio Upload -->
+                                <div class="col-12">
+                                    <label class="form-label fw-medium" style="font-size:0.85rem;">Audio File</label>
+                                    <div class="upload-area p-3 text-center" style="border:2px dashed #E7E7EA; border-radius:12px; background:#FAFAFA; cursor:pointer;" onclick="this.querySelector('input[type=file]').click()">
+                                        <i class="bi bi-cloud-arrow-up" style="font-size:1.5rem; color:#8A8A93;"></i>
+                                        <p class="mb-0 mt-1" style="font-size:0.82rem; color:#8A8A93;">Click to upload audio</p>
+                                        <input type="file" class="d-none" id="addaudiourl" name="audiourl" accept=".mp3" onchange="previewAddAudio(event)">
+                                    </div>
+                                    <div id="addAudioPreviewContainer" style="display:none;">
+                                        <audio id="addAudioPreview" controls class="w-100 mt-2" style="height: 40px;"></audio>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Modal Footer -->
-                    <div class="modal-footer border-top-0 pt-3">
-                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">
+                    <!-- Footer -->
+                    <div class="d-flex justify-content-end gap-2">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal" style="border-radius:10px; padding:8px 20px;">
                             <i class="bi bi-x-circle me-1"></i>Cancel
                         </button>
-                        <button type="submit" class="btn btn-primary btn-sm">
+                        <button type="submit" class="btn" style="background:#0E0E11; color:#fff; border:none; border-radius:10px; padding:8px 24px;">
                             <i class="bi bi-check-circle me-1"></i>Save Changes
                         </button>
                     </div>
@@ -434,8 +442,8 @@
            html: `You are about to delete <b>${productName}</b>. This action cannot be undone.`,
            icon: 'warning',
            showCancelButton: true,
-           confirmButtonColor: '#d33',
-           cancelButtonColor: '#6c757d',
+           confirmButtonColor: '#C33636',
+           cancelButtonColor: '#8A8A93',
            confirmButtonText: 'Yes, delete it!',
            cancelButtonText: 'Cancel'
        }).then((result) => {

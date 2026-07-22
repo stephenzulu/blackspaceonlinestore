@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Store | BlackSpace</title>
-    <link rel="icon" type="image/png" th:href="@{/favicon.png}">
+    <link rel="icon" type="image/png" th:href="@{'/uploads/favicon/' + ${siteSettings.siteFavicon}}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Bootstrap 5 -->
@@ -15,8 +15,8 @@
         body { overflow-x: hidden; }
         .sidebar { width: 250px; min-height: 100vh; background: #fff; border-right: 1px solid #e5e5e5;  flex-shrink: 0; }
         .sidebar .nav-link { color: #333; font-weight: 500; }
-        .sidebar .nav-link.active, .sidebar .nav-link:hover { background-color: #f0f4ff; color: #0d6efd; }
-        .profile-avatar { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid #0d6efd; }
+        .sidebar .nav-link.active, .sidebar .nav-link:hover { background-color: #FBEDE6; color: #E8611D; }
+        .profile-avatar { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid #E8611D; }
         @media (max-width: 991px) { .sidebar { display: none; } }
     </style></head>
 <body class="bg-light">

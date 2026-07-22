@@ -5,11 +5,11 @@
 <body>
 
 <!-- Desktop Sidebar -->
-<aside th:fragment="desktopSidebar(user)" class="d-none d-lg-flex flex-column" style="width:250px; flex-shrink:0; height:100vh; position:sticky; top:0; overflow-y:auto; background:linear-gradient(180deg, #0f0c29, #302b63, #24243e);">
+<aside th:fragment="desktopSidebar(user)" class="d-none d-lg-flex flex-column" style="width:250px; flex-shrink:0; height:100vh; position:sticky; top:0; overflow-y:auto; background:linear-gradient(180deg, #0E0E11, #1a1a1e);">
 
     <style>
         .user-sidebar {
-            background: linear-gradient(180deg, #0f0c29, #302b63, #24243e);
+            background: linear-gradient(180deg, #0E0E11, #1a1a1e);
             min-height: 100vh; color: #fff; padding: 0;
         }
         .user-sidebar .sidebar-header {
@@ -31,7 +31,7 @@
         .user-sidebar .nav-link i { font-size: 1.1rem; width: 22px; text-align: center; color: rgba(255,255,255,.7) !important; }
         .user-sidebar .nav-link:hover { background: rgba(255,255,255,.1); color: #fff !important; }
         .user-sidebar .nav-link:hover i { color: #fff !important; }
-        .user-sidebar .nav-link.active { background: rgba(13,110,253,.3); color: #fff !important; }
+        .user-sidebar .nav-link.active { background: rgba(232,97,29,.3); color: #fff !important; }
         .user-sidebar .nav-link.active i { color: #fff !important; }
         .user-sidebar .sidebar-header h6 { color: #fff !important; }
         .user-sidebar .sidebar-header small, .user-sidebar .sidebar-header small * { color: rgba(255,255,255,.5) !important; }
@@ -44,7 +44,7 @@
             transition: color 0.2s;
         }
         .user-sidebar .sidebar-footer a i { color: rgba(255,255,255,.5) !important; }
-        .user-sidebar .sidebar-footer a:hover, .user-sidebar .sidebar-footer a:hover i { color: #fc5c7d !important; }
+        .user-sidebar .sidebar-footer a:hover, .user-sidebar .sidebar-footer a:hover i { color: #E8611D !important; }
     </style>
 
     <div class="user-sidebar d-flex flex-column">
@@ -93,7 +93,7 @@
 </aside>
 
 <!-- Mobile Sidebar -->
-<div th:fragment="mobileSidebar" class="offcanvas offcanvas-start" id="mobileSidebar" style="width:260px; background:linear-gradient(180deg, #0f0c29, #302b63, #24243e); color:#fff;">
+<div th:fragment="mobileSidebar" class="offcanvas offcanvas-start" id="mobileSidebar" style="width:260px; background:linear-gradient(180deg, #0E0E11, #1a1a1e); color:#fff;">
 
     <div class="offcanvas-header" style="border-bottom:1px solid rgba(255,255,255,.08);">
         <div class="d-flex align-items-center">
@@ -151,7 +151,7 @@
             if (href === bestMatch) {
                 link.classList.add('active');
                 link.style.color = '#fff';
-                link.style.background = 'rgba(13,110,253,.3)';
+                link.style.background = 'rgba(232,97,29,.3)';
             }
         });
     });

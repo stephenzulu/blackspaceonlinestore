@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>My Dashboard | BlackSpace</title>
-    <link rel="icon" type="image/png" th:href="@{/favicon.png}">
+    <link rel="icon" type="image/png" th:href="@{'/uploads/favicon/' + ${siteSettings.siteFavicon}}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Bootstrap 5 -->
@@ -12,43 +12,115 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
     <style>
-        html, body { height: 100%; overflow: hidden; background: #f0f2f5; }
+        html, body { height: 100%; overflow: hidden; background: #F6F6F4; }
         .sidebar { width: 250px; height: 100vh; position: sticky; top: 0; flex-shrink: 0; overflow-y: auto; }
-        .sidebar .nav-link { color: #333; font-weight: 500; }
-        .sidebar .nav-link.active, .sidebar .nav-link:hover { background-color: #f0f4ff; color: #0d6efd; }
         @media (max-width: 991px) { .sidebar { display: none; } }
         .main-content { flex: 1; overflow-y: auto; height: 100vh; }
 
+        /* Page header */
+        .page-header {
+            background: linear-gradient(135deg, #0E0E11, #3A3A40);
+            border-radius: 14px; padding: 24px 28px; color: #fff; margin-bottom: 24px;
+        }
+        .page-header h4 { margin: 0; font-weight: 700; color: #fff !important; }
+        .page-header p { margin: 4px 0 0; color: rgba(255,255,255,.6); font-size: 0.85rem; }
+
         /* Stat cards */
         .stat-card {
-            border: none; border-radius: 14px; padding: 18px; color: #fff;
-            transition: transform 0.2s;
+            border: none; border-radius: 14px; padding: 20px; color: #fff;
+            transition: transform 0.2s, box-shadow 0.2s; position: relative; overflow: hidden;
         }
-        .stat-card:hover { transform: translateY(-3px); }
+        .stat-card::after {
+            content: ''; position: absolute; top: -30px; right: -30px;
+            width: 100px; height: 100px; border-radius: 50%;
+            background: rgba(255,255,255,.06);
+        }
+        .stat-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,.15); }
         .stat-card .stat-icon {
-            width: 44px; height: 44px; border-radius: 12px;
-            background: rgba(255,255,255,.2);
+            width: 48px; height: 48px; border-radius: 12px;
+            background: rgba(255,255,255,.15); backdrop-filter: blur(4px);
             display: flex; align-items: center; justify-content: center; font-size: 1.3rem;
         }
-        .stat-card .stat-value { font-size: 1.6rem; font-weight: 700; }
-        .stat-card .stat-label { font-size: 0.8rem; opacity: 0.85; }
+        .stat-card .stat-value { font-size: 1.8rem; font-weight: 700; line-height: 1.2; }
+        .stat-card .stat-label { font-size: 0.78rem; opacity: 0.75; margin-top: 2px; }
 
-        /* Profile header */
-        .profile-header {
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-            border-radius: 14px 14px 0 0;
-            padding: 24px; color: #fff;
-        }
-
-        /* Cards */
+        /* Dashboard cards */
         .dash-card {
             border: none; border-radius: 14px;
-            box-shadow: 0 2px 12px rgba(0,0,0,.06);
+            box-shadow: 0 2px 12px rgba(0,0,0,.05); background: #fff;
+            transition: box-shadow 0.2s;
         }
+        .dash-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,.08); }
 
-        /* Sub status */
-        .sub-active { border-left: 4px solid #198754; }
-        .sub-inactive { border-left: 4px solid #dc3545; }
+        /* Profile section */
+        .profile-header {
+            background: linear-gradient(135deg, #0E0E11, #3A3A40);
+            border-radius: 14px 14px 0 0; padding: 28px; color: #fff;
+        }
+        .profile-avatar {
+            width: 64px; height: 64px; border-radius: 14px; object-fit: cover;
+            border: 3px solid rgba(255,255,255,.25); box-shadow: 0 4px 12px rgba(0,0,0,.2);
+        }
+        .info-item { padding: 12px 0; }
+        .info-item:not(:last-child) { border-bottom: 1px solid #F0F0F0; }
+        .info-label { font-size: 0.75rem; color: #8A8A93; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+        .info-value { font-size: 0.9rem; font-weight: 500; color: #3A3A40; margin-top: 2px; }
+
+        /* Subscription */
+        .sub-active { border-left: 4px solid #0F7A4E; }
+        .sub-inactive { border-left: 4px solid #C33636; }
+        .sub-badge { font-size: 0.7rem; padding: 4px 10px; border-radius: 20px; font-weight: 600; letter-spacing: 0.3px; }
+
+        /* Store card */
+        .store-banner { height: 200px; overflow: hidden; position: relative; border-radius: 14px 14px 0 0; }
+        .store-banner img { width: 100%; height: 100%; object-fit: cover; }
+        .store-overlay {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            padding: 20px; background: linear-gradient(transparent, rgba(0,0,0,.75));
+        }
+        .store-logo {
+            width: 56px; height: 56px; border-radius: 12px; object-fit: cover;
+            border: 3px solid #fff; box-shadow: 0 4px 12px rgba(0,0,0,.2);
+        }
+        .store-info-row {
+            display: flex; align-items: center; gap: 8px;
+            padding: 8px 0; font-size: 0.85rem;
+        }
+        .store-info-row i { width: 20px; text-align: center; }
+
+        /* Chart card */
+        .chart-card { min-height: 260px; }
+
+        /* Quick actions */
+        .quick-action {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 16px 8px; border-radius: 12px; text-decoration: none;
+            background: #fff; border: 1px solid #E7E7EA; transition: all 0.2s;
+            text-align: center;
+        }
+        .quick-action:hover { border-color: #E8611D; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(232,97,29,.1); }
+        .quick-action i { font-size: 1.4rem; color: #E8611D; margin-bottom: 6px; }
+        .quick-action span { font-size: 0.78rem; font-weight: 500; color: #3A3A40; }
+
+        /* Empty store */
+        .empty-store {
+            text-align: center; padding: 50px 20px;
+            background: linear-gradient(180deg, #FAFAFA, #F6F6F4); border-radius: 14px;
+        }
+        .empty-store i { font-size: 3rem; color: #E7E7EA; }
+
+        /* Upload area in modals */
+        .upload-area {
+            border: 2px dashed #E7E7EA; border-radius: 12px; background: #FAFAFA;
+            padding: 16px; text-align: center; cursor: pointer; transition: border-color 0.2s;
+        }
+        .upload-area:hover { border-color: #E8611D; }
+
+        @media (max-width: 576px) {
+            .stat-card .stat-value { font-size: 1.4rem; }
+            .store-banner { height: 150px; }
+            .profile-header { padding: 20px; }
+        }
     </style>
 </head>
 
@@ -74,16 +146,26 @@
     <main class="main-content p-3 p-md-4">
         <div class="container-fluid">
 
-            <!-- Welcome Header -->
-            <div class="mb-4">
-                <h4 class="fw-bold mb-0">My Dashboard</h4>
-                <small class="text-muted">Welcome, <span th:text="${user.firstName}">User</span></small>
+            <!-- Page Header -->
+            <div class="page-header d-flex flex-wrap justify-content-between align-items-center gap-3">
+                <div>
+                    <h4><i class="bi bi-speedometer2 me-2"></i>Dashboard</h4>
+                    <p>Welcome back, <span th:text="${user.firstName}">User</span></p>
+                </div>
+                <div class="d-flex gap-2">
+                    <a th:href="@{/account/products}" class="btn btn-sm btn-outline-light" style="border-radius:8px;">
+                        <i class="bi bi-box-seam me-1"></i>Products
+                    </a>
+                    <a th:href="@{/account/subscription}" class="btn btn-sm btn-light" style="border-radius:8px; color:#0E0E11;">
+                        <i class="bi bi-credit-card me-1"></i>Subscription
+                    </a>
+                </div>
             </div>
 
             <!-- Stat Cards -->
             <div class="row g-3 mb-4">
                 <div class="col-6 col-md-4">
-                    <div class="stat-card" style="background: linear-gradient(135deg, #0f0c29, #302b63);">
+                    <div class="stat-card" style="background: linear-gradient(135deg, #E8611D, #B8480F);">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
                                 <div class="stat-value" th:text="${productuserChart}">0</div>
@@ -94,7 +176,7 @@
                     </div>
                 </div>
                 <div class="col-6 col-md-4">
-                    <div class="stat-card" style="background: linear-gradient(135deg, #302b63, #24243e);">
+                    <div class="stat-card" style="background: linear-gradient(135deg, #0E0E11, #3A3A40);">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
                                 <div class="stat-value" th:text="${store != null ? (store.shopviews ?: '0') : '0'}">0</div>
@@ -105,12 +187,12 @@
                     </div>
                 </div>
                 <div class="col-12 col-md-4">
-                    <div class="stat-card" style="background: linear-gradient(135deg, #24243e, #0f0c29);">
+                    <div class="stat-card" style="background: linear-gradient(135deg, #3A3A40, #0E0E11);">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
                                 <div class="stat-value">
-                                    <span class="badge fs-6"
-                                          th:classappend="${subscriptionActive} ? 'bg-light text-success' : 'bg-light text-danger'"
+                                    <span class="sub-badge"
+                                          th:style="${subscriptionActive} ? 'background:rgba(15,122,78,.2); color:#0F7A4E;' : 'background:rgba(195,54,54,.2); color:#C33636;'"
                                           th:text="${subscriptionActive} ? 'Active' : 'Inactive'"></span>
                                 </div>
                                 <div class="stat-label">Subscription</div>
@@ -121,222 +203,342 @@
                 </div>
             </div>
 
-            <!-- Profile Card -->
-            <div class="card border-0 shadow-sm mb-4" style="border-radius:14px; overflow:hidden;">
-                <div class="profile-header">
-                    <div class="d-flex align-items-center">
-                        <img src="/store/logo/logo.jpeg"
-                             class="rounded-circle me-3"
-                             style="width:55px; height:55px; object-fit:cover; border:3px solid rgba(255,255,255,.3);">
-                        <div>
-                            <h5 class="mb-0 text-white" th:text="${user.firstName + ' ' + user.lastName}">User</h5>
-                            <small style="color:rgba(255,255,255,.7);">
-                                <i class="bi bi-person-badge me-1"></i>
-                                <span th:text="${user.role}">SELLER</span>
-                            </small>
-                            <span class="badge ms-2"
-                                  th:classappend="${user.enabled} ? 'bg-light text-success' : 'bg-light text-danger'"
-                                  th:text="${user.enabled} ? 'Active' : 'Inactive'"></span>
-                        </div>
-                    </div>
+            <!-- Quick Actions -->
+            <div class="row g-3 mb-4">
+                <div class="col-3 col-md-2">
+                    <a th:href="@{/account/products}" class="quick-action">
+                        <i class="bi bi-box-seam"></i>
+                        <span>Products</span>
+                    </a>
                 </div>
-                <div class="card-body p-3">
-                    <div class="row g-2 small">
-                        <div class="col-6 col-md-3">
-                            <i class="bi bi-person text-primary me-1"></i><strong>Username</strong>
-                            <div class="text-muted" th:text="${user.username}"></div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <i class="bi bi-envelope text-primary me-1"></i><strong>Email</strong>
-                            <div class="text-muted" th:text="${user.email}"></div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <i class="bi bi-telephone text-primary me-1"></i><strong>Phone</strong>
-                            <div class="text-muted" th:text="${user.phoneNumber}"></div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <i class="bi bi-geo-alt text-primary me-1"></i><strong>Address</strong>
-                            <div class="text-muted" th:text="${user.address}"></div>
-                        </div>
-                    </div>
+                <div class="col-3 col-md-2">
+                    <a th:href="@{/account/payments}" class="quick-action">
+                        <i class="bi bi-receipt"></i>
+                        <span>Payments</span>
+                    </a>
+                </div>
+                <div class="col-3 col-md-2">
+                    <a th:href="@{/account/subscription}" class="quick-action">
+                        <i class="bi bi-credit-card"></i>
+                        <span>Plans</span>
+                    </a>
+                </div>
+                <div class="col-3 col-md-2">
+                    <a th:if="${store != null}" th:href="@{'/store/' + ${store.id}}" class="quick-action" target="_blank">
+                        <i class="bi bi-shop"></i>
+                        <span>View Store</span>
+                    </a>
+                    <a th:if="${store == null}" href="#" class="quick-action" data-bs-toggle="modal" data-bs-target="#createStoreModal">
+                        <i class="bi bi-shop"></i>
+                        <span>Create Store</span>
+                    </a>
                 </div>
             </div>
 
-            <!-- Subscription Card -->
-            <div class="card dash-card mb-4" th:if="${store != null}"
-                 th:classappend="${subscriptionActive} ? 'sub-active' : 'sub-inactive'">
-                <div class="card-body p-3">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <h6 class="fw-semibold mb-0"><i class="bi bi-credit-card me-2"></i>Subscription</h6>
-                        <a th:href="@{/account/subscription}" class="btn btn-sm btn-outline-primary">
-                            <span th:text="${subscriptionActive} ? 'Upgrade' : 'Subscribe'">Manage</span>
-                        </a>
-                    </div>
-                    <!-- Active -->
-                    <div th:if="${subscriptionActive}">
-                        <div class="row g-2 small">
-                            <div class="col-6">
-                                <span class="text-muted">Expiry:</span>
-                                <strong th:text="${store.durationtimeupdate != null ? #temporals.format(store.durationtimeupdate, 'dd/MM/yyyy') : 'N/A'}"></strong>
+            <div class="row g-4">
+                <!-- Left Column -->
+                <div class="col-lg-7">
+
+                    <!-- Store Card -->
+                    <div class="dash-card mb-4" style="overflow:hidden;">
+                        <div th:if="${store != null}">
+                            <!-- Store Banner -->
+                            <div class="store-banner">
+                                <img th:if="${store.storebanner != null and store.storebanner != ''}"
+                                     th:src="@{/uploads/stores/{img}(img=${store.storebanner})}"
+                                     alt="Store Banner">
+                                <img th:unless="${store.storebanner != null and store.storebanner != ''}"
+                                     th:src="@{/store/banner/banner.jpeg}"
+                                     alt="Store Banner">
+                                <div class="store-overlay d-flex align-items-end">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <img th:if="${store.storelogo != null and store.storelogo != ''}"
+                                             th:src="@{/uploads/stores/{img}(img=${store.storelogo})}"
+                                             class="store-logo" alt="Store Logo">
+                                        <img th:unless="${store.storelogo != null and store.storelogo != ''}"
+                                             th:src="@{/store/logo/logo.jpeg}"
+                                             class="store-logo" alt="Store Logo">
+                                        <div>
+                                            <h6 class="mb-0 text-white fw-bold" th:text="${store.name}">Store</h6>
+                                            <span class="sub-badge mt-1 d-inline-block"
+                                                  th:style="${store.active} ? 'background:rgba(15,122,78,.25); color:#1D9E63;' : 'background:rgba(195,54,54,.25); color:#e06060;'"
+                                                  th:text="${store.active} ? 'Active' : 'Inactive'"></span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-6">
-                                <span class="text-muted">Items allowed:</span>
-                                <strong th:text="${store.numberofproducts ?: '0'}"></strong>
+
+                            <!-- Store Info -->
+                            <div class="p-3 p-md-4">
+                                <div class="row g-3 mb-3">
+                                    <div class="col-6">
+                                        <div class="store-info-row">
+                                            <i class="bi bi-telephone-fill text-success"></i>
+                                            <span th:text="${store.contactNumber ?: 'N/A'}"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="store-info-row">
+                                            <i class="bi bi-whatsapp text-success"></i>
+                                            <a th:if="${store.whatsappNumber != null}"
+                                               th:href="'https://wa.me/' + ${store.whatsappNumber}"
+                                               target="_blank" th:text="${store.whatsappNumber}" style="color:#0F7A4E; text-decoration:none;"></a>
+                                            <span th:if="${store.whatsappNumber == null}" class="text-muted">N/A</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="store-info-row">
+                                            <i class="bi bi-envelope-fill text-primary"></i>
+                                            <span th:text="${store.email ?: 'N/A'}" style="font-size:0.82rem;"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="store-info-row">
+                                            <i class="bi bi-eye-fill text-info"></i>
+                                            <span><span th:text="${store.shopviews ?: '0'}"></span> views</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <p class="text-muted mb-3" th:text="${store.description}" style="font-size:0.88rem; line-height:1.6;"></p>
+
+                                <a class="btn btn-sm btn-outline-primary" style="border-radius:8px;"
+                                   data-bs-toggle="modal" data-bs-target="#editStoreModal">
+                                    <i class="bi bi-pencil me-1"></i>Edit Store
+                                </a>
                             </div>
                         </div>
-                    </div>
-                    <!-- Inactive -->
-                    <div th:if="${!subscriptionActive}">
-                        <p class="small text-muted mb-0">You don't have an active subscription. Subscribe to start posting products.</p>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Product Limit Notice -->
-            <div th:if="${productLimitReached}" class="alert alert-warning mb-4 d-flex align-items-center justify-content-between" style="border-radius:12px;">
-                <div>
-                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                    <strong>Product limit reached!</strong>
-                    You've used all <span th:text="${maxProducts}">0</span> products allowed by your current plan.
-                    Upgrade your subscription to add more products.
-                </div>
-                <a th:href="@{/account/subscription}" class="btn btn-sm btn-primary ms-3" style="white-space:nowrap;">Upgrade Now</a>
-            </div>
-
-            <!-- Store Card -->
-            <div class="card dash-card mb-4" style="overflow:hidden;">
-                <div class="card-body p-0">
-                    <div th:if="${store != null}">
-                        <!-- Store Banner -->
-                        <div class="position-relative" style="height:180px; overflow:hidden;">
-                            <img th:if="${store.storebanner != null and store.storebanner != ''}"
-                                 th:src="@{/uploads/stores/{img}(img=${store.storebanner})}"
-                                 class="w-100 h-100" style="object-fit:cover;">
-                            <img th:unless="${store.storebanner != null and store.storebanner != ''}"
-                                 th:src="@{/store/banner/banner.jpeg}"
-                                 class="w-100 h-100" style="object-fit:cover;">
-                            <div class="d-flex align-items-center position-absolute bottom-0 start-0 w-100 p-3"
-                                 style="background:linear-gradient(transparent, rgba(0,0,0,.7));">
-                                <img th:if="${store.storelogo != null and store.storelogo != ''}"
-                                     th:src="@{/uploads/stores/{img}(img=${store.storelogo})}"
-                                     class="rounded-circle me-3"
-                                     style="width:50px; height:50px; object-fit:cover; border:2px solid #fff;">
-                                <img th:unless="${store.storelogo != null and store.storelogo != ''}"
-                                     th:src="@{/store/logo/logo.jpeg}"
-                                     class="rounded-circle me-3"
-                                     style="width:50px; height:50px; object-fit:cover; border:2px solid #fff;">
-                                <div class="text-white">
-                                    <h6 class="mb-0" th:text="${store.name}">Store</h6>
-                                    <span class="badge" th:classappend="${store.active} ? 'bg-success' : 'bg-danger'"
-                                          th:text="${store.active} ? 'Active' : 'Inactive'"></span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Store Info -->
-                        <div class="p-3">
-                            <div class="row g-2 small">
-                                <div class="col-6">
-                                    <i class="bi bi-telephone text-success me-1"></i>
-                                    <span th:text="${store.contactNumber ?: 'N/A'}"></span>
-                                </div>
-                                <div class="col-6">
-                                    <i class="bi bi-whatsapp text-success me-1"></i>
-                                    <a th:if="${store.whatsappNumber != null}"
-                                       th:href="'https://wa.me/' + ${store.whatsappNumber}"
-                                       target="_blank" th:text="${store.whatsappNumber}"></a>
-                                    <span th:if="${store.whatsappNumber == null}">N/A</span>
-                                </div>
-                                <div class="col-6">
-                                    <i class="bi bi-envelope text-primary me-1"></i>
-                                    <span th:text="${store.email ?: 'N/A'}"></span>
-                                </div>
-                                <div class="col-6">
-                                    <i class="bi bi-eye text-info me-1"></i>
-                                    <span th:text="${store.shopviews ?: '0'}"></span> views
-                                </div>
-                            </div>
-                            <p class="small text-muted mt-2 mb-2" th:text="${store.description}"></p>
-                            <a class="btn btn-sm btn-outline-primary"
-                               data-bs-toggle="modal" data-bs-target="#editStoreModal">
-                                <i class="bi bi-pencil me-1"></i>Edit Store
+                        <!-- No Store -->
+                        <div th:if="${store == null}" class="empty-store">
+                            <i class="bi bi-shop"></i>
+                            <h6 class="mt-3 fw-bold">No Store Yet</h6>
+                            <p class="text-muted mb-3" style="font-size:0.88rem;">Create your store to start listing products and selling.</p>
+                            <a class="btn btn-primary btn-sm" style="border-radius:8px;" data-bs-toggle="modal" data-bs-target="#createStoreModal">
+                                <i class="bi bi-plus-circle me-1"></i>Create Store
                             </a>
                         </div>
                     </div>
 
-                    <!-- No Store -->
-                    <div th:if="${store == null}" class="text-center p-4">
-                        <i class="bi bi-shop fs-1 text-muted"></i>
-                        <p class="text-muted mt-2 mb-3">No store found. Create one to get started.</p>
-                        <a class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#createStoreModal">
-                            <i class="bi bi-plus-circle me-1"></i>Create Store
-                        </a>
+                    <!-- Products Overview Chart -->
+                    <div class="dash-card chart-card mb-4">
+                        <div class="card-body p-3 p-md-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="fw-bold mb-0" style="font-size:0.95rem;">
+                                    <i class="bi bi-bar-chart-fill me-2" style="color:#E8611D;"></i>Products by Category
+                                </h6>
+                                <a th:href="@{/account/products}" class="text-muted" style="font-size:0.78rem; text-decoration:none;">View All <i class="bi bi-arrow-right"></i></a>
+                            </div>
+                            <canvas id="productuserChart"></canvas>
+                        </div>
                     </div>
+                </div>
+
+                <!-- Right Column -->
+                <div class="col-lg-5">
+
+                    <!-- Profile Card -->
+                    <div class="dash-card mb-4" style="overflow:hidden;">
+                        <div class="profile-header">
+                            <div class="d-flex align-items-center gap-3">
+                                <img src="/store/logo/logo.jpeg" class="profile-avatar" alt="Profile">
+                                <div>
+                                    <h5 class="mb-1 text-white fw-bold" style="font-size:1.1rem;" th:text="${user.firstName + ' ' + user.lastName}">User</h5>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span style="color:rgba(255,255,255,.6); font-size:0.8rem;">
+                                            <i class="bi bi-person-badge me-1"></i>
+                                            <span th:text="${user.role}">SELLER</span>
+                                        </span>
+                                        <span class="sub-badge"
+                                              th:style="${user.enabled} ? 'background:rgba(15,122,78,.25); color:#1D9E63;' : 'background:rgba(195,54,54,.25); color:#e06060;'"
+                                              th:text="${user.enabled} ? 'Active' : 'Inactive'"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body px-4 py-3">
+                            <div class="info-item">
+                                <div class="info-label"><i class="bi bi-person me-1"></i>Username</div>
+                                <div class="info-value" th:text="${user.username}"></div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label"><i class="bi bi-envelope me-1"></i>Email</div>
+                                <div class="info-value" th:text="${user.email}"></div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label"><i class="bi bi-telephone me-1"></i>Phone</div>
+                                <div class="info-value" th:text="${user.phoneNumber ?: 'Not set'}"></div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label"><i class="bi bi-geo-alt me-1"></i>Address</div>
+                                <div class="info-value" th:text="${user.address ?: 'Not set'}"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Subscription Card -->
+                    <div class="dash-card mb-4" th:if="${store != null}"
+                         th:classappend="${subscriptionActive} ? 'sub-active' : 'sub-inactive'">
+                        <div class="card-body p-3 p-md-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="fw-bold mb-0" style="font-size:0.95rem;">
+                                    <i class="bi bi-credit-card me-2" style="color:#E8611D;"></i>Subscription
+                                </h6>
+                                <a th:href="@{/account/subscription}" class="btn btn-sm btn-outline-primary" style="border-radius:8px; font-size:0.78rem;">
+                                    <span th:text="${subscriptionActive} ? 'Upgrade' : 'Subscribe'">Manage</span>
+                                </a>
+                            </div>
+                            <!-- Active -->
+                            <div th:if="${subscriptionActive}">
+                                <div class="d-flex gap-3">
+                                    <div class="flex-fill p-3 text-center" style="background:#F6F6F4; border-radius:10px;">
+                                        <div class="info-label mb-1">Expires</div>
+                                        <div class="fw-bold" style="font-size:0.9rem; color:#3A3A40;"
+                                             th:text="${store.durationtimeupdate != null ? #temporals.format(store.durationtimeupdate, 'dd MMM yyyy') : 'N/A'}"></div>
+                                    </div>
+                                    <div class="flex-fill p-3 text-center" style="background:#F6F6F4; border-radius:10px;">
+                                        <div class="info-label mb-1">Items Allowed</div>
+                                        <div class="fw-bold" style="font-size:0.9rem; color:#3A3A40;"
+                                             th:text="${store.numberofproducts ?: '0'}"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Inactive -->
+                            <div th:if="${!subscriptionActive}" class="p-3 text-center" style="background:#F6F6F4; border-radius:10px;">
+                                <i class="bi bi-exclamation-circle text-muted" style="font-size:1.5rem;"></i>
+                                <p class="text-muted mt-2 mb-0" style="font-size:0.85rem;">No active subscription. Subscribe to start posting products.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Product Limit Notice -->
+                    <div th:if="${productLimitReached}" class="dash-card mb-4 sub-inactive">
+                        <div class="card-body p-3 p-md-4">
+                            <div class="d-flex align-items-start gap-3">
+                                <div class="stat-icon" style="background:rgba(195,54,54,.1); flex-shrink:0;">
+                                    <i class="bi bi-exclamation-triangle-fill" style="color:#C33636;"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold mb-1" style="font-size:0.9rem;">Product Limit Reached</h6>
+                                    <p class="text-muted mb-2" style="font-size:0.82rem;">
+                                        You've used all <strong th:text="${maxProducts}">0</strong> products allowed by your current plan.
+                                    </p>
+                                    <a th:href="@{/account/subscription}" class="btn btn-sm btn-primary" style="border-radius:8px; font-size:0.78rem;">
+                                        Upgrade Now
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
             <!-- Edit Store Modal -->
             <div class="modal fade" id="editStoreModal" tabindex="-1">
-                <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
-                    <div class="modal-content" style="border-radius:14px; overflow:hidden;">
+                <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                    <div class="modal-content border-0" style="border-radius:16px; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,.15);">
                         <form th:action="@{/store/update}" method="post" enctype="multipart/form-data">
                             <input type="hidden" name="id" th:value="${store != null ? store.id : ''}">
-                            <div class="modal-header" style="background:linear-gradient(135deg,#0f0c29,#302b63); color:#fff;">
-                                <h5 class="modal-title"><i class="bi bi-pencil me-2"></i>Edit Store</h5>
+                            <div class="modal-header px-4 py-3" style="background:linear-gradient(135deg,#0E0E11,#3A3A40); border-bottom:none;">
+                                <div>
+                                    <h5 class="modal-title fw-bold mb-0" style="color:#fff; font-size:1.1rem;">
+                                        <i class="bi bi-pencil me-2" style="color:#E8611D;"></i>Edit Store
+                                    </h5>
+                                    <p class="mb-0" style="color:rgba(255,255,255,.5); font-size:0.78rem;">Update your store details and media</p>
+                                </div>
                                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                             </div>
-                            <div class="modal-body" style="max-height:75vh; overflow-y:auto;">
-                                <div class="position-relative mb-3" style="height:25vh; overflow:hidden; border-radius:10px;">
+                            <div class="modal-body p-4" style="background:#F6F6F4;">
+                                <!-- Current preview -->
+                                <div class="position-relative mb-4" style="height:160px; overflow:hidden; border-radius:12px;">
                                     <img th:if="${store != null and store.storebanner != null and store.storebanner != ''}"
                                          th:src="@{/uploads/stores/{img}(img=${store.storebanner})}"
                                          class="w-100 h-100" style="object-fit:cover;">
                                     <img th:unless="${store != null and store.storebanner != null and store.storebanner != ''}"
                                          th:src="@{/store/banner/banner.jpeg}"
                                          class="w-100 h-100" style="object-fit:cover;">
-                                    <div class="position-absolute bottom-0 start-0 mb-2 ms-2 bg-white rounded-circle border">
+                                    <div class="position-absolute bottom-0 start-0 mb-3 ms-3">
                                         <img th:if="${store != null and store.storelogo != null and store.storelogo != ''}"
                                              th:src="@{/uploads/stores/{img}(img=${store.storelogo})}"
-                                             class="rounded-circle" style="width:50px;height:50px;object-fit:cover;">
+                                             class="store-logo" style="border:3px solid #fff;">
                                         <img th:unless="${store != null and store.storelogo != null and store.storelogo != ''}"
                                              th:src="@{/store/logo/logo.jpeg}"
-                                             class="rounded-circle" style="width:50px;height:50px;object-fit:cover;">
+                                             class="store-logo" style="border:3px solid #fff;">
                                     </div>
                                 </div>
-                                <div class="d-flex flex-column flex-md-row gap-3 mb-3">
-                                    <div class="flex-fill">
-                                        <label class="form-label">Upload Logo</label>
-                                        <input type="file" class="form-control" name="storelogo" accept="image/*" required>
-                                    </div>
-                                    <div class="flex-fill">
-                                        <label class="form-label">Upload Banner</label>
-                                        <input type="file" class="form-control" name="storebanner" accept="image/*" required>
+
+                                <!-- Media uploads -->
+                                <div class="card border-0 mb-3" style="border-radius:12px; box-shadow:0 1px 6px rgba(0,0,0,.04);">
+                                    <div class="card-body p-3 p-md-4">
+                                        <h6 class="fw-bold mb-3" style="font-size:0.85rem; color:#8A8A93; text-transform:uppercase; letter-spacing:0.5px;">
+                                            <i class="bi bi-images me-1"></i> Media
+                                        </h6>
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label fw-medium" style="font-size:0.85rem;">Store Logo</label>
+                                                <div class="upload-area" onclick="this.querySelector('input').click()">
+                                                    <i class="bi bi-image" style="font-size:1.3rem; color:#8A8A93;"></i>
+                                                    <p class="mb-0 mt-1" style="font-size:0.78rem; color:#8A8A93;">Click to upload logo</p>
+                                                    <input type="file" class="d-none" name="storelogo" accept="image/*" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label fw-medium" style="font-size:0.85rem;">Store Banner</label>
+                                                <div class="upload-area" onclick="this.querySelector('input').click()">
+                                                    <i class="bi bi-card-image" style="font-size:1.3rem; color:#8A8A93;"></i>
+                                                    <p class="mb-0 mt-1" style="font-size:0.78rem; color:#8A8A93;">Click to upload banner</p>
+                                                    <input type="file" class="d-none" name="storebanner" accept="image/*" required>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="row g-2">
-                                    <div class="col-md-6">
-                                        <label class="form-label">Store Name</label>
-                                        <input class="form-control bg-light" name="name" th:value="${store != null ? store.name : ''}" readonly>
+
+                                <!-- Store details -->
+                                <div class="card border-0" style="border-radius:12px; box-shadow:0 1px 6px rgba(0,0,0,.04);">
+                                    <div class="card-body p-3 p-md-4">
+                                        <h6 class="fw-bold mb-3" style="font-size:0.85rem; color:#8A8A93; text-transform:uppercase; letter-spacing:0.5px;">
+                                            <i class="bi bi-info-circle me-1"></i> Store Details
+                                        </h6>
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label fw-medium" style="font-size:0.85rem;">Store Name</label>
+                                                <input class="form-control bg-light" name="name" th:value="${store != null ? store.name : ''}" readonly style="border-radius:10px;">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label fw-medium" style="font-size:0.85rem;">Email</label>
+                                                <input class="form-control bg-light" name="email" th:value="${store != null ? store.email : ''}" readonly style="border-radius:10px;">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label fw-medium" style="font-size:0.85rem;">Contact Number</label>
+                                                <input class="form-control bg-light" name="contactNumber" th:value="${store != null ? store.contactNumber : ''}" readonly style="border-radius:10px;">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label fw-medium" style="font-size:0.85rem;">WhatsApp Number</label>
+                                                <input class="form-control" name="whatsappNumber" th:value="${store != null ? store.whatsappNumber : ''}" required style="border-radius:10px;">
+                                            </div>
+                                            <div class="col-12">
+                                                <label class="form-label fw-medium" style="font-size:0.85rem;">Description</label>
+                                                <textarea name="description" class="form-control" rows="4"
+                                                          th:text="${store != null ? store.description : ''}" required style="border-radius:10px;"></textarea>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Email</label>
-                                        <input class="form-control bg-light" name="email" th:value="${store != null ? store.email : ''}" readonly>
+                                </div>
+
+                                <!-- Progress & Actions -->
+                                <div id="updateStoreProgress" class="mt-3" style="display:none;">
+                                    <div class="progress" style="height:6px; border-radius:3px;">
+                                        <div class="progress-bar progress-bar-striped progress-bar-animated" style="width:0%; background:#E8611D;"></div>
                                     </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Contact Number</label>
-                                        <input class="form-control bg-light" name="contactNumber" th:value="${store != null ? store.contactNumber : ''}" readonly>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">WhatsApp Number</label>
-                                        <input class="form-control" name="whatsappNumber" th:value="${store != null ? store.whatsappNumber : ''}" required>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Description</label>
-                                        <textarea name="description" class="form-control" rows="6"
-                                                  th:text="${store != null ? store.description : ''}" required></textarea>
-                                    </div>
-                                    <div class="col-md-6 d-flex flex-column justify-content-end align-items-end gap-2">
-                                        <button class="btn btn-primary w-50">Update Store</button>
-                                    </div>
+                                    <small class="text-muted" style="font-size:0.78rem;">Uploading and updating store...</small>
+                                </div>
+                                <div class="d-flex justify-content-end gap-2 mt-3">
+                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal" style="border-radius:10px; padding:8px 20px;">Cancel</button>
+                                    <button class="btn" id="updateStoreBtn" style="background:#0E0E11; color:#fff; border:none; border-radius:10px; padding:8px 24px;">
+                                        <i class="bi bi-check-circle me-1"></i>Update Store
+                                    </button>
                                 </div>
                             </div>
                         </form>
@@ -347,60 +549,93 @@
             <!-- Create Store Modal -->
             <div class="modal fade" id="createStoreModal" tabindex="-1">
                 <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-                    <div class="modal-content border-0 shadow-lg" style="border-radius:14px; overflow:hidden;">
-                        <div class="modal-header" style="background:linear-gradient(135deg,#0f0c29,#302b63); color:#fff;">
-                            <h5 class="modal-title"><i class="bi bi-plus-circle me-2"></i>Create Store</h5>
+                    <div class="modal-content border-0" style="border-radius:16px; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,.15);">
+                        <div class="modal-header px-4 py-3" style="background:linear-gradient(135deg,#0E0E11,#3A3A40); border-bottom:none;">
+                            <div>
+                                <h5 class="modal-title fw-bold mb-0" style="color:#fff; font-size:1.1rem;">
+                                    <i class="bi bi-plus-circle me-2" style="color:#E8611D;"></i>Create Store
+                                </h5>
+                                <p class="mb-0" style="color:rgba(255,255,255,.5); font-size:0.78rem;">Set up your store to start selling</p>
+                            </div>
                             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                         </div>
                         <form th:action="@{/store/create}" method="post" enctype="multipart/form-data">
-                            <div class="modal-body p-4">
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label">Store Name</label>
-                                        <input type="text" class="form-control" name="name" required>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label">Email</label>
-                                        <input type="email" class="form-control" name="email" required>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label">Contact Number</label>
-                                        <input type="text" class="form-control" name="contactNumber" required>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label">WhatsApp Number</label>
-                                        <input type="text" class="form-control" name="whatsappNumber" required>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label">Store Logo</label>
-                                        <input type="file" class="form-control" name="logoFile" accept="image/*" required>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label">Store Banner</label>
-                                        <input type="file" class="form-control" name="bannerFile" accept="image/*" required>
-                                    </div>
-                                    <div class="col-12 mb-3">
-                                        <label class="form-label">Description</label>
-                                        <textarea class="form-control" name="description" rows="3" required></textarea>
+                            <div class="modal-body p-4" style="background:#F6F6F4;">
+
+                                <!-- Store Details -->
+                                <div class="card border-0 mb-3" style="border-radius:12px; box-shadow:0 1px 6px rgba(0,0,0,.04);">
+                                    <div class="card-body p-3 p-md-4">
+                                        <h6 class="fw-bold mb-3" style="font-size:0.85rem; color:#8A8A93; text-transform:uppercase; letter-spacing:0.5px;">
+                                            <i class="bi bi-info-circle me-1"></i> Store Details
+                                        </h6>
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label fw-medium" style="font-size:0.85rem;">Store Name</label>
+                                                <input type="text" class="form-control" name="name" required style="border-radius:10px;">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label fw-medium" style="font-size:0.85rem;">Email</label>
+                                                <input type="email" class="form-control" name="email" required style="border-radius:10px;">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label fw-medium" style="font-size:0.85rem;">Contact Number</label>
+                                                <input type="text" class="form-control" name="contactNumber" required style="border-radius:10px;">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label fw-medium" style="font-size:0.85rem;">WhatsApp Number</label>
+                                                <input type="text" class="form-control" name="whatsappNumber" required style="border-radius:10px;">
+                                            </div>
+                                            <div class="col-12">
+                                                <label class="form-label fw-medium" style="font-size:0.85rem;">Description</label>
+                                                <textarea class="form-control" name="description" rows="3" required style="border-radius:10px;"></textarea>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="modal-footer border-top-0">
-                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                                <button type="submit" class="btn btn-success">
-                                    <i class="bi bi-check-circle me-1"></i>Save Store
-                                </button>
+
+                                <!-- Media -->
+                                <div class="card border-0" style="border-radius:12px; box-shadow:0 1px 6px rgba(0,0,0,.04);">
+                                    <div class="card-body p-3 p-md-4">
+                                        <h6 class="fw-bold mb-3" style="font-size:0.85rem; color:#8A8A93; text-transform:uppercase; letter-spacing:0.5px;">
+                                            <i class="bi bi-images me-1"></i> Media
+                                        </h6>
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label fw-medium" style="font-size:0.85rem;">Store Logo</label>
+                                                <div class="upload-area" onclick="this.querySelector('input').click()">
+                                                    <i class="bi bi-image" style="font-size:1.3rem; color:#8A8A93;"></i>
+                                                    <p class="mb-0 mt-1" style="font-size:0.78rem; color:#8A8A93;">Click to upload logo</p>
+                                                    <input type="file" class="d-none" name="logoFile" accept="image/*" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label fw-medium" style="font-size:0.85rem;">Store Banner</label>
+                                                <div class="upload-area" onclick="this.querySelector('input').click()">
+                                                    <i class="bi bi-card-image" style="font-size:1.3rem; color:#8A8A93;"></i>
+                                                    <p class="mb-0 mt-1" style="font-size:0.78rem; color:#8A8A93;">Click to upload banner</p>
+                                                    <input type="file" class="d-none" name="bannerFile" accept="image/*" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Progress & Actions -->
+                                <div id="createStoreProgress" class="mt-3" style="display:none;">
+                                    <div class="progress" style="height:6px; border-radius:3px;">
+                                        <div class="progress-bar progress-bar-striped progress-bar-animated" style="width:0%; background:#0F7A4E;"></div>
+                                    </div>
+                                    <small class="text-muted" style="font-size:0.78rem;">Uploading and saving store...</small>
+                                </div>
+                                <div class="d-flex justify-content-end gap-2 mt-3">
+                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal" style="border-radius:10px; padding:8px 20px;">Cancel</button>
+                                    <button type="submit" class="btn" id="createStoreBtn" style="background:#0E0E11; color:#fff; border:none; border-radius:10px; padding:8px 24px;">
+                                        <i class="bi bi-check-circle me-1"></i>Create Store
+                                    </button>
+                                </div>
                             </div>
                         </form>
                     </div>
-                </div>
-            </div>
-
-            <!-- Products Overview Chart -->
-            <div class="card dash-card mb-4">
-                <div class="card-body">
-                    <h6 class="fw-semibold mb-3"><i class="bi bi-box-seam me-2 text-warning"></i>Products by Category</h6>
-                    <canvas id="productuserChart"></canvas>
                 </div>
             </div>
 
@@ -418,13 +653,19 @@
                         datasets: [{
                             label: 'Products',
                             data: values,
-                            backgroundColor: 'rgba(48,43,99,.7)',
-                            borderRadius: 6
+                            backgroundColor: 'rgba(232,97,29,.75)',
+                            borderRadius: 8,
+                            borderSkipped: false,
+                            barThickness: 32,
+                            maxBarThickness: 40
                         }]
                     },
                     options: {
                         responsive: true,
-                        scales: { y: { beginAtZero: true, ticks: { precision: 0 } } },
+                        scales: {
+                            y: { beginAtZero: true, ticks: { precision: 0, font: { size: 12 } }, grid: { color: 'rgba(0,0,0,.04)' } },
+                            x: { ticks: { font: { size: 12 } }, grid: { display: false } }
+                        },
                         plugins: { legend: { display: false } }
                     }
                 });
@@ -435,6 +676,35 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+function handleFormProgress(form, progressId, btnId) {
+    form.addEventListener('submit', function(e) {
+        if (!form.checkValidity()) return;
+        var btn = document.getElementById(btnId);
+        var progress = document.getElementById(progressId);
+        var bar = progress.querySelector('.progress-bar');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Saving...';
+        progress.style.display = 'block';
+        var width = 0;
+        var interval = setInterval(function() {
+            if (width < 90) {
+                width += Math.random() * 15;
+                if (width > 90) width = 90;
+                bar.style.width = width + '%';
+            }
+        }, 300);
+        form.dataset.interval = interval;
+    });
+}
+
+var createForm = document.querySelector('#createStoreModal form');
+if (createForm) handleFormProgress(createForm, 'createStoreProgress', 'createStoreBtn');
+
+var updateForm = document.querySelector('#editStoreModal form');
+if (updateForm) handleFormProgress(updateForm, 'updateStoreProgress', 'updateStoreBtn');
+</script>
 
 </body>
 </html>

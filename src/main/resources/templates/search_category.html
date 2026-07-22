@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <link rel="icon" type="image/png" th:href="@{/favicon.png}">
+    <link rel="icon" type="image/png" th:href="@{'/uploads/favicon/' + ${siteSettings.siteFavicon}}">
 
     <title th:text="${categoryName} + ' Products | Black Space Store'">Category Products</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -167,7 +167,7 @@
 
     .icon-box i {
         font-size: 2rem;
-        color: #0d6efd;
+        color: #E8611D;
     }
 </style>
 
@@ -197,9 +197,9 @@
 
 /* Button emphasis on hover */
 .product-card:hover .btn {
-    background-color: #0d6efd;
+    background-color: #E8611D;
     color: #fff;
-    border-color: #0d6efd;
+    border-color: #E8611D;
 }
 
 </style>

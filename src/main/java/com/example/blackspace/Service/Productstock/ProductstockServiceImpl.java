@@ -34,7 +34,7 @@ public class ProductstockServiceImpl implements ProductstockService {
 
     @Override
     public List<Productstock> getAllProductstock() {
-        return productsRepository.findAll();
+        return productsRepository.findAllByOrderByCreatedAtDesc();
     }
 
 
@@ -176,7 +176,7 @@ public class ProductstockServiceImpl implements ProductstockService {
 
     @Override
     public List<Productstock> getProductsByUsername(String username) {
-        return productsRepository.findByUsername(username);
+        return productsRepository.findByUsernameOrderByCreatedAtDesc(username);
     }
 
 
@@ -201,12 +201,12 @@ public class ProductstockServiceImpl implements ProductstockService {
 
     @Override
     public List<Productstock> getAllProducts() {
-        return productsRepository.findAll();
+        return productsRepository.findAllByOrderByCreatedAtDesc();
     }
 
     @Override
     public List<Productstock> getProductsFromActiveStores() {
-        return productsRepository.findAllByActiveStore();
+        return productsRepository.findAllByActiveStoreOrderByCreatedAtDesc();
     }
 
     @Override

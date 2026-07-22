@@ -20,7 +20,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public List<Payment> getAllPayments() {
-        return paymentRepository.findAll();
+        return paymentRepository.findAllByOrderByCreatedtimeDesc();
     }
 
     @Override
@@ -48,7 +48,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public List<Payment> getPaymentsByUsername(String username) {
-        return paymentRepository.findByUsername(username);
+        return paymentRepository.findByUsernameOrderByCreatedtimeDesc(username);
     }
 
 

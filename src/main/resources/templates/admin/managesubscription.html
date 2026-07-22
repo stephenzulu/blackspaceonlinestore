@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Store | BlackSpace</title>
-    <link rel="icon" type="image/png" th:href="@{/favicon.png}">
+    <link rel="icon" type="image/png" th:href="@{'/uploads/favicon/' + ${siteSettings.siteFavicon}}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Bootstrap 5 -->
@@ -12,10 +12,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
     <style>
-        html, body { height: 100%; overflow: hidden; background: #f0f2f5; }
+        html, body { height: 100%; overflow: hidden; background: #F6F6F4; }
         .sidebar { width: 250px; height: 100vh; position: sticky; top: 0; flex-shrink: 0; overflow-y: auto; }
         .main-content { flex: 1; overflow-y: auto; height: 100vh; }
-        .page-header { background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); border-radius: 14px; padding: 20px 24px; color: #fff; margin-bottom: 20px; }
+        .page-header { background: linear-gradient(135deg, #0E0E11, #3A3A40); border-radius: 14px; padding: 20px 24px; color: #fff; margin-bottom: 20px; }
         .page-header h4 { margin: 0; font-weight: 700; }
         .page-header p { margin: 4px 0 0; color: rgba(255,255,255,.7); font-size: 0.85rem; }
         .content-card { border: none; border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,.06); }
@@ -42,8 +42,8 @@
             </div>
 
             <div class="d-flex justify-content-between align-items-center mb-3">
-        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addSubscriptionModal">
-            <i class="bi bi-plus-circle"></i> Add Subscription
+        <button class="btn" style="background:#0E0E11; color:#fff; border:none; border-radius:10px; padding:8px 18px; font-size:0.88rem;" data-bs-toggle="modal" data-bs-target="#addSubscriptionModal">
+            <i class="bi bi-plus-circle me-1"></i> Add Subscription
         </button>
         <div id="customSearch"></div>
     </div>
@@ -70,7 +70,7 @@
             <td th:text="${m.durationtime}"></td>
             <td th:text="${m.numberofproducts}"></td>
             <td>
-                <button class="btn btn-secondary btn-sm"
+                <button class="btn btn-outline-warning btn-sm" style="border-radius:8px; width:34px; height:34px; padding:0; display:inline-flex; align-items:center; justify-content:center;"
                         th:attr="
             data-id=${m.id},
             data-name=${m.name},
@@ -85,7 +85,7 @@
 
 
                 <a th:href="@{/admin/subscription/delete/{id}(id=${m.id})}"
-                   class="btn btn-danger btn-sm"
+                   class="btn btn-outline-danger btn-sm" style="border-radius:8px; width:34px; height:34px; padding:0; display:inline-flex; align-items:center; justify-content:center;"
                    onclick="return confirm('Delete this subscription?')">
                     <i class="bi bi-trash"></i>
                 </a>
@@ -104,29 +104,52 @@
 <!-- ================= ADD MODAL ================= -->
 <div class="modal fade" id="addSubscriptionModal">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
+        <div class="modal-content border-0" style="border-radius:16px; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,.15);">
 
             <form th:action="@{/admin/subscription/add}" method="post">
-                <div class="modal-header">
-                    <h5>Add Subscription</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <div class="modal-header px-4 py-3" style="background:linear-gradient(135deg,#0E0E11,#3A3A40); border-bottom:none;">
+                    <div>
+                        <h5 class="modal-title fw-bold mb-0" style="color:#fff; font-size:1.1rem;">
+                            <i class="bi bi-credit-card me-2" style="color:#E8611D;"></i>Add Subscription
+                        </h5>
+                        <p class="mb-0" style="color:rgba(255,255,255,.5); font-size:0.78rem;">Create a new subscription plan</p>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
 
-                <div class="modal-body">
-                    <label> Name</label>
-                    <input type="text" name="name" class="form-control mb-2" placeholder="Name" required>
-                    <label> Duration (Days)</label>
-                    <input type="text" name="durationtime" class="form-control mb-2" placeholder="Duration" required>
-                    <label> Number of Products</label>
-                    <input type="text" name="numberofproducts" class="form-control mb-2" placeholder="Number of Products" required>
-                    <label> Amount</label>
-                    <input type="text" name="amount" class="form-control mb-2" placeholder="Amount">
-                    <label> Description</label>
-                    <textarea name="description" class="form-control" placeholder="Description"></textarea>
+                <div class="modal-body p-4" style="background:#F6F6F4;">
+                    <div class="bg-white rounded-3 p-3" style="border-radius:14px;">
+                        <h6 class="fw-semibold mb-3" style="font-size:0.9rem;">Subscription Details</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label" style="font-size:0.85rem;">Name</label>
+                                <input type="text" name="name" class="form-control" style="border-radius:10px;" placeholder="Name" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" style="font-size:0.85rem;">Duration (Days)</label>
+                                <input type="text" name="durationtime" class="form-control" style="border-radius:10px;" placeholder="Duration" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" style="font-size:0.85rem;">Number of Products</label>
+                                <input type="text" name="numberofproducts" class="form-control" style="border-radius:10px;" placeholder="Number of Products" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" style="font-size:0.85rem;">Amount</label>
+                                <input type="text" name="amount" class="form-control" style="border-radius:10px;" placeholder="Amount">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label" style="font-size:0.85rem;">Description</label>
+                                <textarea name="description" class="form-control" style="border-radius:10px;" placeholder="Description"></textarea>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="modal-footer">
-                    <button class="btn btn-primary">Save</button>
+                <div class="modal-footer" style="background:#F6F6F4; border-top:none;">
+                    <div class="d-flex justify-content-end gap-2">
+                        <button type="button" class="btn btn-light" style="border-radius:10px; padding:8px 20px;" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn" style="background:#0E0E11; color:#fff; border:none; border-radius:10px; padding:8px 24px;">Save</button>
+                    </div>
                 </div>
             </form>
 
@@ -137,31 +160,54 @@
 <!-- ================= EDIT MODAL ================= -->
 <div class="modal fade" id="editsubscriptionModal">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
+        <div class="modal-content border-0" style="border-radius:16px; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,.15);">
 
             <form th:action="@{/admin/subscription/update}" method="post">
                 <input type="hidden" name="id" id="editId">
 
-                <div class="modal-header">
-                    <h5>Edit Subscription</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <div class="modal-header px-4 py-3" style="background:linear-gradient(135deg,#0E0E11,#3A3A40); border-bottom:none;">
+                    <div>
+                        <h5 class="modal-title fw-bold mb-0" style="color:#fff; font-size:1.1rem;">
+                            <i class="bi bi-pencil me-2" style="color:#E8611D;"></i>Edit Subscription
+                        </h5>
+                        <p class="mb-0" style="color:rgba(255,255,255,.5); font-size:0.78rem;">Update subscription plan details</p>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
 
-                <div class="modal-body">
-                    <label> Name</label>
-                    <input id="editName" name="name" class="form-control mb-2" required>
-                    <label> Duration (Days)</label>
-                    <input id="editdurationtime" name="durationtime" class="form-control mb-2" required>
-                    <label> Number of Products</label>
-                    <input id="editnumberofproducts" name="numberofproducts" class="form-control mb-2" required>
-                    <label> Amount</label>
-                    <input id="editAmount" name="amount" class="form-control mb-2">
-                    <label> Description</label>
-                    <textarea id="editDescription" name="description" class="form-control"></textarea>
+                <div class="modal-body p-4" style="background:#F6F6F4;">
+                    <div class="bg-white rounded-3 p-3" style="border-radius:14px;">
+                        <h6 class="fw-semibold mb-3" style="font-size:0.9rem;">Subscription Details</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label" style="font-size:0.85rem;">Name</label>
+                                <input id="editName" name="name" class="form-control" style="border-radius:10px;" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" style="font-size:0.85rem;">Duration (Days)</label>
+                                <input id="editdurationtime" name="durationtime" class="form-control" style="border-radius:10px;" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" style="font-size:0.85rem;">Number of Products</label>
+                                <input id="editnumberofproducts" name="numberofproducts" class="form-control" style="border-radius:10px;" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" style="font-size:0.85rem;">Amount</label>
+                                <input id="editAmount" name="amount" class="form-control" style="border-radius:10px;">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label" style="font-size:0.85rem;">Description</label>
+                                <textarea id="editDescription" name="description" class="form-control" style="border-radius:10px;"></textarea>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="modal-footer">
-                    <button class="btn btn-success">Update</button>
+                <div class="modal-footer" style="background:#F6F6F4; border-top:none;">
+                    <div class="d-flex justify-content-end gap-2">
+                        <button type="button" class="btn btn-light" style="border-radius:10px; padding:8px 20px;" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn" style="background:#0E0E11; color:#fff; border:none; border-radius:10px; padding:8px 24px;">Update</button>
+                    </div>
                 </div>
             </form>
 

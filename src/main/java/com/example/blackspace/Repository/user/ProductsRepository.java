@@ -17,6 +17,8 @@ public interface ProductsRepository extends JpaRepository<Productstock, Long> {
 
     List<Productstock> findByUsername(String username);
 
+    List<Productstock> findByUsernameOrderByCreatedAtDesc(String username);
+
     long countByUsername(String username);
 
 
@@ -33,6 +35,11 @@ public interface ProductsRepository extends JpaRepository<Productstock, Long> {
 
     @Query("SELECT p FROM Productstock p WHERE p.username IN (SELECT s.username FROM Store s WHERE s.active = true)")
     List<Productstock> findAllByActiveStore();
+
+    List<Productstock> findAllByOrderByCreatedAtDesc();
+
+    @Query("SELECT p FROM Productstock p WHERE p.username IN (SELECT s.username FROM Store s WHERE s.active = true) ORDER BY p.createdAt DESC")
+    List<Productstock> findAllByActiveStoreOrderByCreatedAtDesc();
 
 
 

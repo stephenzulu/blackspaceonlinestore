@@ -11,13 +11,13 @@ public class SiteSettings {
     private Long id;
 
     @Column(name = "primary_color")
-    private String primaryColor = "#302b63";
+    private String primaryColor = "#0E0E11";
 
     @Column(name = "secondary_color")
-    private String secondaryColor = "#24243e";
+    private String secondaryColor = "#3A3A40";
 
     @Column(name = "accent_color")
-    private String accentColor = "#0d6efd";
+    private String accentColor = "#E8611D";
 
     @Column(name = "font_family")
     private String fontFamily = "Arial, sans-serif";

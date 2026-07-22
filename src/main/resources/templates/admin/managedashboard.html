@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Admin Dashboard | BlackSpace</title>
-    <link rel="icon" type="image/png" th:href="@{/favicon.png}">
+    <link rel="icon" type="image/png" th:href="@{'/uploads/favicon/' + ${siteSettings.siteFavicon}}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Bootstrap 5 -->
@@ -12,10 +12,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
     <style>
-        html, body { height: 100%; overflow: hidden; background: #f0f2f5; }
+        html, body { height: 100%; overflow: hidden; background: #F6F6F4; }
         .sidebar { width: 250px; height: 100vh; position: sticky; top: 0; flex-shrink: 0; overflow-y: auto; }
         .sidebar .nav-link { color: #333; font-weight: 500; }
-        .sidebar .nav-link.active, .sidebar .nav-link:hover { background-color: #f0f4ff; color: #0d6efd; }
+        .sidebar .nav-link.active, .sidebar .nav-link:hover { background-color: #FBEDE6; color: #E8611D; }
         @media (max-width: 991px) { .sidebar { display: none; } }
         .main-content { flex: 1; overflow-y: auto; height: 100vh; }
 
@@ -39,7 +39,7 @@
 
         /* Profile card */
         .profile-header {
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            background: linear-gradient(135deg, #0E0E11, #3A3A40);
             border-radius: 14px 14px 0 0;
             padding: 24px;
             color: #fff;
@@ -53,11 +53,11 @@
         }
 
         /* Dark mode */
-        body.dark-mode { background: #1a1a2e; }
-        body.dark-mode .sidebar { background-color: #0f3460; border-right-color: #1a1a2e; }
+        body.dark-mode { background: #0E0E11; }
+        body.dark-mode .sidebar { background-color: #3A3A40; border-right-color: #0E0E11; }
         body.dark-mode .sidebar .nav-link { color: #e0e0e0; }
-        body.dark-mode .sidebar .nav-link.active, body.dark-mode .sidebar .nav-link:hover { background-color: #1a1a2e; color: #0d6efd; }
-        body.dark-mode .chart-card, body.dark-mode .card { background: #16213e; color: #e0e0e0; }
+        body.dark-mode .sidebar .nav-link.active, body.dark-mode .sidebar .nav-link:hover { background-color: #0E0E11; color: #E8611D; }
+        body.dark-mode .chart-card, body.dark-mode .card { background: #1a1a1e; color: #e0e0e0; }
         body.dark-mode .table { color: #e0e0e0; }
     </style>
 </head>
@@ -95,7 +95,7 @@
             <!-- Stat Cards Row -->
             <div class="row g-3 mb-4">
                 <div class="col-6 col-md-3">
-                    <div class="stat-card" style="background: linear-gradient(135deg, #0f0c29, #302b63);">
+                    <div class="stat-card" style="background: linear-gradient(135deg, #0E0E11, #3A3A40);">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
                                 <div class="stat-value" th:text="${productCount}">0</div>
@@ -106,7 +106,7 @@
                     </div>
                 </div>
                 <div class="col-6 col-md-3">
-                    <div class="stat-card" style="background: linear-gradient(135deg, #302b63, #24243e);">
+                    <div class="stat-card" style="background: linear-gradient(135deg, #3A3A40, #0E0E11);">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
                                 <div class="stat-value" th:text="${storeCount}">0</div>
@@ -117,7 +117,7 @@
                     </div>
                 </div>
                 <div class="col-6 col-md-3">
-                    <div class="stat-card" style="background: linear-gradient(135deg, #24243e, #302b63);">
+                    <div class="stat-card" style="background: linear-gradient(135deg, #0E0E11, #3A3A40);">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
                                 <div class="stat-value" th:text="${userCount}">0</div>
@@ -128,7 +128,7 @@
                     </div>
                 </div>
                 <div class="col-6 col-md-3">
-                    <div class="stat-card" style="background: linear-gradient(135deg, #302b63, #0f0c29);">
+                    <div class="stat-card" style="background: linear-gradient(135deg, #3A3A40, #0E0E11);">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
                                 <div class="stat-value" th:text="${#lists.size(categoryLabels)}">0</div>
@@ -277,7 +277,7 @@
                     </div>
                     <div class="table-responsive" id="visitsTableContainer">
                         <table class="table table-sm table-hover mb-0" style="font-size:0.85rem;" id="visitsTable">
-                            <thead style="background:rgba(48,43,99,.06);">
+                            <thead style="background:rgba(58,58,64,.06);">
                                 <tr>
                                     <th>#</th>
                                     <th>Page</th>
@@ -291,7 +291,7 @@
                                 <tr th:each="v, stat : ${recentVisits}" class="visit-row" th:data-date="${v.date}">
                                     <td class="text-muted" th:text="${stat.index + 1}"></td>
                                     <td>
-                                        <i class="bi bi-file-earmark me-1" style="color:#302b63;"></i>
+                                        <i class="bi bi-file-earmark me-1" style="color:#3A3A40;"></i>
                                         <span th:text="${v.page}"></span>
                                     </td>
                                     <td>
@@ -332,11 +332,11 @@
                         datasets: [{
                             label: 'Visits',
                             data: visitCounts,
-                            borderColor: '#302b63',
-                            backgroundColor: 'rgba(48,43,99,.15)',
+                            borderColor: '#3A3A40',
+                            backgroundColor: 'rgba(58,58,64,.15)',
                             fill: true,
                             tension: 0.4,
-                            pointBackgroundColor: '#302b63',
+                            pointBackgroundColor: '#3A3A40',
                             pointRadius: 4
                         }]
                     },
@@ -350,7 +350,7 @@
                 // Browser Doughnut Chart
                 var browserLabels = [[${browserLabels}]];
                 var browserValues = [[${browserValues}]];
-                var browserColors = ['#302b63','#667eea','#764ba2','#fc5c7d','#6a82fb','#f093fb','#24243e'];
+                var browserColors = ['#3A3A40','#667eea','#764ba2','#fc5c7d','#6a82fb','#f093fb','#0E0E11'];
 
                 new Chart(document.getElementById('browserChart').getContext('2d'), {
                     type: 'doughnut',
@@ -372,7 +372,7 @@
                 // Device Doughnut Chart
                 var deviceLabels = [[${deviceLabels}]];
                 var deviceValues = [[${deviceValues}]];
-                var deviceColors = ['#302b63','#11998e','#fc5c7d','#f5576c'];
+                var deviceColors = ['#3A3A40','#11998e','#fc5c7d','#f5576c'];
 
                 new Chart(document.getElementById('deviceChart').getContext('2d'), {
                     type: 'doughnut',
@@ -402,7 +402,7 @@
                         datasets: [{
                             label: 'Products',
                             data: values,
-                            backgroundColor: 'rgba(48,43,99,.7)',
+                            backgroundColor: 'rgba(232,97,29,.7)',
                             borderRadius: 6
                         }]
                     },
@@ -484,7 +484,7 @@
         window.printVisitsTable = function() {
             var visible = getFilteredRows();
             var html = '<table border="1" cellpadding="8" cellspacing="0" style="width:100%;border-collapse:collapse;font-family:Arial;font-size:12px;">';
-            html += '<thead><tr style="background:#302b63;color:#fff;">';
+            html += '<thead><tr style="background:#3A3A40;color:#fff;">';
             html += '<th>#</th><th>Page</th><th>Browser</th><th>Device</th><th>IP</th><th>Date</th>';
             html += '</tr></thead><tbody>';
             visible.forEach(function(row, i) {
@@ -502,11 +502,11 @@
             win.document.write('<!DOCTYPE html><html><head><title>Page Visits Report - BlackSpace</title>');
             win.document.write('<style>body{margin:0;font-family:Arial;} @media print{.no-print{display:none !important;} body{-webkit-print-color-adjust:exact;print-color-adjust:exact;}}</style>');
             win.document.write('</head><body>');
-            win.document.write('<div style="text-align:center;padding:20px;background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);">');
+            win.document.write('<div style="text-align:center;padding:20px;background:linear-gradient(135deg,#0E0E11,#3A3A40);">');
             win.document.write('<h2 style="color:#fff;margin:0;">BlackSpace Online Store</h2>');
             win.document.write('<p style="color:rgba(255,255,255,.6);margin:4px 0 0;">Page Visits Report</p></div>');
             win.document.write('<div style="padding:20px;">' + html + '</div>');
-            win.document.write('<div class="no-print" style="text-align:center;padding:10px;"><button onclick="window.print()" style="padding:8px 24px;background:#302b63;color:#fff;border:none;border-radius:8px;cursor:pointer;">Print</button></div>');
+            win.document.write('<div class="no-print" style="text-align:center;padding:10px;"><button onclick="window.print()" style="padding:8px 24px;background:#3A3A40;color:#fff;border:none;border-radius:8px;cursor:pointer;">Print</button></div>');
             win.document.write('</body></html>');
             win.document.close();
         };

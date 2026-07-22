@@ -2,22 +2,22 @@
 <!-- FOOTER -->
 <div th:fragment="footer" xmlns:th="http://www.w3.org/1999/xhtml" class="d-none d-md-block">
 
-<footer class="text-white pt-5 pb-3"
-        th:style="'background: linear-gradient(135deg,' + ${siteSettings.primaryColor} + ',' + ${siteSettings.secondaryColor} + ');'">
+<footer id="site-footer" class="text-white pt-5 pb-3"
+        style="background: #0E0E11;">
     <div class="container">
         <div class="row text-center text-md-start">
 
             <!-- About -->
             <div class="col-md-3 mb-4">
-                <h5 class="text-uppercase mb-3" style="letter-spacing:1px;"><i class="bi bi-shop me-2"></i>Black Space Store</h5>
-                <p class="small" style="color:rgba(255,255,255,.7);">
+                <h5 class="text-uppercase mb-3" style="letter-spacing:1px; color:#fff !important;"><i class="bi bi-shop me-2"></i>Black Space Store</h5>
+                <p class="small" style="color:#fff !important;">
                     <i class="bi bi-info-circle me-1"></i>A modern marketplace connecting stores and customers with ease and security.
                 </p>
             </div>
 
             <!-- Quick Links -->
             <div class="col-md-3 mb-4">
-                <h5 class="text-uppercase mb-3" style="letter-spacing:1px;"><i class="bi bi-link-45deg me-2"></i>Quick Links</h5>
+                <h5 class="text-uppercase mb-3" style="letter-spacing:1px; color:#fff !important;"><i class="bi bi-link-45deg me-2"></i>Quick Links</h5>
                 <ul class="list-unstyled">
                     <li class="mb-2"><a href="/" class="text-decoration-none footer-link"><i class="bi bi-house-door me-1"></i>Home</a></li>
                     <li class="mb-2"><a href="/stores" class="text-decoration-none footer-link"><i class="bi bi-shop-window me-1"></i>Stores</a></li>
@@ -27,7 +27,7 @@
 
             <!-- Social Media -->
             <div class="col-md-3 mb-4 text-center">
-                <h5 class="text-uppercase mb-3" style="letter-spacing:1px;"><i class="bi bi-people me-2"></i>Follow Us</h5>
+                <h5 class="text-uppercase mb-3" style="letter-spacing:1px; color:#fff !important;"><i class="bi bi-people me-2"></i>Follow Us</h5>
                 <div class="d-flex justify-content-center gap-3">
                     <a href="https://web.facebook.com/Blackspaceonlinestore" class="social-icon">
                         <i class="bi bi-facebook"></i>
@@ -46,16 +46,16 @@
 
             <!-- Contact -->
             <div class="col-md-3 mb-4">
-                <h5 class="text-uppercase mb-3" style="letter-spacing:1px;"><i class="bi bi-headset me-2"></i>Contact</h5>
-                <p class="mb-2" style="color:rgba(255,255,255,.7);">
-                    <i class="bi bi-geo-alt-fill me-2 text-info"></i>Lusaka, Zambia
+                <h5 class="text-uppercase mb-3" style="letter-spacing:1px; color:#fff !important;"><i class="bi bi-headset me-2"></i>Contact</h5>
+                <p class="mb-2" style="color:#fff !important;">
+                    <i class="bi bi-geo-alt-fill me-2" style="color:#fff !important;"></i>Lusaka, Zambia
                 </p>
-                <p class="mb-2" style="color:rgba(255,255,255,.7);">
-                    <i class="bi bi-telephone-fill me-2 text-success"></i>
+                <p class="mb-2" style="color:#fff !important;">
+                    <i class="bi bi-telephone-fill me-2" style="color:#fff !important;"></i>
                     <a href="tel:+260960847099" class="text-decoration-none footer-link">+260 960 847 099</a>
                 </p>
-                <p class="mb-0" style="color:rgba(255,255,255,.7);">
-                    <i class="bi bi-envelope-fill me-2 text-warning"></i>
+                <p class="mb-0" style="color:#fff !important;">
+                    <i class="bi bi-envelope-fill me-2" style="color:#fff !important;"></i>
                     <a href="mailto:blackspaceonlinestore9@gmail.com" class="text-decoration-none footer-link">infor@blackspaceonline.com</a>
                 </p>
             </div>
@@ -64,22 +64,24 @@
 
         <hr style="border-color: rgba(255,255,255,.15);">
 
-        <div class="text-center small" style="color:rgba(255,255,255,.5);">
+        <div class="text-center" style="color:#fff !important; font-size:13px; font-weight:400;">
             <i class="bi bi-c-circle me-1"></i> 2025 Black Space Store. All rights reserved.
         </div>
     </div>
 </footer>
 
 <style>
-    .footer-link { color: rgba(255,255,255,.7); transition: color 0.2s, padding-left 0.2s; }
-    .footer-link:hover { color: #fff; padding-left: 4px; }
+    footer#site-footer, footer#site-footer *, #site-footer h1, #site-footer h2, #site-footer h3, #site-footer h4, #site-footer h5, #site-footer h6, #site-footer p, #site-footer a, #site-footer a:hover, #site-footer a:visited, #site-footer i, #site-footer span, #site-footer li, #site-footer small, #site-footer div { color: #fff !important; }
+    .footer-link { color: #fff !important; transition: padding-left 0.2s; font-size: 14px; font-weight: 400; }
+    .footer-link:hover { padding-left: 4px; color: #fff !important; }
     .social-icon {
         display: inline-flex; align-items: center; justify-content: center;
         width: 42px; height: 42px; border-radius: 50%;
-        background: rgba(255,255,255,.1); color: #fff; font-size: 1.2rem;
+        background: rgba(255,255,255,.1); color: #fff !important; font-size: 1.2rem;
         transition: background 0.3s, transform 0.3s;
     }
-    .social-icon:hover { background: #0d6efd; color: #fff; transform: translateY(-3px); }
+    .social-icon:hover { background: #E8611D; color: #fff !important; transform: translateY(-3px); }
+    .social-icon i { color: #fff !important; }
 </style>
 
 </div>

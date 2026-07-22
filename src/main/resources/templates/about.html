@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" th:href="@{/favicon.png}">
+    <link rel="icon" type="image/png" th:href="@{'/uploads/favicon/' + ${siteSettings.siteFavicon}}">
 
     <title>About Us | Black Space Store</title>
 
@@ -22,7 +22,7 @@
 <section class="about-hero">
     <div class="container">
         <h1 class="fw-bold"><i class="bi bi-info-circle me-2"></i>About Black Space Store</h1>
-        <p class="lead mt-2" style="color:rgba(255,255,255,.8);">
+        <p class="lead mt-2" style="color:#fff;">
             Connecting buyers with trusted local sellers
         </p>
     </div>
@@ -68,7 +68,7 @@
 </section>
 
 <!-- MISSION / VISION -->
-<section class="py-5" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
+<section class="py-5" style="background: linear-gradient(135deg, #F6F6F4, #E7E7EA);">
     <div class="container">
         <div class="row text-center g-4">
 
@@ -109,7 +109,7 @@
 </section>
 
 <!-- WHY CHOOSE US -->
-<section class="py-5" style="background: linear-gradient(180deg, #fff, #f0f4ff);">
+<section class="py-5" style="background: linear-gradient(180deg, #FFFFFF, #F6F6F4);">
     <div class="container">
         <h3 class="text-center fw-bold mb-4">Why Choose Black Space Store?</h3>
 
@@ -159,7 +159,7 @@
 
 
 <!-- CONTACT US -->
-<section class="py-5" style="background: linear-gradient(135deg, #e0eafc, #cfdef3);">
+<section class="py-5" style="background: linear-gradient(135deg, #E6F2EC, #FBEDE6);">
     <div class="container">
         <div class="row justify-content-center text-center">
 
@@ -200,7 +200,7 @@
 <style>
 
     .about-hero {
-        background: linear-gradient(135deg, rgba(15,12,41,.8), rgba(48,43,99,.8)),
+        background: linear-gradient(135deg, rgba(14,14,17,.85), rgba(58,58,64,.8)),
                     url('/store/banner/store_banner.png') center/cover no-repeat;
         color: white;
         padding: 80px 0;
@@ -209,12 +209,12 @@
 
     .icon-box i {
         font-size: 2.5rem;
-        color: #0d6efd;
+        color: #E8611D;
     }
 
     .icon-box {
         width: 70px; height: 70px; border-radius: 50%;
-        background: rgba(13,110,253,.1);
+        background: rgba(232,97,29,.1);
         display: inline-flex; align-items: center; justify-content: center;
     }
 </style>

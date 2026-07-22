@@ -32,15 +32,15 @@ public class CustomLogoutHandler implements LogoutSuccessHandler {
             if (user != null) {
                 String html = buildBrandedEmail(
                     "You've been logged out",
-                    "<p style='font-size:16px;color:#333;'>Your <strong>BlackSpace Online Store</strong> session has ended.</p>"
-                    + "<p style='color:#666;font-size:14px;'>You have been successfully logged out of your account. "
+                    "<p style='font-size:16px;color:#3A3A40;'>Your <strong>BlackSpace Online Store</strong> session has ended.</p>"
+                    + "<p style='color:#8A8A93;font-size:14px;'>You have been successfully logged out of your account. "
                     + "Your session data has been cleared for security.</p>"
                     + "<div style='text-align:center;margin:20px 0;'>"
                     + "<a href='http://localhost:8090/login' style='display:inline-block;padding:12px 30px;"
-                    + "background:linear-gradient(135deg,#302b63,#24243e);color:#fff;text-decoration:none;"
+                    + "background:linear-gradient(135deg,#E8611D,#B8480F);color:#fff;text-decoration:none;"
                     + "border-radius:8px;font-weight:600;font-size:14px;'>Log Back In</a>"
                     + "</div>"
-                    + "<p style='color:#999;font-size:13px;'>If this wasn't you, please secure your account immediately.</p>"
+                    + "<p style='color:#8A8A93;font-size:13px;'>If this wasn't you, please secure your account immediately.</p>"
                 );
                 try {
                     emailService.sendHtmlEmail(email, "BlackSpace - Session Ended", html);
@@ -53,21 +53,20 @@ public class CustomLogoutHandler implements LogoutSuccessHandler {
     }
 
     private String buildBrandedEmail(String heading, String bodyContent) {
-        return "<!DOCTYPE html><html><head><meta charset='UTF-8'></head><body style='margin:0;padding:0;background:#f0f2f5;font-family:Arial,sans-serif;'>"
+        return "<!DOCTYPE html><html><head><meta charset='UTF-8'></head><body style='margin:0;padding:0;background:#F6F6F4;font-family:Arial,sans-serif;'>"
             + "<div style='max-width:500px;margin:30px auto;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.1);'>"
-            + "<div style='background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);padding:30px;text-align:center;'>"
-            + "<img src='https://via.placeholder.com/60x60/302b63/fff?text=BS' style='width:60px;height:60px;border-radius:14px;border:2px solid rgba(255,255,255,.3);' alt='Logo'>"
+            + "<div style='background:linear-gradient(135deg,#0E0E11,#3A3A40);padding:30px;text-align:center;'>"
             + "<h1 style='color:#fff;margin:12px 0 4px;font-size:20px;letter-spacing:1px;'>BlackSpace Online Store</h1>"
             + "<p style='color:rgba(255,255,255,.6);margin:0;font-size:13px;'>Your AI-Powered Marketplace</p>"
             + "</div>"
             + "<div style='padding:28px;'>"
-            + "<h2 style='color:#302b63;margin:0 0 16px;font-size:18px;'>" + heading + "</h2>"
+            + "<h2 style='color:#3A3A40;margin:0 0 16px;font-size:18px;'>" + heading + "</h2>"
             + bodyContent
             + "</div>"
-            + "<div style='background:#f8f9fa;padding:20px;text-align:center;border-top:1px solid #e9ecef;'>"
-            + "<p style='margin:0 0 4px;color:#302b63;font-weight:600;font-size:13px;'>BlackSpace Online Store</p>"
-            + "<p style='margin:0;color:#999;font-size:12px;'>Lusaka, Zambia | +260 960 847 099</p>"
-            + "<p style='margin:8px 0 0;color:#999;font-size:11px;'>www.blackspaceonline.com</p>"
+            + "<div style='background:#F6F6F4;padding:20px;text-align:center;border-top:1px solid #E7E7EA;'>"
+            + "<p style='margin:0 0 4px;color:#3A3A40;font-weight:600;font-size:13px;'>BlackSpace Online Store</p>"
+            + "<p style='margin:0;color:#8A8A93;font-size:12px;'>Lusaka, Zambia | +260 960 847 099</p>"
+            + "<p style='margin:8px 0 0;color:#8A8A93;font-size:11px;'>www.blackspaceonline.com</p>"
             + "</div>"
             + "</div></body></html>";
     }

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" th:href="@{/favicon.png}">
+    <link rel="icon" type="image/png" th:href="@{'/uploads/favicon/' + ${siteSettings.siteFavicon}}">
     <title>Help | Black Space Store</title>
 
     <!-- Bootstrap CSS -->
@@ -18,7 +18,7 @@
 <section class="help-hero">
     <div class="container">
         <h1 class="fw-bold"><i class="bi bi-question-circle me-2"></i>Help Center</h1>
-        <p class="lead mt-2" style="color:rgba(255,255,255,.8);">
+        <p class="lead mt-2" style="color:#fff;">
             Everything you need to get started
         </p>
     </div>
@@ -47,8 +47,8 @@
 
             <!-- Step 1: Register -->
             <div class="col-md-4 text-center">
-                <div class="card h-100 p-4 border-0" style="background: linear-gradient(135deg, #f0f4ff, #e8ecf8); border-radius:16px;">
-                    <div class="mx-auto mb-3" style="width:60px;height:60px;border-radius:50%;background:rgba(13,110,253,.1);display:flex;align-items:center;justify-content:center;">
+                <div class="card h-100 p-4 border-0" style="background: linear-gradient(135deg, #FBEDE6, #F6F6F4); border-radius:16px;">
+                    <div class="mx-auto mb-3" style="width:60px;height:60px;border-radius:50%;background:rgba(232,97,29,.1);display:flex;align-items:center;justify-content:center;">
                         <i class="bi bi-person-plus fs-2 text-primary"></i>
                     </div>
                     <span class="badge bg-primary mb-2 mx-auto" style="width:fit-content;">Step 1</span>
@@ -61,8 +61,8 @@
 
             <!-- Step 2: Create Your Store -->
             <div class="col-md-4 text-center">
-                <div class="card h-100 p-4 border-0" style="background: linear-gradient(135deg, #f0fff0, #e8f8e8); border-radius:16px;">
-                    <div class="mx-auto mb-3" style="width:60px;height:60px;border-radius:50%;background:rgba(25,135,84,.1);display:flex;align-items:center;justify-content:center;">
+                <div class="card h-100 p-4 border-0" style="background: linear-gradient(135deg, #E6F2EC, #F6F6F4); border-radius:16px;">
+                    <div class="mx-auto mb-3" style="width:60px;height:60px;border-radius:50%;background:rgba(15,122,78,.1);display:flex;align-items:center;justify-content:center;">
                         <i class="bi bi-shop fs-2 text-success"></i>
                     </div>
                     <span class="badge bg-success mb-2 mx-auto" style="width:fit-content;">Step 2</span>
@@ -92,7 +92,7 @@
 </section>
 
 <!-- CONTACT US -->
-<section class="py-5" style="background: linear-gradient(135deg, #e0eafc, #cfdef3);">
+<section class="py-5" style="background: linear-gradient(135deg, #E6F2EC, #FBEDE6);">
     <div class="container">
         <div class="row justify-content-center text-center">
 
@@ -135,7 +135,7 @@
 <style>
 
     .help-hero {
-        background: linear-gradient(135deg, rgba(15,12,41,.8), rgba(48,43,99,.8)),
+        background: linear-gradient(135deg, rgba(14,14,17,.85), rgba(58,58,64,.8)),
                     url('/store/banner/store_banner.png') center/cover no-repeat;
         color: white;
         padding: 80px 0;

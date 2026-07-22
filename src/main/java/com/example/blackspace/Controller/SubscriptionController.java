@@ -5,6 +5,7 @@ import com.example.blackspace.Lencopayment.LencoProperties;
 import com.example.blackspace.Model.Subscription;
 import com.example.blackspace.Model.User;
 import com.example.blackspace.Service.Payment.PaymentService;
+import com.example.blackspace.Service.Store.StoreService;
 import com.example.blackspace.Service.Subscription.SubscriptionService;
 import com.example.blackspace.Service.User.UserService;
 import jakarta.servlet.http.HttpSession;
@@ -19,13 +20,16 @@ public class SubscriptionController {
 
     private final PaymentService paymentService;
 
+    private final StoreService storeService;
+
     private final SubscriptionService subscriptionService;
 
     private final LencoProperties lencoProperties;
 
-    public SubscriptionController(UserService userService, PaymentService paymentService, SubscriptionService subscriptionService, LencoProperties lencoProperties) {
+    public SubscriptionController(UserService userService, PaymentService paymentService, StoreService storeService, SubscriptionService subscriptionService, LencoProperties lencoProperties) {
         this.userService = userService;
         this.paymentService = paymentService;
+        this.storeService = storeService;
         this.subscriptionService = subscriptionService;
         this.lencoProperties = lencoProperties;
     }
@@ -97,14 +101,19 @@ public class SubscriptionController {
 
     // View membership page
     @GetMapping("/account/subscription")
-    public String useraddSubscription(Model model,HttpSession session) {
+    public String useraddSubscription(Model model, HttpSession session, RedirectAttributes redirectAttributes) {
+        String username = (String) session.getAttribute("LOGGED_IN_USERNAME");
+
+        // Check if user has set up a store first
+        if (storeService.getStoreByUsername(username) == null) {
+            redirectAttributes.addFlashAttribute("error", "Please set up your store before purchasing a subscription.");
+            return "redirect:/account/dashboard";
+        }
+
         model.addAttribute("subscriptions", subscriptionService.getAllSubscription());
         model.addAttribute("subscription", new Subscription());
 
-        String username = (String) session.getAttribute("LOGGED_IN_USERNAME");
-
-        // Get the user with username "boo1"
-        User user = userService.findByUsername(username); // fetch User object
+        User user = userService.findByUsername(username);
         if (user == null) {
             user = new User();           // create empty User
             user.setFirstName("User Null");  // default value to prevent template errors

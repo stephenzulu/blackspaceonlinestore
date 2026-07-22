@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Black Space Store</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" type="image/png" th:href="@{/favicon.png}">
+    <link rel="icon" type="image/png" th:href="@{'/uploads/favicon/' + ${siteSettings.siteFavicon}}">
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -15,7 +15,7 @@
 
     <style>
         .hero2 {
-          color: #000;
+          color: #0E0E11;
           padding: 20px ;
           text-align: center;
       }
@@ -53,13 +53,13 @@
                      th:src="@{/store/banner/banner.jpeg}"
                      class="d-block w-100" style="height:300px; object-fit:cover;">
 
-                <div class="carousel-caption d-md-block" style="background: rgba(0,0,0,0.1);">
-                    <h3 th:text="${store.name}">
+                <div class="carousel-caption d-md-block" style="background: rgba(0,0,0,0.3); color: #fff;">
+                    <h3 style="color: #fff;" th:text="${store.name}">
                         <i class="bi bi-shop me-2"></i> <!-- Icon before store name -->
                         Store Name
                     </h3>
-                    <a th:href="@{'/store/' + ${store.id}}" class="btn btn-primary view-details-btn">
-                        Visit Shop   <i class="bi bi-arrow-right-circle me-1"></i> <!-- Icon inside button -->
+                    <a th:href="@{'/store/' + ${store.id}}" class="btn btn-modern-light view-details-btn">
+                        Visit Shop <i class="bi bi-arrow-right ms-1"></i>
                     </a>
                 </div>
 
@@ -90,7 +90,7 @@
             Discover Products or Services Near You
         </h1>
         <p class="lead mt-2 text-muted">
-            <i class="bi bi-shop me-2 text-success"></i>
+            <i class="bi bi-shop me-2 text-white"></i>
             Shop directly from local stores
         </p>
     </div>
@@ -119,7 +119,7 @@
                            placeholder="Search items..."
                            autocomplete="off"
                            th:value="${q}">
-                    <button class="btn btn-primary" type="submit">
+                    <button class="btn btn-modern-primary" type="submit">
                         <i class="bi bi-search"></i>
                     </button>
                 </div>
@@ -132,7 +132,7 @@
 
 
 <!-- CATEGORIES -->
-<section class="py-3" style="background: linear-gradient(180deg, #f8f9fa, #e9ecef);">
+<section class="py-3" style="background: linear-gradient(180deg, #F6F6F4, #E7E7EA);">
     <div class="container">
         <h4 class="text-center mb-4">Top Categories</h4>
 
@@ -158,7 +158,7 @@
 
 
 <!-- WHY SELL WITH US -->
-<section class="py-5" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
+<section class="py-5" style="background: linear-gradient(135deg, #F6F6F4, #E7E7EA);">
     <div class="container">
         <h4 class="text-center mb-4">Why Sell With Black Space</h4>
 
@@ -228,9 +228,9 @@
         </div>
 
         <!-- CALL TO ACTION -->
-        <div class="text-center mt-5 ">
+        <div class="text-center mt-5">
             <a th:href="@{/register}"
-               class="btn btn-lg btn-primary px-5 shadow-sm">
+               class="btn btn-modern-primary btn-lg px-5">
                 <i class="bi bi-shop me-2"></i>
                 Create Free Store
             </a>
@@ -243,7 +243,7 @@
 
 
 <!-- TOP PRODUCTS BY Views -->
-<section class="py-5" style="background: linear-gradient(180deg, #ffffff, #f0f4ff);">
+<section class="py-5" style="background: linear-gradient(180deg, #FFFFFF, #F6F6F4);">
     <div class="container">
         <h4 class="text-center mb-4">
             <i class="bi bi-fire text-danger"></i> Trending
@@ -274,7 +274,7 @@
                             <span class="fw-bold text-primary"
                                   th:text="${product.currency + ' ' + #numbers.formatDecimal(product.price, 1, 'COMMA', 0, 'POINT')}"></span>
                             <a th:href="@{'/product/' + ${product.id}}"
-                               class="btn btn-sm btn-outline-primary view-details-btn">View</a>
+                               class="btn btn-modern-outline btn-sm view-details-btn">View</a>
                         </div>
 
                         <!-- Display views -->
@@ -311,9 +311,9 @@
 
     <div class="mt-4 text-center">
         <a th:href="@{/products}"
-           class="btn btn-primary btn-sm px-4 py-2 rounded-pill shadow-sm d-inline-flex align-items-center gap-2">
+           class="btn btn-modern-primary btn-sm px-4 py-2 rounded-pill d-inline-flex align-items-center gap-2">
             <span>View More</span>
-            <i class="bi bi-arrow-right-circle-fill"></i>
+            <i class="bi bi-arrow-right"></i>
         </a>
     </div>
 
@@ -322,10 +322,10 @@
 
 
 <!-- LATEST STORES -->
-<section class="py-5" style="background: linear-gradient(135deg, #e0eafc, #cfdef3);">
+<section class="py-5" style="background: linear-gradient(135deg, #E6F2EC, #FBEDE6);">
     <div class="container">
         <h4 class="text-center mb-4">
-            <i class="bi bi-shop me-2 text-primary"></i> Latest Stores
+            <i class="bi bi-shop me-2 text-white"></i> Latest Stores
         </h4>
 
 
@@ -382,8 +382,8 @@
 
                         <div class="text-end ">
                             <a th:href="@{'/store/' + ${store.id}}"
-                               class="btn btn-sm btn-outline-dark">
-                                Visit Store
+                               class="btn btn-modern-outline btn-sm">
+                                Visit Store <i class="bi bi-arrow-right ms-1"></i>
                             </a>
                         </div>
 
@@ -403,9 +403,9 @@
 
     <div class="mt-4 text-center">
         <a th:href="@{/stores}"
-           class="btn btn-primary btn-sm px-4 py-2 rounded-pill shadow-sm d-inline-flex align-items-center gap-2">
+           class="btn btn-modern-primary btn-sm px-4 py-2 rounded-pill d-inline-flex align-items-center gap-2">
             <span>View More</span>
-            <i class="bi bi-arrow-right-circle-fill"></i>
+            <i class="bi bi-arrow-right"></i>
         </a>
     </div>
 
@@ -459,8 +459,8 @@
                 <p class="text-muted mb-2" id="productPrice"></p>
                 <p id="productDescription"></p>
 
-                <a id="productLink" class="btn btn-primary mt-3 view-details-btn">
-                    View Details <i class="bi bi-arrow-right-circle me-1"></i> <!-- Icon for button -->
+                <a id="productLink" class="btn btn-modern-primary mt-3 view-details-btn">
+                    View Details <i class="bi bi-arrow-right ms-1"></i>
                 </a>
 
             </div>
@@ -489,7 +489,7 @@
 
 
 <!-- PRODUCTS -->
-<section class="py-5" style="background: linear-gradient(180deg, #fff, #f8f0fc);">
+<section class="py-5" style="background: linear-gradient(180deg, #FFFFFF, #F6F6F4);">
     <div class="container">
         <h4 class="text-left mb-4">
             <i class="bi bi-box-seam me-2 text-primary"></i> Latest Products
@@ -522,7 +522,7 @@
                                   th:text="${product.currency + ' ' + #numbers.formatDecimal(product.price, 1, 'COMMA', 0, 'POINT')}">
                             </span>
                             <a th:href="@{'/product/' + ${product.id}}"
-                               class="btn btn-sm btn-outline-primary view-details-btn">
+                               class="btn btn-modern-outline btn-sm view-details-btn">
                                 View
                             </a>
                         </div>
@@ -557,9 +557,9 @@
 
     <div class="mt-4 text-center">
         <a th:href="@{/products}"
-           class="btn btn-primary btn-sm px-4 py-2 rounded-pill shadow-sm d-inline-flex align-items-center gap-2">
+           class="btn btn-modern-primary btn-sm px-4 py-2 rounded-pill d-inline-flex align-items-center gap-2">
             <span>View More</span>
-            <i class="bi bi-arrow-right-circle-fill"></i>
+            <i class="bi bi-arrow-right"></i>
         </a>
     </div>
 
@@ -570,7 +570,7 @@
 
 
 <!-- WHY CHOOSE US -->
-<section class="py-5" style="background: linear-gradient(135deg, #fdfcfb, #e2d1c3);">
+<section class="py-5" style="background: linear-gradient(135deg, #F6F6F4, #FBEDE6);">
     <div class="container">
         <h3 class="text-center fw-bold mb-4">Why Choose Black Space Store?</h3>
 
@@ -746,10 +746,75 @@
 }
 
 /* Button emphasis on hover */
-.product-card:hover .btn {
-    background-color: #0d6efd;
+.product-card:hover .btn-modern-outline {
+    background-color: #0E0E11;
     color: #fff;
-    border-color: #0d6efd;
+    border-color: #0E0E11;
+}
+
+/* Modern Buttons */
+.btn-modern-primary {
+    background: linear-gradient(135deg, #0E0E11, #3A3A40);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.88rem;
+    padding: 10px 24px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(14,14,17,.25);
+}
+.btn-modern-primary:hover {
+    background: linear-gradient(135deg, #3A3A40, #0E0E11);
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(14,14,17,.35);
+}
+.btn-modern-primary.btn-sm {
+    padding: 7px 18px;
+    font-size: 0.82rem;
+    border-radius: 10px;
+}
+.btn-modern-primary.btn-lg {
+    padding: 14px 36px;
+    font-size: 1rem;
+    border-radius: 14px;
+}
+
+.btn-modern-outline {
+    background: transparent;
+    color: #3A3A40;
+    border: 1.5px solid #3A3A40;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.82rem;
+    padding: 6px 16px;
+    transition: all 0.3s ease;
+}
+.btn-modern-outline:hover {
+    background: #0E0E11;
+    color: #fff;
+    border-color: #0E0E11;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(14,14,17,.2);
+}
+
+.btn-modern-light {
+    background: rgba(255,255,255,.95);
+    color: #0E0E11;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 10px 24px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(8px);
+}
+.btn-modern-light:hover {
+    background: #fff;
+    color: #0E0E11;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,.15);
 }
 
 </style>
@@ -780,7 +845,7 @@
         transition: background 0.2s;
     }
     .search-suggestions a:last-child { border-bottom: none; }
-    .search-suggestions a:hover { background: #f0f4ff; }
+    .search-suggestions a:hover { background: #FBEDE6; }
     .search-suggestions img {
         width: 40px;
         height: 40px;
@@ -790,7 +855,7 @@
         flex-shrink: 0;
     }
     .search-suggestions .suggest-name { font-weight: 500; font-size: 0.9rem; }
-    .search-suggestions .suggest-price { font-size: 0.8rem; color: #0d6efd; }
+    .search-suggestions .suggest-price { font-size: 0.8rem; color: #E8611D; }
     body.dark-mode .search-suggestions { background: #16213e; border-color: #0f3460; }
     body.dark-mode .search-suggestions a { color: #e0e0e0; border-bottom-color: #0f3460; }
     body.dark-mode .search-suggestions a:hover { background: #1a1a2e; }

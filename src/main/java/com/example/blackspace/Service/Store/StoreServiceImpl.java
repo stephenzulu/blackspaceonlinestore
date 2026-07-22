@@ -102,7 +102,8 @@ public class StoreServiceImpl implements StoreService {
 
     @Override
     public Store getStoreByUsername(String username) {
-        return storeRepository.findByUsername(username).orElse(null);
+        List<Store> stores = storeRepository.findByUsername(username);
+        return stores.isEmpty() ? null : stores.get(0);
     }
 
     @Override

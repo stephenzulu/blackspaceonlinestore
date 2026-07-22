@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Login | Black Space Store</title>
-    <link rel="icon" type="image/png" th:href="@{/favicon.png}">
+    <link rel="icon" type="image/png" th:href="@{'/uploads/favicon/' + ${siteSettings.siteFavicon}}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -17,7 +17,7 @@
         }
         .login-left {
             flex: 1;
-            background: linear-gradient(135deg, rgba(15,12,41,.85), rgba(48,43,99,.85), rgba(36,36,62,.85)),
+            background: linear-gradient(135deg, rgba(14,14,17,.9), rgba(58,58,64,.85)),
                         url('/store/banner/store_banner.png') center/cover no-repeat;
             display: flex;
             flex-direction: column;
@@ -34,7 +34,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background: linear-gradient(135deg, rgba(248,249,250,.92), rgba(230,230,250,.92)),
+            background: linear-gradient(135deg, rgba(246,246,244,.95), rgba(251,237,230,.6)),
                         url('/store/banner/store_banner.png') center/cover no-repeat;
             padding: 40px 20px;
         }
@@ -50,15 +50,15 @@
         .form-control {
             border-radius: 10px;
             padding: 12px 14px;
-            border: 1px solid #e0e0e0;
+            border: 1px solid #E7E7EA;
             transition: border-color 0.2s, box-shadow 0.2s;
         }
         .form-control:focus {
-            border-color: #302b63;
-            box-shadow: 0 0 0 3px rgba(48,43,99,.12);
+            border-color: #E8611D;
+            box-shadow: 0 0 0 3px rgba(232,97,29,.12);
         }
         .btn-login {
-            background: linear-gradient(135deg, #302b63, #24243e);
+            background: linear-gradient(135deg, #E8611D, #B8480F);
             color: #fff;
             border: none;
             border-radius: 10px;
@@ -69,8 +69,8 @@
         }
         .btn-login:hover { opacity: 0.9; transform: translateY(-1px); color: #fff; }
         .divider { display: flex; align-items: center; margin: 20px 0; }
-        .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: #e0e0e0; }
-        .divider span { padding: 0 12px; color: #999; font-size: 0.85rem; }
+        .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: #E7E7EA; }
+        .divider span { padding: 0 12px; color: #8A8A93; font-size: 0.85rem; }
 
         @media (max-width: 768px) {
             body { flex-direction: column; }
@@ -84,9 +84,9 @@
 
 <!-- Left Panel -->
 <div class="login-left d-none d-md-flex">
-    <img th:src="@{'/uploads/logo/logo.jpeg'}" alt="Logo"
+    <img th:src="@{'/uploads/logo/' + ${siteSettings.siteLogo}}" alt="Logo"
          style="width: 80px; height: 80px; border-radius: 16px; margin-bottom: 20px; object-fit: cover;">
-    <h2>Black Space Store</h2>
+    <h2 th:text="${siteSettings.siteName}">Black Space Store</h2>
     <p>Your AI-powered marketplace connecting buyers with trusted local sellers across Zambia.</p>
     <div class="mt-4 d-flex gap-3">
         <div class="text-center">
@@ -111,7 +111,7 @@
 
         <!-- Mobile logo -->
         <div class="text-center d-md-none mb-3">
-            <img th:src="@{'/uploads/logo/logo.jpeg'}" alt="Logo"
+            <img th:src="@{'/uploads/logo/' + ${siteSettings.siteLogo}}" alt="Logo"
                  style="width: 60px; height: 60px; border-radius: 12px; object-fit: cover;">
         </div>
 
@@ -140,14 +140,14 @@
                     <input type="password" class="form-control" name="password" id="password" placeholder="Enter password" required
                            style="border-radius: 10px 0 0 10px;">
                     <button class="btn btn-outline-secondary" type="button" onclick="togglePassword()"
-                            style="border-radius: 0 10px 10px 0; border-color: #e0e0e0;">
+                            style="border-radius: 0 10px 10px 0; border-color: #E7E7EA;">
                         <i class="bi bi-eye" id="toggleIcon"></i>
                     </button>
                 </div>
             </div>
 
             <div class="mb-3 text-end">
-                <a th:href="@{/forgot-password}" class="small text-decoration-none" style="color:#302b63;">
+                <a th:href="@{/forgot-password}" class="small text-decoration-none" style="color:#B8480F;">
                     Forgot password?
                 </a>
             </div>
@@ -166,7 +166,7 @@
 
         <div class="text-center">
             <span class="text-muted" style="font-size:0.9rem;">Don't have an account? </span>
-            <a th:href="@{/register}" class="fw-semibold text-decoration-none" style="color:#302b63;">Create one</a>
+            <a th:href="@{/register}" class="fw-semibold text-decoration-none" style="color:#B8480F;">Create one</a>
         </div>
     </div>
 </div>
@@ -175,9 +175,9 @@
 <div id="loadingOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,.6); z-index:9999; justify-content:center; align-items:center;">
     <div style="background:#fff; border-radius:16px; padding:30px 40px; text-align:center; box-shadow:0 8px 30px rgba(0,0,0,.3);">
         <div class="spinner-border text-primary mb-3" style="width:3rem; height:3rem;" role="status"></div>
-        <p id="loaderText" class="mb-1 fw-semibold" style="color:#302b63;">Signing in...</p>
-        <div style="width:200px; height:4px; background:#e0e0e0; border-radius:4px; overflow:hidden; margin:10px auto 0;">
-            <div id="progressBar" style="width:0%; height:100%; background:linear-gradient(90deg,#302b63,#667eea); border-radius:4px; transition:width 0.3s;"></div>
+        <p id="loaderText" class="mb-1 fw-semibold" style="color:#0E0E11;">Signing in...</p>
+        <div style="width:200px; height:4px; background:#E7E7EA; border-radius:4px; overflow:hidden; margin:10px auto 0;">
+            <div id="progressBar" style="width:0%; height:100%; background:linear-gradient(90deg,#E8611D,#E8611D); border-radius:4px; transition:width 0.3s;"></div>
         </div>
     </div>
 </div>

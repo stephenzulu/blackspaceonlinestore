@@ -14,6 +14,10 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
     // Fetch payments by username
     List<Payment> findByUsername(String username);
 
+    List<Payment> findByUsernameOrderByCreatedtimeDesc(String username);
+
+    List<Payment> findAllByOrderByCreatedtimeDesc();
+
 
     // Get the latest enabled subscription payment for a given username
 

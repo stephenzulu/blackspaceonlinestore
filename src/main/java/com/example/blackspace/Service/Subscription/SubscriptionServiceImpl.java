@@ -104,8 +104,11 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         //  UPDATE STORE DURATION ⬅️ IMPORTANT PART
 
         // Update store
-        Store store = storeRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Store not found"));
+        List<Store> stores = storeRepository.findByUsername(username);
+        if (stores.isEmpty()) {
+            throw new RuntimeException("Store not found");
+        }
+        Store store = stores.get(0);
 
         int durationDays = Integer.parseInt(subscription.getDurationtime());
         store.setDurationindays(String.valueOf(durationDays));
@@ -155,8 +158,11 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
         paymentRepository.save(newPayment);
 
-        Store store = storeRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Store not found"));
+        List<Store> stores = storeRepository.findByUsername(username);
+        if (stores.isEmpty()) {
+            throw new RuntimeException("Store not found");
+        }
+        Store store = stores.get(0);
 
         int durationDays = Integer.parseInt(subscription.getDurationtime());
         store.setDurationindays(String.valueOf(durationDays));

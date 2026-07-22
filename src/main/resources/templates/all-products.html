@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>All Products | Black Space Store</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" type="image/png" th:href="@{/favicon.png}">
+    <link rel="icon" type="image/png" th:href="@{'/uploads/favicon/' + ${siteSettings.siteFavicon}}">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
@@ -17,7 +17,7 @@
 <section class="about-hero">
     <div class="container">
         <h1 class="fw-bold"><i class="bi bi-box-seam me-2"></i>All Products</h1>
-        <p class="lead mt-2" style="color:rgba(255,255,255,.8);">
+        <p class="lead mt-2" style="color:#fff;">
             Explore products from trusted local sellers
         </p>
     </div>
@@ -161,7 +161,7 @@
 <style>
 
     .about-hero {
-        background: linear-gradient(135deg, rgba(15,12,41,.8), rgba(48,43,99,.8)),
+        background: linear-gradient(135deg, rgba(14,14,17,.85), rgba(58,58,64,.8)),
                     url('/store/banner/store_banner.png') center/cover no-repeat;
         color: white;
         padding: 80px 0;
@@ -170,10 +170,10 @@
 
     .icon-box i {
         font-size: 2rem;
-        color: #0d6efd;
+        color: #E8611D;
     }
 
-    body { background: linear-gradient(180deg, #f8f9fa, #e9ecef); }
+    body { background: linear-gradient(180deg, #F6F6F4, #E7E7EA); }
 </style>
 
 
@@ -203,19 +203,19 @@
 
 /* Button emphasis on hover */
 .product-card:hover .btn {
-    background-color: #0d6efd;
+    background-color: #E8611D;
     color: #fff;
-    border-color: #0d6efd;
+    border-color: #E8611D;
 }
 
 </style>
 
 
 <!-- TOP STORES CAROUSEL -->
-<section class="py-4" style="background: linear-gradient(135deg, #e0eafc, #cfdef3);" th:if="${topStores != null and !#lists.isEmpty(topStores)}">
+<section class="py-4" style="background: linear-gradient(135deg, #E6F2EC, #FBEDE6);" th:if="${topStores != null and !#lists.isEmpty(topStores)}">
     <div class="container">
         <h4 class="text-center mb-4">
-            <i class="bi bi-shop me-2 text-primary"></i>Top Stores
+            <i class="bi bi-shop me-2 text-white"></i>Top Stores
         </h4>
         <div id="topStoresCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
             <div class="carousel-inner">
