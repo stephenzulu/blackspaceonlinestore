@@ -104,7 +104,8 @@ public class PasswordResetService {
             + "<div style='background:#F6F6F4;padding:20px;text-align:center;border-top:1px solid #E7E7EA;'>"
             + "<p style='margin:0 0 4px;color:#3A3A40;font-weight:600;font-size:13px;'>BlackSpace Online Store</p>"
             + "<p style='margin:0;color:#8A8A93;font-size:12px;'>Lusaka, Zambia | +260 960 847 099</p>"
-            + "<p style='margin:8px 0 0;color:#8A8A93;font-size:11px;'>www.blackspaceonline.com</p>"
+            + "<p style='margin:4px 0 0;color:#8A8A93;font-size:11px;'>Sent from: <a href='mailto:blackspaceonlinestore9@gmail.com' style='color:#E8611D;text-decoration:none;'>blackspaceonlinestore9@gmail.com</a></p>"
+            + "<p style='margin:4px 0 0;color:#8A8A93;font-size:11px;'>www.blackspaceonline.com</p>"
             + "</div>"
             + "</div></body></html>";
     }

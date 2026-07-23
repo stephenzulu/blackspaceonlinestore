@@ -45,20 +45,29 @@ public class AdminPasswordResetController {
             adminUser.setFirstName("Admin");
         }
         model.addAttribute("user", adminUser);
-        model.addAttribute("resetTokens", tokenRepo.findAllByOrderByExpiryDateDesc());
+        var tokens = tokenRepo.findAllByOrderByExpiryDateDesc();
+        long activeCount = tokens.stream().filter(t -> t.getExpiryDate().isAfter(java.time.LocalDateTime.now())).count();
+        long expiredCount = tokens.size() - activeCount;
+
+        model.addAttribute("resetTokens", tokens);
+        model.addAttribute("activeCount", activeCount);
+        model.addAttribute("expiredCount", expiredCount);
         model.addAttribute("allUsers", userRepo.findAll());
         return "admin/managepasswordresets";
     }
 
     @PostMapping("/admin/send-reset-link")
     public String sendResetLink(@RequestParam String email,
+                                 @RequestParam(value = "redirectTo", required = false) String redirectTo,
                                  RedirectAttributes redirect,
                                  HttpServletRequest request) {
+
+        String redirectUrl = (redirectTo != null && !redirectTo.isEmpty()) ? redirectTo : "/admin/password-resets";
 
         var userOpt = userRepo.findByEmail(email);
         if (userOpt.isEmpty()) {
             redirect.addFlashAttribute("error", "No account found with email: " + email);
-            return "redirect:/admin/password-resets";
+            return "redirect:" + redirectUrl;
         }
 
         try {
@@ -91,7 +100,7 @@ public class AdminPasswordResetController {
             redirect.addFlashAttribute("error", "Failed to send reset link. Please try again.");
         }
 
-        return "redirect:/admin/password-resets";
+        return "redirect:" + redirectUrl;
     }
 
     private String buildBrandedEmail(String heading, String bodyContent) {
@@ -108,6 +117,8 @@ public class AdminPasswordResetController {
             + "<div style='background:#F6F6F4;padding:20px;text-align:center;border-top:1px solid #E7E7EA;'>"
             + "<p style='margin:0 0 4px;color:#3A3A40;font-weight:600;font-size:13px;'>BlackSpace Online Store</p>"
             + "<p style='margin:0;color:#8A8A93;font-size:12px;'>Lusaka, Zambia | +260 960 847 099</p>"
+            + "<p style='margin:4px 0 0;color:#8A8A93;font-size:11px;'>Sent from: <a href='mailto:blackspaceonlinestore9@gmail.com' style='color:#E8611D;text-decoration:none;'>blackspaceonlinestore9@gmail.com</a></p>"
+            + "<p style='margin:4px 0 0;color:#8A8A93;font-size:11px;'>www.blackspaceonline.com</p>"
             + "</div>"
             + "</div></body></html>";
     }
