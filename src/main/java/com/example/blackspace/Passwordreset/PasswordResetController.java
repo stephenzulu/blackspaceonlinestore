@@ -1,5 +1,7 @@
 package com.example.blackspace.Passwordreset;
 
+import com.example.blackspace.Recaptcha.RecaptchaConfig;
+import com.example.blackspace.Recaptcha.RecaptchaService;
 import com.example.blackspace.Repository.user.UserRepository;
 import com.example.blackspace.SMS.EmailService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,19 +18,26 @@ public class PasswordResetController {
     private final UserRepository userRepo;
     private final PasswordResetService resetService;
     private final EmailService emailService;
+    private final RecaptchaConfig recaptchaConfig;
+    private final RecaptchaService recaptchaService;
 
     public PasswordResetController(
             UserRepository userRepo,
             PasswordResetService resetService,
-            EmailService emailService) {
+            EmailService emailService,
+            RecaptchaConfig recaptchaConfig,
+            RecaptchaService recaptchaService) {
         this.userRepo = userRepo;
         this.resetService = resetService;
         this.emailService = emailService;
+        this.recaptchaConfig = recaptchaConfig;
+        this.recaptchaService = recaptchaService;
     }
 
     // Forgot password page
     @GetMapping("/forgot-password")
-    public String forgotPassword() {
+    public String forgotPassword(Model model) {
+        model.addAttribute("recaptchaSiteKey", recaptchaConfig.getSiteKey());
         return "forgot-password";
     }
 
@@ -36,8 +45,14 @@ public class PasswordResetController {
     @PostMapping("/forgot-password")
     public String processForgotPassword(
             @RequestParam String email,
+            @RequestParam(value = "g-recaptcha-response", required = false) String captchaResponse,
             RedirectAttributes redirect,
             HttpServletRequest request) {
+
+        if (captchaResponse == null || !recaptchaService.verify(captchaResponse)) {
+            redirect.addFlashAttribute("error", "Please complete the reCAPTCHA verification.");
+            return "redirect:/forgot-password";
+        }
 
         try {
             var userOpt = userRepo.findByEmail(email);
