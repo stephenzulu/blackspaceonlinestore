@@ -212,5 +212,45 @@
     }
 </script>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script th:inline="javascript">
+(function() {
+    var registered = [[${registered != null ? registered : false}]];
+    var name = [[${registeredName != null ? registeredName : ''}]];
+
+    if (registered) {
+        Swal.fire({
+            html:
+                '<div style="text-align:center;">' +
+                    '<div style="width:72px;height:72px;border-radius:50%;background:rgba(15,122,78,.1);display:inline-flex;align-items:center;justify-content:center;margin-bottom:16px;">' +
+                        '<i class="bi bi-check-circle-fill" style="font-size:2.2rem;color:#0F7A4E;"></i>' +
+                    '</div>' +
+                    '<h4 style="font-weight:700;color:#0E0E11;margin:0 0 8px;">Welcome to BlackSpace!</h4>' +
+                    '<p style="color:#8A8A93;font-size:0.9rem;margin:0 0 20px;">Thank you' + (name ? ', <strong style="color:#0E0E11;">' + name + '</strong>' : '') + '! Your account has been created successfully.</p>' +
+                    '<div style="display:flex;flex-direction:column;gap:10px;text-align:left;">' +
+                        '<div style="display:flex;align-items:center;gap:12px;padding:12px;background:#F6F6F4;border-radius:10px;">' +
+                            '<div style="width:36px;height:36px;border-radius:8px;background:rgba(232,97,29,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="bi bi-box-arrow-in-right" style="color:#E8611D;font-size:1rem;"></i></div>' +
+                            '<div><strong style="font-size:0.82rem;">Step 1:</strong> <span style="font-size:0.82rem;color:#3A3A40;">Log in with your email & password</span></div>' +
+                        '</div>' +
+                        '<div style="display:flex;align-items:center;gap:12px;padding:12px;background:#F6F6F4;border-radius:10px;">' +
+                            '<div style="width:36px;height:36px;border-radius:8px;background:rgba(15,122,78,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="bi bi-shop" style="color:#0F7A4E;font-size:1rem;"></i></div>' +
+                            '<div><strong style="font-size:0.82rem;">Step 2:</strong> <span style="font-size:0.82rem;color:#3A3A40;">Create your store & subscribe</span></div>' +
+                        '</div>' +
+                        '<div style="display:flex;align-items:center;gap:12px;padding:12px;background:#F6F6F4;border-radius:10px;">' +
+                            '<div style="width:36px;height:36px;border-radius:8px;background:rgba(59,130,246,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="bi bi-box-seam" style="color:#3B82F6;font-size:1rem;"></i></div>' +
+                            '<div><strong style="font-size:0.82rem;">Step 3:</strong> <span style="font-size:0.82rem;color:#3A3A40;">Start adding products</span></div>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>',
+            showConfirmButton: true,
+            confirmButtonText: '<i class="bi bi-box-arrow-in-right me-1"></i> Login Now',
+            confirmButtonColor: '#E8611D',
+            width: '480px',
+            customClass: { popup: 'rounded-4' }
+        });
+    }
+})();
+</script>
+
 </body>
 </html>

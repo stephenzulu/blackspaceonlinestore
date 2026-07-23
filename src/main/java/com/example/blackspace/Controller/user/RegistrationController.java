@@ -79,12 +79,10 @@ public class RegistrationController {
 
         userService.saveUser(user);
 
-        redirectAttributes.addFlashAttribute(
-                "success",
-                "Account created successfully"
-        );
+        redirectAttributes.addFlashAttribute("registered", true);
+        redirectAttributes.addFlashAttribute("registeredName", user.getFirstName());
 
-        return "redirect:/";
+        return "redirect:/login";
     }
 
     private String generateUsername(String firstName, String lastName) {

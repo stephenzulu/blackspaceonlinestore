@@ -40,6 +40,8 @@ public class SecurityConfig {
                                 "/about",
                                 "/help",
                                 "/register",
+                                "/verify-otp",
+                                "/resend-otp",
                                 "/css/**",
                                 "/js/**",
                                 "/images/**",
