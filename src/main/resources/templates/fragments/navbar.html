@@ -711,6 +711,23 @@
     });
 </script>
 
+    <!-- Disable right-click and DevTools shortcuts -->
+    <script>
+        document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+        document.addEventListener('keydown', function(e) {
+            // F12
+            if (e.key === 'F12') { e.preventDefault(); return false; }
+            // Ctrl+Shift+I / Cmd+Opt+I (Inspect)
+            if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'I') { e.preventDefault(); return false; }
+            // Ctrl+Shift+J / Cmd+Opt+J (Console)
+            if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'J') { e.preventDefault(); return false; }
+            // Ctrl+Shift+C / Cmd+Opt+C (Element picker)
+            if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'C') { e.preventDefault(); return false; }
+            // Ctrl+U / Cmd+U (View source)
+            if ((e.ctrlKey || e.metaKey) && e.key === 'u') { e.preventDefault(); return false; }
+        });
+    </script>
+
 </div>
 </body>
 </html>
