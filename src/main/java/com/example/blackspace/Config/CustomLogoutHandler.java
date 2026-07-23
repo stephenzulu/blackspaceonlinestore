@@ -30,13 +30,20 @@ public class CustomLogoutHandler implements LogoutSuccessHandler {
             User user = userRepository.findByEmail(email).orElse(null);
 
             if (user != null) {
+                String baseUrl = request.getScheme() + "://" + request.getServerName();
+                int port = request.getServerPort();
+                if (port != 80 && port != 443) {
+                    baseUrl += ":" + port;
+                }
+                String loginUrl = baseUrl + "/login";
+
                 String html = buildBrandedEmail(
                     "You've been logged out",
                     "<p style='font-size:16px;color:#3A3A40;'>Your <strong>BlackSpace Online Store</strong> session has ended.</p>"
                     + "<p style='color:#8A8A93;font-size:14px;'>You have been successfully logged out of your account. "
                     + "Your session data has been cleared for security.</p>"
                     + "<div style='text-align:center;margin:20px 0;'>"
-                    + "<a href='http://localhost:8090/login' style='display:inline-block;padding:12px 30px;"
+                    + "<a href='" + loginUrl + "' style='display:inline-block;padding:12px 30px;"
                     + "background:linear-gradient(135deg,#E8611D,#B8480F);color:#fff;text-decoration:none;"
                     + "border-radius:8px;font-weight:600;font-size:14px;'>Log Back In</a>"
                     + "</div>"

@@ -2,6 +2,7 @@ package com.example.blackspace.Passwordreset;
 
 import com.example.blackspace.Repository.user.UserRepository;
 import com.example.blackspace.SMS.EmailService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,11 +36,17 @@ public class PasswordResetController {
     @PostMapping("/forgot-password")
     public String processForgotPassword(
             @RequestParam String email,
-            RedirectAttributes redirect) {
+            RedirectAttributes redirect,
+            HttpServletRequest request) {
 
         userRepo.findByEmail(email).ifPresent(user -> {
             String token = resetService.createResetToken(user);
-            String link = "http://localhost:8090/reset-password?token=" + token;
+            String baseUrl = request.getScheme() + "://" + request.getServerName();
+            int port = request.getServerPort();
+            if (port != 80 && port != 443) {
+                baseUrl += ":" + port;
+            }
+            String link = baseUrl + "/reset-password?token=" + token;
 
             String html = buildBrandedEmail(
                 "Password Reset Request",
