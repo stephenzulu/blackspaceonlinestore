@@ -503,6 +503,11 @@ public String users(Model model, Principal principal,HttpSession session) {
     model.addAttribute("category", new Category());
 
 
+    // --- Store & subscription status for popup notices ---
+    Store store = storeService.getStoreByUsername(username);
+    model.addAttribute("store", store);
+    boolean subscriptionActive = false;
+
     // --- PAYMENT-BASED ADD BUTTON VISIBILITY ---
     boolean showAddProductButton = true;
 
@@ -525,7 +530,9 @@ public String users(Model model, Principal principal,HttpSession session) {
         model.addAttribute("remainingProducts", maxProducts - usedProducts);
 
         showAddProductButton = usedProducts < maxProducts;
+        subscriptionActive = true;
     }
+    model.addAttribute("subscriptionActive", subscriptionActive);
     model.addAttribute("showAddProductButton", showAddProductButton);
 
 

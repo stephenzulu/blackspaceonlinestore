@@ -146,7 +146,7 @@
                                 <h6 class="fw-bold mb-3" style="font-size:0.85rem; color:#8A8A93; text-transform:uppercase; letter-spacing:0.5px;">Site Logo</h6>
 
                                 <div class="d-flex align-items-center gap-3 mb-3 p-3" style="background:#F6F6F4; border-radius:12px;">
-                                    <img th:src="@{'/uploads/logo/' + ${settings.siteLogo}}"
+                                    <img loading="lazy" th:src="@{'/uploads/logo/' + ${settings.siteLogo}}"
                                          style="width:60px; height:60px; border-radius:14px; object-fit:cover; border:2px solid #e0e0e0;" alt="Current Logo">
                                     <div>
                                         <small class="fw-medium d-block">Current Logo</small>
@@ -168,7 +168,7 @@
                                 <h6 class="fw-bold mb-3" style="font-size:0.85rem; color:#8A8A93; text-transform:uppercase; letter-spacing:0.5px;">Favicon</h6>
 
                                 <div class="d-flex align-items-center gap-3 mb-3 p-3" style="background:#F6F6F4; border-radius:12px;">
-                                    <img th:src="@{'/uploads/favicon/' + ${settings.siteFavicon}}"
+                                    <img loading="lazy" th:src="@{'/uploads/favicon/' + ${settings.siteFavicon}}"
                                          style="width:32px; height:32px; border-radius:6px; object-fit:contain; border:1px solid #e0e0e0;"
                                          alt="Current Favicon"
                                          onerror="this.src='/favicon.png'">

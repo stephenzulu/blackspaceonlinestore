@@ -64,7 +64,7 @@
             <td th:text="${stat.count}"></td>
             <td th:text="${cat.name}"></td>
             <td>
-                <img th:src="@{'/uploads/categories/' + ${cat.catimages}}"
+                <img loading="lazy" th:src="@{'/uploads/categories/' + ${cat.catimages}}"
                      alt="Category Image"
                      style="width: 50px; height: 50px; object-fit: cover; margin-right: 10px;">
             </td>
@@ -242,7 +242,7 @@
                             <!-- Current Image Preview -->
                             <div class="mb-3 text-center">
                                 <label class="form-label d-block text-start" style="font-size:0.85rem;">Current Image</label>
-                                <img id="editCategoryImagePreview" src="" alt="Category Image"
+                                <img loading="lazy" id="editCategoryImagePreview" src="" alt="Category Image"
                                      style="max-width:150px; border-radius:10px; display:block; margin-bottom:10px;">
                             </div>
 

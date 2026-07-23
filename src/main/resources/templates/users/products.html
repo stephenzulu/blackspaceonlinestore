@@ -132,7 +132,7 @@
                         <div class="product-img-wrapper">
                             <span class="badge bg-dark product-badge position-absolute top-0 end-0 m-2 px-2 py-1"
                                   th:text="${productstock.category}">Category</span>
-                            <img th:if="${productstock.imageurls != null}"
+                            <img loading="lazy" th:if="${productstock.imageurls != null}"
                                  th:src="@{'/uploads/products/images/' + ${#strings.arraySplit(productstock.imageurls, ',')[0]}}"
                                  alt="Product Image">
                             <div th:if="${productstock.imageurls == null}" class="d-flex align-items-center justify-content-center h-100">
@@ -280,7 +280,7 @@
                                 <div class="current-file-preview mb-2">
                                     <small class="text-muted" id="currentImageInfo"></small>
                                     <div id="currentImagePreview" class="mt-2 text-center" style="display:none;">
-                                        <img id="imagePreview" src="" alt="Current Image" class="img-fluid rounded" style="max-height:120px; border:2px solid #E7E7EA; border-radius:10px;">
+                                        <img loading="lazy" id="imagePreview" src="" alt="Current Image" class="img-fluid rounded" style="max-height:120px; border:2px solid #E7E7EA; border-radius:10px;">
                                     </div>
                                 </div>
                                 <input type="hidden" id="existingImages" name="existingImages">
@@ -929,6 +929,65 @@ if (editForm) handleFormProgress(editForm, 'editProductProgress', 'editProductBt
 
 var addForm = document.querySelector('#addProductModal form');
 if (addForm) handleFormProgress(addForm, 'addProductProgress', 'addProductBtn');
+</script>
+
+<script th:inline="javascript">
+(function() {
+    var hasStore = [[${store != null}]];
+    var subscriptionActive = [[${subscriptionActive}]];
+
+    if (!hasStore) {
+        Swal.fire({
+            icon: 'info',
+            title: 'Create Your Store First',
+            html: '<p style="font-size:0.92rem; color:#3A3A40; line-height:1.6;">Before you can add products, you need to <strong>create a store</strong> and <strong>subscribe to a plan</strong>.</p>' +
+                  '<div style="display:flex; flex-direction:column; gap:10px; margin-top:16px;">' +
+                    '<div style="display:flex; align-items:center; gap:12px; padding:12px; background:#F6F6F4; border-radius:10px;">' +
+                      '<div style="width:36px; height:36px; border-radius:8px; background:rgba(232,97,29,.12); display:flex; align-items:center; justify-content:center; flex-shrink:0;"><i class="bi bi-shop" style="color:#E8611D; font-size:1.1rem;"></i></div>' +
+                      '<div style="text-align:left;"><strong style="font-size:0.85rem;">Step 1:</strong> <span style="font-size:0.85rem; color:#3A3A40;">Create your store</span></div>' +
+                    '</div>' +
+                    '<div style="display:flex; align-items:center; gap:12px; padding:12px; background:#F6F6F4; border-radius:10px;">' +
+                      '<div style="width:36px; height:36px; border-radius:8px; background:rgba(15,122,78,.12); display:flex; align-items:center; justify-content:center; flex-shrink:0;"><i class="bi bi-credit-card" style="color:#0F7A4E; font-size:1.1rem;"></i></div>' +
+                      '<div style="text-align:left;"><strong style="font-size:0.85rem;">Step 2:</strong> <span style="font-size:0.85rem; color:#3A3A40;">Subscribe to a plan</span></div>' +
+                    '</div>' +
+                    '<div style="display:flex; align-items:center; gap:12px; padding:12px; background:#F6F6F4; border-radius:10px;">' +
+                      '<div style="width:36px; height:36px; border-radius:8px; background:rgba(59,130,246,.12); display:flex; align-items:center; justify-content:center; flex-shrink:0;"><i class="bi bi-box-seam" style="color:#3B82F6; font-size:1.1rem;"></i></div>' +
+                      '<div style="text-align:left;"><strong style="font-size:0.85rem;">Step 3:</strong> <span style="font-size:0.85rem; color:#3A3A40;">Start adding products</span></div>' +
+                    '</div>' +
+                  '</div>',
+            confirmButtonText: '<i class="bi bi-arrow-left me-1"></i> Go to Dashboard',
+            confirmButtonColor: '#E8611D',
+            showCancelButton: true,
+            cancelButtonText: 'Later',
+            cancelButtonColor: '#8A8A93',
+            customClass: { popup: 'rounded-4' }
+        }).then(function(result) {
+            if (result.isConfirmed) {
+                window.location.href = '/account/dashboard';
+            }
+        });
+    } else if (!subscriptionActive) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Subscription Required',
+            html: '<p style="font-size:0.92rem; color:#3A3A40; line-height:1.6;">Your store has been created, but you need an <strong>active subscription</strong> before you can add products.</p>' +
+                  '<div style="display:flex; align-items:center; gap:12px; padding:14px; background:#F6F6F4; border-radius:10px; margin-top:12px;">' +
+                    '<div style="width:36px; height:36px; border-radius:8px; background:rgba(15,122,78,.12); display:flex; align-items:center; justify-content:center; flex-shrink:0;"><i class="bi bi-credit-card" style="color:#0F7A4E; font-size:1.1rem;"></i></div>' +
+                    '<div style="text-align:left;"><span style="font-size:0.85rem; color:#3A3A40;">Choose a plan to unlock product listings and start selling.</span></div>' +
+                  '</div>',
+            confirmButtonText: '<i class="bi bi-credit-card me-1"></i> View Plans',
+            confirmButtonColor: '#0F7A4E',
+            showCancelButton: true,
+            cancelButtonText: 'Later',
+            cancelButtonColor: '#8A8A93',
+            customClass: { popup: 'rounded-4' }
+        }).then(function(result) {
+            if (result.isConfirmed) {
+                window.location.href = '/account/subscription';
+            }
+        });
+    }
+})();
 </script>
 
 </body>

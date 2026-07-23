@@ -9,6 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageOutputStream;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -46,14 +54,13 @@ public class ProductstockServiceImpl implements ProductstockService {
         Files.createDirectories(imagePath);
         Files.createDirectories(docPath);
 
-        // Save multiple images
+        // Save multiple images (compressed)
         if (images != null && images.length > 0) {
             StringBuilder filenames = new StringBuilder();
             for (MultipartFile image : images) {
                 if (!image.isEmpty()) {
-                    String imageName = UUID.randomUUID() + "_" + image.getOriginalFilename();
-                    Files.copy(image.getInputStream(), imagePath.resolve(imageName), StandardCopyOption.REPLACE_EXISTING);
-                    filenames.append(imageName).append(",");
+                    String savedName = compressAndSaveImage(image, imagePath);
+                    filenames.append(savedName).append(",");
                 }
             }
             // Remove trailing comma
@@ -94,16 +101,15 @@ public class ProductstockServiceImpl implements ProductstockService {
         String existingImages = productstock.getImageurls() != null ? productstock.getImageurls() : "";
         StringBuilder filenames = new StringBuilder(existingImages);
 
-        // Save new images and append
+        // Save new images (compressed) and append
         if (newImages != null && newImages.length > 0) {
             for (MultipartFile image : newImages) {
                 if (!image.isEmpty()) {
-                    String imageName = UUID.randomUUID() + "_" + image.getOriginalFilename();
-                    Files.copy(image.getInputStream(), imagePath.resolve(imageName), StandardCopyOption.REPLACE_EXISTING);
+                    String savedName = compressAndSaveImage(image, imagePath);
                     if (filenames.length() > 0 && !filenames.toString().endsWith(",")) {
                         filenames.append(",");
                     }
-                    filenames.append(imageName);
+                    filenames.append(savedName);
                 }
             }
         }
@@ -121,6 +127,58 @@ public class ProductstockServiceImpl implements ProductstockService {
     }
 
 
+
+    private String compressAndSaveImage(MultipartFile file, Path targetDir) throws IOException {
+        String originalName = file.getOriginalFilename();
+        String contentType = file.getContentType();
+
+        if (contentType != null && contentType.startsWith("image/")) {
+            try {
+                BufferedImage originalImage = ImageIO.read(file.getInputStream());
+                if (originalImage != null) {
+                    // Resize if larger than 1200px
+                    int maxDim = 1200;
+                    int w = originalImage.getWidth();
+                    int h = originalImage.getHeight();
+                    if (w > maxDim || h > maxDim) {
+                        double scale = Math.min((double) maxDim / w, (double) maxDim / h);
+                        int newW = (int) (w * scale);
+                        int newH = (int) (h * scale);
+                        BufferedImage resized = new BufferedImage(newW, newH, BufferedImage.TYPE_INT_RGB);
+                        Graphics2D g = resized.createGraphics();
+                        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+                        g.drawImage(originalImage, 0, 0, newW, newH, null);
+                        g.dispose();
+                        originalImage = resized;
+                    }
+
+                    // Save as compressed JPEG
+                    String fileName = UUID.randomUUID() + "_" + originalName.replaceAll("\\.[^.]+$", "") + ".jpg";
+                    File outputFile = targetDir.resolve(fileName).toFile();
+                    Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("jpg");
+                    if (writers.hasNext()) {
+                        ImageWriter writer = writers.next();
+                        ImageWriteParam param = writer.getDefaultWriteParam();
+                        param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+                        param.setCompressionQuality(0.75f);
+                        ImageOutputStream ios = ImageIO.createImageOutputStream(outputFile);
+                        writer.setOutput(ios);
+                        writer.write(null, new IIOImage(originalImage, null, null), param);
+                        ios.close();
+                        writer.dispose();
+                        return fileName;
+                    }
+                }
+            } catch (Exception e) {
+                // Fall back to saving original
+            }
+        }
+
+        // Fallback: save original file
+        String fileName = UUID.randomUUID() + "_" + originalName;
+        Files.copy(file.getInputStream(), targetDir.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
+        return fileName;
+    }
 
     @Override
     @Transactional

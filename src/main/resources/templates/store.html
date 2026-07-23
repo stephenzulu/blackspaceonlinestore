@@ -97,12 +97,12 @@
 
 <!-- ================= BANNER ================= -->
 <div class="container-fluid p-0 position-relative">
-    <img class="banner-img"
+    <img loading="lazy" class="banner-img"
          th:if="${store != null and store.storebanner != null and store.storebanner != ''}"
          th:src="@{'/uploads/stores/' + ${store.storebanner}}"
          alt="Store Banner">
 
-    <img class="banner-img"
+    <img loading="lazy" class="banner-img"
          th:unless="${store != null and store.storebanner != null and store.storebanner != ''}"
          th:src="@{/store/banner/banner.jpeg}"
          alt="Store Banner">
@@ -134,11 +134,11 @@
 <div class="container mt-3 p-0 position-relative">
 
     <div class="d-flex align-items-center">
-        <img class="store-logo me-3"
+        <img loading="lazy" class="store-logo me-3"
              th:if="${store != null and store.storelogo != null and store.storelogo != ''}"
              th:src="@{'/uploads/stores/' + ${store.storelogo}}"
              alt="Store Logo">
-        <img class="store-logo me-3"
+        <img loading="lazy" class="store-logo me-3"
              th:unless="${store != null and store.storelogo != null and store.storelogo != ''}"
              th:src="@{/store/logo/logo.jpeg}"
              alt="Store Logo">
@@ -147,8 +147,9 @@
             <h2 class="mb-0" th:text="${store != null} ? ${store.name} : 'Store'">Store</h2>
 
 
-            <button type="button" class="btn btn-sm btn-outline-primary ms-3" data-bs-toggle="modal" data-bs-target="#storeDescModal">
-                About
+            <button type="button" class="btn btn-sm ms-3" data-bs-toggle="modal" data-bs-target="#storeDescModal"
+                    style="background:#0E0E11; color:#fff; border:none; border-radius:8px; padding:6px 16px;">
+                <i class="bi bi-info-circle me-1"></i>About
             </button>
         </div>
     </div>
@@ -185,14 +186,14 @@
             <div th:each="product : ${products}" class="col-6 col-sm-6 col-md-3">
             <div class="card h-100 product-card shadow-sm">
             <a th:href="@{'/product/' + ${product.id}}" class="text-decoration-none text-dark">
-                <img th:if="${product.imageurls != null and product.imageurls != ''}"
+                <img loading="lazy" th:if="${product.imageurls != null and product.imageurls != ''}"
                      th:src="@{'/uploads/products/images/' + ${#strings.arraySplit(product.imageurls, ',')[0]}}"
                      class="card-img-top"
                      alt="Product Image"
                      style="height:180px; object-fit:contain;">
 
 
-                <img th:unless="${product.imageurls != null and product.imageurls != ''}"
+                <img loading="lazy" th:unless="${product.imageurls != null and product.imageurls != ''}"
                      th:src="@{/product/images/default-product.jpeg}"
                      class="card-img-top"
                      alt="Product Image"
@@ -241,16 +242,94 @@
 
 <!-- ================= STORE DESCRIPTION MODAL ================= -->
 <div class="modal fade" id="storeDescModal" tabindex="-1" aria-labelledby="storeDescModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-fullscreen modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="storeDescModalLabel" th:text="${store != null} ? ${store.name} : 'Store'">Store</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <div style="white-space: pre-wrap;" th:text="${store != null and store.description != null} ? ${store.description} : 'Welcome to our store'">
-                    Welcome to our store
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content border-0" style="border-radius:16px; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,.15); max-height:90vh;">
+            <!-- Header with banner & logo -->
+            <div class="position-relative" style="min-height:140px;">
+                <img loading="lazy" th:if="${store != null and store.storebanner != null and store.storebanner != ''}"
+                     th:src="@{'/uploads/stores/' + ${store.storebanner}}"
+                     class="w-100" style="height:140px; object-fit:cover;" alt="Banner">
+                <img loading="lazy" th:unless="${store != null and store.storebanner != null and store.storebanner != ''}"
+                     th:src="@{/store/banner/banner.jpeg}"
+                     class="w-100" style="height:140px; object-fit:cover;" alt="Banner">
+                <div class="position-absolute bottom-0 start-0 end-0" style="background:linear-gradient(transparent, rgba(0,0,0,.7)); padding:16px 24px;">
+                    <div class="d-flex align-items-center gap-3">
+                        <img loading="lazy" th:if="${store != null and store.storelogo != null and store.storelogo != ''}"
+                             th:src="@{'/uploads/stores/' + ${store.storelogo}}"
+                             style="width:52px; height:52px; border-radius:12px; object-fit:cover; border:2px solid #fff;" alt="Logo">
+                        <img loading="lazy" th:unless="${store != null and store.storelogo != null and store.storelogo != ''}"
+                             th:src="@{/store/logo/logo.jpeg}"
+                             style="width:52px; height:52px; border-radius:12px; object-fit:cover; border:2px solid #fff;" alt="Logo">
+                        <div>
+                            <h5 class="modal-title mb-0 fw-bold text-white" id="storeDescModalLabel"
+                                th:text="${store != null} ? ${store.name} : 'Store'">Store</h5>
+                            <span style="font-size:0.78rem; color:rgba(255,255,255,.7);">About this store</span>
+                        </div>
+                    </div>
                 </div>
+                <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <!-- Body -->
+            <div class="modal-body p-4" style="background:#F6F6F4; overflow-y:auto; max-height:60vh;">
+                <!-- Contact info -->
+                <div class="row g-2 mb-4">
+                    <div class="col-sm-6 col-md-4" th:if="${store != null and store.contactNumber != null}">
+                        <div class="d-flex align-items-center gap-2 p-2" style="background:#fff; border-radius:10px; border:1px solid #E7E7EA;">
+                            <div style="width:36px; height:36px; border-radius:8px; background:rgba(15,122,78,.1); display:flex; align-items:center; justify-content:center;">
+                                <i class="bi bi-telephone-fill" style="color:#0F7A4E;"></i>
+                            </div>
+                            <div>
+                                <div style="font-size:0.7rem; color:#8A8A93; font-weight:600; text-transform:uppercase;">Phone</div>
+                                <a th:href="'tel:' + ${store.contactNumber}" th:text="${store.contactNumber}" style="font-size:0.85rem; color:#3A3A40; text-decoration:none; font-weight:500;"></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-4" th:if="${store != null and store.email != null}">
+                        <div class="d-flex align-items-center gap-2 p-2" style="background:#fff; border-radius:10px; border:1px solid #E7E7EA;">
+                            <div style="width:36px; height:36px; border-radius:8px; background:rgba(59,130,246,.1); display:flex; align-items:center; justify-content:center;">
+                                <i class="bi bi-envelope-fill" style="color:#3B82F6;"></i>
+                            </div>
+                            <div>
+                                <div style="font-size:0.7rem; color:#8A8A93; font-weight:600; text-transform:uppercase;">Email</div>
+                                <a th:href="'mailto:' + ${store.email}" th:text="${store.email}" style="font-size:0.85rem; color:#3A3A40; text-decoration:none; font-weight:500;"></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-4" th:if="${store != null and store.whatsappNumber != null}">
+                        <div class="d-flex align-items-center gap-2 p-2" style="background:#fff; border-radius:10px; border:1px solid #E7E7EA;">
+                            <div style="width:36px; height:36px; border-radius:8px; background:rgba(37,211,102,.1); display:flex; align-items:center; justify-content:center;">
+                                <i class="bi bi-whatsapp" style="color:#25D366;"></i>
+                            </div>
+                            <div>
+                                <div style="font-size:0.7rem; color:#8A8A93; font-weight:600; text-transform:uppercase;">WhatsApp</div>
+                                <a th:href="'https://wa.me/' + ${store.whatsappNumber}" target="_blank" th:text="${store.whatsappNumber}" style="font-size:0.85rem; color:#3A3A40; text-decoration:none; font-weight:500;"></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div style="background:#fff; border-radius:12px; border:1px solid #E7E7EA; padding:20px;">
+                    <h6 class="fw-bold mb-3" style="font-size:0.85rem; color:#8A8A93; text-transform:uppercase; letter-spacing:0.5px;">
+                        <i class="bi bi-info-circle me-1"></i> Description
+                    </h6>
+                    <div style="white-space:pre-wrap; font-size:0.9rem; line-height:1.7; color:#3A3A40;"
+                         th:text="${store != null and store.description != null} ? ${store.description} : 'Welcome to our store'">
+                        Welcome to our store
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="modal-footer border-0 px-4 py-3" style="background:#F6F6F4;">
+                <a th:if="${store != null and store.whatsappNumber != null}"
+                   th:href="'https://wa.me/' + ${store.whatsappNumber}" target="_blank"
+                   class="btn btn-sm" style="background:#25D366; color:#fff; border:none; border-radius:10px; padding:8px 20px;">
+                    <i class="bi bi-whatsapp me-1"></i>Message on WhatsApp
+                </a>
+                <button type="button" class="btn btn-sm" data-bs-dismiss="modal"
+                        style="background:#0E0E11; color:#fff; border:none; border-radius:10px; padding:8px 20px;">Close</button>
             </div>
         </div>
     </div>

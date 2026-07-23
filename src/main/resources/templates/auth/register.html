@@ -99,7 +99,7 @@
 
 <!-- Left Panel -->
 <div class="reg-left d-none d-md-flex">
-    <img th:src="@{'/uploads/logo/' + ${siteSettings.siteLogo}}" alt="Logo"
+    <img loading="lazy" th:src="@{'/uploads/logo/' + ${siteSettings.siteLogo}}" alt="Logo"
          style="width: 70px; height: 70px; border-radius: 14px; margin-bottom: 16px; object-fit: cover;">
     <h2>Join BlackSpace</h2>
     <p>Create your free account and start selling or shopping today.</p>
@@ -127,7 +127,7 @@
 
         <!-- Mobile logo -->
         <div class="text-center d-md-none mb-3">
-            <img th:src="@{'/uploads/logo/' + ${siteSettings.siteLogo}}" alt="Logo"
+            <img loading="lazy" th:src="@{'/uploads/logo/' + ${siteSettings.siteLogo}}" alt="Logo"
                  style="width: 50px; height: 50px; border-radius: 10px; object-fit: cover;">
         </div>
 

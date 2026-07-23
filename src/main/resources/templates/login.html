@@ -84,7 +84,7 @@
 
 <!-- Left Panel -->
 <div class="login-left d-none d-md-flex">
-    <img th:src="@{'/uploads/logo/' + ${siteSettings.siteLogo}}" alt="Logo"
+    <img loading="lazy" th:src="@{'/uploads/logo/' + ${siteSettings.siteLogo}}" alt="Logo"
          style="width: 80px; height: 80px; border-radius: 16px; margin-bottom: 20px; object-fit: cover;">
     <h2 th:text="${siteSettings.siteName}">Black Space Store</h2>
     <p>Your AI-powered marketplace connecting buyers with trusted local sellers across Zambia.</p>
@@ -111,7 +111,7 @@
 
         <!-- Mobile logo -->
         <div class="text-center d-md-none mb-3">
-            <img th:src="@{'/uploads/logo/' + ${siteSettings.siteLogo}}" alt="Logo"
+            <img loading="lazy" th:src="@{'/uploads/logo/' + ${siteSettings.siteLogo}}" alt="Logo"
                  style="width: 60px; height: 60px; border-radius: 12px; object-fit: cover;">
         </div>
 

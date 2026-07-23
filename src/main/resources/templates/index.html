@@ -46,10 +46,10 @@
         <div class="carousel-inner" >
             <div class="carousel-item" th:each="store, iterStat : ${latestStores}" th:classappend="${iterStat.index == 0} ? ' active'">
 
-                <img th:if="${store.storebanner != null and store.storebanner != ''}"
+                <img loading="lazy" th:if="${store.storebanner != null and store.storebanner != ''}"
                      th:src="@{'/uploads/stores/' + ${store.storebanner}}"
                      class="d-block w-100" style="height:300px; object-fit:cover;">
-                <img th:unless="${store.storebanner != null and store.storebanner != ''}"
+                <img loading="lazy" th:unless="${store.storebanner != null and store.storebanner != ''}"
                      th:src="@{/store/banner/banner.jpeg}"
                      class="d-block w-100" style="height:300px; object-fit:cover;">
 
@@ -262,7 +262,7 @@
 
 
                     <a th:href="@{'/product/' + ${product.id}}" class="d-flex justify-content-center align-items-center" style="height:180px;">
-                        <img th:src="@{'/uploads/products/images/' + ${#strings.arraySplit(product.imageurls, ',')[0]}}" class="img-fluid store-banner" alt="image"
+                        <img loading="lazy" th:src="@{'/uploads/products/images/' + ${#strings.arraySplit(product.imageurls, ',')[0]}}" class="img-fluid store-banner" alt="image"
                              style="max-height:180px; object-fit:contain; cursor:pointer;">
                     </a>
 
@@ -340,17 +340,17 @@
                     <div class="position-relative">
 
                         <!-- Full-width banner -->
-                        <img class="w-100"
+                        <img loading="lazy" class="w-100"
                              th:if="${store != null and store.storebanner != null and store.storebanner != ''}"
                              th:src="@{'/uploads/stores/' + ${store.storebanner}}"
                              style="height:130px; object-fit:cover;">
-                        <img class="w-100"
+                        <img loading="lazy" class="w-100"
                              th:unless="${store != null and store.storebanner != null and store.storebanner != ''}"
                              th:src="@{/store/banner/banner.jpeg}"
                              style="height:130px; object-fit:cover;">
 
                         <!-- Store logo (LEFT) -->
-                        <img th:if="${store != null and store.storelogo != null and store.storelogo != ''}"
+                        <img loading="lazy" th:if="${store != null and store.storelogo != null and store.storelogo != ''}"
                              th:src="@{'/uploads/stores/' + ${store.storelogo}}"
                              class="position-absolute rounded-circle border bg-white"
                              style="
@@ -360,7 +360,7 @@
                                 bottom:-35px;
                                 left:15px;
                              ">
-                        <img th:unless="${store != null and store.storelogo != null and store.storelogo != ''}"
+                        <img loading="lazy" th:unless="${store != null and store.storelogo != null and store.storelogo != ''}"
                              th:src="@{/store/logo/logo.jpeg}"
                              class="position-absolute rounded-circle border bg-white"
                              style="
@@ -434,7 +434,7 @@
                              th:data-description="${product.description}"
                              th:data-url="@{'/product/' + ${product.id}}">
 
-                            <img th:src="@{'/uploads/products/images/' + ${#strings.arraySplit(product.imageurls, ',')[0]}}"
+                            <img loading="lazy" th:src="@{'/uploads/products/images/' + ${#strings.arraySplit(product.imageurls, ',')[0]}}"
                                  class="img-fluid store-banner "
                                  alt="Product Image"
                                  style="height: 350px; object-fit: contain;">
@@ -504,7 +504,7 @@
                 <div class="card h-100 product-card" >
 
                     <a th:href="@{'/product/' + ${product.id}}" class="d-flex justify-content-center align-items-center" style="height:180px;">
-                        <img th:src="@{'/uploads/products/images/' + ${#strings.arraySplit(product.imageurls, ',')[0]}}" class="img-fluid store-banner" alt="image"
+                        <img loading="lazy" th:src="@{'/uploads/products/images/' + ${#strings.arraySplit(product.imageurls, ',')[0]}}" class="img-fluid store-banner" alt="image"
                              style="max-height:180px; object-fit:contain; cursor:pointer;">
                     </a>
 

@@ -120,6 +120,26 @@
             .stat-card .stat-value { font-size: 1.4rem; }
             .store-banner { height: 150px; }
             .profile-header { padding: 20px; }
+
+            /* Responsive modals */
+            #editStoreModal .modal-body,
+            #createStoreModal .modal-body { padding: 12px !important; }
+            #editStoreModal .modal-header,
+            #createStoreModal .modal-header { padding: 12px 16px !important; }
+            #editStoreModal .modal-title,
+            #createStoreModal .modal-title { font-size: 0.95rem !important; }
+            #editStoreModal .modal-header p,
+            #createStoreModal .modal-header p { font-size: 0.7rem !important; }
+            #editStoreModal .position-relative.mb-4 { height: 100px !important; }
+            #editStoreModal .store-logo { width: 40px; height: 40px; }
+            #editStoreModal .card-body,
+            #createStoreModal .card-body { padding: 12px !important; }
+            #editStoreModal .upload-area,
+            #createStoreModal .upload-area { padding: 10px; }
+            #editStoreModal .upload-area i,
+            #createStoreModal .upload-area i { font-size: 1rem; }
+            #editStoreModal .upload-area p,
+            #createStoreModal .upload-area p { font-size: 0.72rem; }
         }
     </style>
 </head>
@@ -160,6 +180,12 @@
                         <i class="bi bi-credit-card me-1"></i>Subscription
                     </a>
                 </div>
+            </div>
+
+            <!-- Flash Messages -->
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show py-2 small" role="alert">
+                <i class="bi bi-exclamation-triangle me-1"></i><span th:text="${error}"></span>
+                <button type="button" class="btn-close btn-sm" data-bs-dismiss="alert"></button>
             </div>
 
             <!-- Stat Cards -->
@@ -244,18 +270,18 @@
                         <div th:if="${store != null}">
                             <!-- Store Banner -->
                             <div class="store-banner">
-                                <img th:if="${store.storebanner != null and store.storebanner != ''}"
+                                <img loading="lazy" th:if="${store.storebanner != null and store.storebanner != ''}"
                                      th:src="@{/uploads/stores/{img}(img=${store.storebanner})}"
                                      alt="Store Banner">
-                                <img th:unless="${store.storebanner != null and store.storebanner != ''}"
+                                <img loading="lazy" th:unless="${store.storebanner != null and store.storebanner != ''}"
                                      th:src="@{/store/banner/banner.jpeg}"
                                      alt="Store Banner">
                                 <div class="store-overlay d-flex align-items-end">
                                     <div class="d-flex align-items-center gap-3">
-                                        <img th:if="${store.storelogo != null and store.storelogo != ''}"
+                                        <img loading="lazy" th:if="${store.storelogo != null and store.storelogo != ''}"
                                              th:src="@{/uploads/stores/{img}(img=${store.storelogo})}"
                                              class="store-logo" alt="Store Logo">
-                                        <img th:unless="${store.storelogo != null and store.storelogo != ''}"
+                                        <img loading="lazy" th:unless="${store.storelogo != null and store.storelogo != ''}"
                                              th:src="@{/store/logo/logo.jpeg}"
                                              class="store-logo" alt="Store Logo">
                                         <div>
@@ -341,7 +367,7 @@
                     <div class="dash-card mb-4" style="overflow:hidden;">
                         <div class="profile-header">
                             <div class="d-flex align-items-center gap-3">
-                                <img src="/store/logo/logo.jpeg" class="profile-avatar" alt="Profile">
+                                <img loading="lazy" src="/store/logo/logo.jpeg" class="profile-avatar" alt="Profile">
                                 <div>
                                     <h5 class="mb-1 text-white fw-bold" style="font-size:1.1rem;" th:text="${user.firstName + ' ' + user.lastName}">User</h5>
                                     <div class="d-flex align-items-center gap-2">
@@ -436,8 +462,8 @@
 
             <!-- Edit Store Modal -->
             <div class="modal fade" id="editStoreModal" tabindex="-1">
-                <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-                    <div class="modal-content border-0" style="border-radius:16px; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,.15);">
+                <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" style="max-height:90vh;">
+                    <div class="modal-content border-0" style="border-radius:16px; box-shadow:0 20px 60px rgba(0,0,0,.15); max-height:90vh;">
                         <form th:action="@{/store/update}" method="post" enctype="multipart/form-data">
                             <input type="hidden" name="id" th:value="${store != null ? store.id : ''}">
                             <div class="modal-header px-4 py-3" style="background:linear-gradient(135deg,#0E0E11,#3A3A40); border-bottom:none;">
@@ -449,20 +475,20 @@
                                 </div>
                                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                             </div>
-                            <div class="modal-body p-4" style="background:#F6F6F4;">
+                            <div class="modal-body p-4" style="background:#F6F6F4; overflow-y:auto; max-height:70vh;">
                                 <!-- Current preview -->
                                 <div class="position-relative mb-4" style="height:160px; overflow:hidden; border-radius:12px;">
-                                    <img th:if="${store != null and store.storebanner != null and store.storebanner != ''}"
+                                    <img loading="lazy" th:if="${store != null and store.storebanner != null and store.storebanner != ''}"
                                          th:src="@{/uploads/stores/{img}(img=${store.storebanner})}"
                                          class="w-100 h-100" style="object-fit:cover;">
-                                    <img th:unless="${store != null and store.storebanner != null and store.storebanner != ''}"
+                                    <img loading="lazy" th:unless="${store != null and store.storebanner != null and store.storebanner != ''}"
                                          th:src="@{/store/banner/banner.jpeg}"
                                          class="w-100 h-100" style="object-fit:cover;">
                                     <div class="position-absolute bottom-0 start-0 mb-3 ms-3">
-                                        <img th:if="${store != null and store.storelogo != null and store.storelogo != ''}"
+                                        <img loading="lazy" th:if="${store != null and store.storelogo != null and store.storelogo != ''}"
                                              th:src="@{/uploads/stores/{img}(img=${store.storelogo})}"
                                              class="store-logo" style="border:3px solid #fff;">
-                                        <img th:unless="${store != null and store.storelogo != null and store.storelogo != ''}"
+                                        <img loading="lazy" th:unless="${store != null and store.storelogo != null and store.storelogo != ''}"
                                              th:src="@{/store/logo/logo.jpeg}"
                                              class="store-logo" style="border:3px solid #fff;">
                                     </div>
@@ -534,9 +560,9 @@
                                     </div>
                                     <small class="text-muted" style="font-size:0.78rem;">Uploading and updating store...</small>
                                 </div>
-                                <div class="d-flex justify-content-end gap-2 mt-3">
-                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal" style="border-radius:10px; padding:8px 20px;">Cancel</button>
-                                    <button class="btn" id="updateStoreBtn" style="background:#0E0E11; color:#fff; border:none; border-radius:10px; padding:8px 24px;">
+                                <div class="d-flex justify-content-end flex-column flex-sm-row gap-2 mt-3">
+                                    <button type="button" class="btn btn-light order-2 order-sm-1" data-bs-dismiss="modal" style="border-radius:10px; padding:8px 20px;">Cancel</button>
+                                    <button class="btn order-1 order-sm-2" id="updateStoreBtn" style="background:#0E0E11; color:#fff; border:none; border-radius:10px; padding:8px 24px;">
                                         <i class="bi bi-check-circle me-1"></i>Update Store
                                     </button>
                                 </div>
@@ -549,7 +575,7 @@
             <!-- Create Store Modal -->
             <div class="modal fade" id="createStoreModal" tabindex="-1">
                 <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-                    <div class="modal-content border-0" style="border-radius:16px; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,.15);">
+                    <div class="modal-content border-0" style="border-radius:16px; box-shadow:0 20px 60px rgba(0,0,0,.15); max-height:90vh;">
                         <div class="modal-header px-4 py-3" style="background:linear-gradient(135deg,#0E0E11,#3A3A40); border-bottom:none;">
                             <div>
                                 <h5 class="modal-title fw-bold mb-0" style="color:#fff; font-size:1.1rem;">
@@ -560,7 +586,7 @@
                             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                         </div>
                         <form th:action="@{/store/create}" method="post" enctype="multipart/form-data">
-                            <div class="modal-body p-4" style="background:#F6F6F4;">
+                            <div class="modal-body p-4" style="background:#F6F6F4; overflow-y:auto; max-height:70vh;">
 
                                 <!-- Store Details -->
                                 <div class="card border-0 mb-3" style="border-radius:12px; box-shadow:0 1px 6px rgba(0,0,0,.04);">
@@ -601,19 +627,21 @@
                                         </h6>
                                         <div class="row g-3">
                                             <div class="col-md-6">
-                                                <label class="form-label fw-medium" style="font-size:0.85rem;">Store Logo</label>
+                                                <label class="form-label fw-medium" style="font-size:0.85rem;">Store Logo <span style="color:#E8611D;">*</span></label>
                                                 <div class="upload-area" onclick="this.querySelector('input').click()">
                                                     <i class="bi bi-image" style="font-size:1.3rem; color:#8A8A93;"></i>
                                                     <p class="mb-0 mt-1" style="font-size:0.78rem; color:#8A8A93;">Click to upload logo</p>
-                                                    <input type="file" class="d-none" name="logoFile" accept="image/*" required>
+                                                    <input type="file" class="d-none" name="logoFile" accept="image/*" required
+                                                           onchange="this.closest('.upload-area').querySelector('p').textContent = this.files[0]?.name || 'Click to upload logo'">
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
-                                                <label class="form-label fw-medium" style="font-size:0.85rem;">Store Banner</label>
+                                                <label class="form-label fw-medium" style="font-size:0.85rem;">Store Banner <span style="color:#E8611D;">*</span></label>
                                                 <div class="upload-area" onclick="this.querySelector('input').click()">
                                                     <i class="bi bi-card-image" style="font-size:1.3rem; color:#8A8A93;"></i>
                                                     <p class="mb-0 mt-1" style="font-size:0.78rem; color:#8A8A93;">Click to upload banner</p>
-                                                    <input type="file" class="d-none" name="bannerFile" accept="image/*" required>
+                                                    <input type="file" class="d-none" name="bannerFile" accept="image/*" required
+                                                           onchange="this.closest('.upload-area').querySelector('p').textContent = this.files[0]?.name || 'Click to upload banner'">
                                                 </div>
                                             </div>
                                         </div>
@@ -627,9 +655,9 @@
                                     </div>
                                     <small class="text-muted" style="font-size:0.78rem;">Uploading and saving store...</small>
                                 </div>
-                                <div class="d-flex justify-content-end gap-2 mt-3">
-                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal" style="border-radius:10px; padding:8px 20px;">Cancel</button>
-                                    <button type="submit" class="btn" id="createStoreBtn" style="background:#0E0E11; color:#fff; border:none; border-radius:10px; padding:8px 24px;">
+                                <div class="d-flex justify-content-end flex-column flex-sm-row gap-2 mt-3">
+                                    <button type="button" class="btn btn-light order-2 order-sm-1" data-bs-dismiss="modal" style="border-radius:10px; padding:8px 20px;">Cancel</button>
+                                    <button type="submit" class="btn order-1 order-sm-2" id="createStoreBtn" style="background:#0E0E11; color:#fff; border:none; border-radius:10px; padding:8px 24px;">
                                         <i class="bi bi-check-circle me-1"></i>Create Store
                                     </button>
                                 </div>
@@ -700,10 +728,81 @@ function handleFormProgress(form, progressId, btnId) {
 }
 
 var createForm = document.querySelector('#createStoreModal form');
-if (createForm) handleFormProgress(createForm, 'createStoreProgress', 'createStoreBtn');
+if (createForm) {
+    createForm.addEventListener('submit', function(e) {
+        var logo = createForm.querySelector('input[name="logoFile"]');
+        var banner = createForm.querySelector('input[name="bannerFile"]');
+        if (!logo.files.length || !banner.files.length) {
+            e.preventDefault();
+            alert('Please upload both a store logo and a store banner.');
+            return;
+        }
+    });
+    handleFormProgress(createForm, 'createStoreProgress', 'createStoreBtn');
+}
 
 var updateForm = document.querySelector('#editStoreModal form');
 if (updateForm) handleFormProgress(updateForm, 'updateStoreProgress', 'updateStoreBtn');
+</script>
+
+<script th:inline="javascript">
+(function() {
+    var hasStore = [[${store != null}]];
+    var subscriptionActive = [[${subscriptionActive}]];
+
+    if (!hasStore) {
+        Swal.fire({
+            icon: 'info',
+            title: 'Create Your Store First',
+            html: '<p style="font-size:0.92rem; color:#3A3A40; line-height:1.6;">Before you can add products, you need to <strong>create a store</strong> and <strong>subscribe to a plan</strong>.</p>' +
+                  '<div style="display:flex; flex-direction:column; gap:10px; margin-top:16px;">' +
+                    '<div style="display:flex; align-items:center; gap:12px; padding:12px; background:#F6F6F4; border-radius:10px;">' +
+                      '<div style="width:36px; height:36px; border-radius:8px; background:rgba(232,97,29,.12); display:flex; align-items:center; justify-content:center; flex-shrink:0;"><i class="bi bi-shop" style="color:#E8611D; font-size:1.1rem;"></i></div>' +
+                      '<div style="text-align:left;"><strong style="font-size:0.85rem;">Step 1:</strong> <span style="font-size:0.85rem; color:#3A3A40;">Create your store</span></div>' +
+                    '</div>' +
+                    '<div style="display:flex; align-items:center; gap:12px; padding:12px; background:#F6F6F4; border-radius:10px;">' +
+                      '<div style="width:36px; height:36px; border-radius:8px; background:rgba(15,122,78,.12); display:flex; align-items:center; justify-content:center; flex-shrink:0;"><i class="bi bi-credit-card" style="color:#0F7A4E; font-size:1.1rem;"></i></div>' +
+                      '<div style="text-align:left;"><strong style="font-size:0.85rem;">Step 2:</strong> <span style="font-size:0.85rem; color:#3A3A40;">Subscribe to a plan</span></div>' +
+                    '</div>' +
+                    '<div style="display:flex; align-items:center; gap:12px; padding:12px; background:#F6F6F4; border-radius:10px;">' +
+                      '<div style="width:36px; height:36px; border-radius:8px; background:rgba(59,130,246,.12); display:flex; align-items:center; justify-content:center; flex-shrink:0;"><i class="bi bi-box-seam" style="color:#3B82F6; font-size:1.1rem;"></i></div>' +
+                      '<div style="text-align:left;"><strong style="font-size:0.85rem;">Step 3:</strong> <span style="font-size:0.85rem; color:#3A3A40;">Start adding products</span></div>' +
+                    '</div>' +
+                  '</div>',
+            confirmButtonText: '<i class="bi bi-plus-circle me-1"></i> Create Store',
+            confirmButtonColor: '#E8611D',
+            showCancelButton: true,
+            cancelButtonText: 'Later',
+            cancelButtonColor: '#8A8A93',
+            customClass: { popup: 'rounded-4' }
+        }).then(function(result) {
+            if (result.isConfirmed) {
+                var modal = new bootstrap.Modal(document.getElementById('createStoreModal'));
+                modal.show();
+            }
+        });
+    } else if (!subscriptionActive) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Subscription Required',
+            html: '<p style="font-size:0.92rem; color:#3A3A40; line-height:1.6;">Your store has been created, but you need an <strong>active subscription</strong> before you can add products.</p>' +
+                  '<div style="display:flex; align-items:center; gap:12px; padding:14px; background:#F6F6F4; border-radius:10px; margin-top:12px;">' +
+                    '<div style="width:36px; height:36px; border-radius:8px; background:rgba(15,122,78,.12); display:flex; align-items:center; justify-content:center; flex-shrink:0;"><i class="bi bi-credit-card" style="color:#0F7A4E; font-size:1.1rem;"></i></div>' +
+                    '<div style="text-align:left;"><span style="font-size:0.85rem; color:#3A3A40;">Choose a plan to unlock product listings and start selling.</span></div>' +
+                  '</div>',
+            confirmButtonText: '<i class="bi bi-credit-card me-1"></i> View Plans',
+            confirmButtonColor: '#0F7A4E',
+            showCancelButton: true,
+            cancelButtonText: 'Later',
+            cancelButtonColor: '#8A8A93',
+            customClass: { popup: 'rounded-4' }
+        }).then(function(result) {
+            if (result.isConfirmed) {
+                window.location.href = '/account/subscription';
+            }
+        });
+    }
+})();
 </script>
 
 </body>

@@ -79,12 +79,12 @@
 
 <!-- ================= BANNER ================= -->
 <div class="container-fluid p-0 position-relative">
-    <img class="banner-img"
+    <img loading="lazy" class="banner-img"
          th:if="${store != null and store.storebanner != null and store.storebanner != ''}"
          th:src="@{'/uploads/stores/' + ${store.storebanner}}"
          alt="Store Banner">
 
-    <img class="banner-img"
+    <img loading="lazy" class="banner-img"
          th:unless="${store != null and store.storebanner != null and store.storebanner != ''}"
          th:src="@{/store/banner/banner.jpeg}"
          alt="Store Banner">
@@ -115,11 +115,11 @@
 <div class="container mt-3 p-0 position-relative">
     <div class="d-flex align-items-center">
         <!-- Store Logo -->
-        <img class="store-logo me-3"
+        <img loading="lazy" class="store-logo me-3"
              th:if="${store != null and store.storelogo != null and store.storelogo != ''}"
              th:src="@{'/uploads/stores/' + ${store.storelogo}}"
              alt="Store Logo">
-        <img class="store-logo me-3"
+        <img loading="lazy" class="store-logo me-3"
              th:unless="${store != null and store.storelogo != null and store.storelogo != ''}"
              th:src="@{/store/logo/logo.jpeg}"
              alt="Store Logo">
@@ -167,7 +167,7 @@
                                 <div th:each="img,iter : ${#strings.arraySplit(product.imageurls, ',')}"
                                      class="carousel-item"
                                      th:classappend="${iter.index == 0} ? ' active'">
-                                    <img th:src="@{'/uploads/products/images/'+${img}}"
+                                    <img loading="lazy" th:src="@{'/uploads/products/images/'+${img}}"
                                          class="d-block w-100 product-image"
                                          alt="Product Image">
                                 </div>
@@ -188,7 +188,7 @@
                     <div class="col-md-3">
                         <!-- Thumbnails: vertical on md+ screens, horizontal on small screens -->
                         <div class="d-flex flex-row flex-md-column gap-2">
-                            <img th:each="img,iter : ${#strings.arraySplit(product.imageurls, ',')}"
+                            <img loading="lazy" th:each="img,iter : ${#strings.arraySplit(product.imageurls, ',')}"
                                  th:src="@{'/uploads/products/images/' + ${img}}"
                                  class="thumb-img"
                                  style="cursor: pointer; width: 60px; height: 60px; object-fit: cover;"
@@ -497,7 +497,7 @@
 
                 <div class="card h-100 shadow-sm">
                     <a th:href="@{'/product/' + ${p.id}}">
-                        <img class="card-img-top"
+                        <img loading="lazy" class="card-img-top"
                              th:src="@{'/uploads/products/images/' +
                              ${#strings.arraySplit(p.imageurls, ',')[0]}}"
                              style="height:180px; object-fit:contain;">

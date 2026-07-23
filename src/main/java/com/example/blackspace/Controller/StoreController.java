@@ -15,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.time.LocalDate;
@@ -257,8 +258,14 @@ public class StoreController {
     public String usersaveStore(
             @ModelAttribute Store store,
             @RequestParam("logoFile") MultipartFile logoFile,
-            @RequestParam("bannerFile") MultipartFile bannerFile, HttpSession session
+            @RequestParam("bannerFile") MultipartFile bannerFile, HttpSession session,
+            RedirectAttributes redirectAttributes
     ) {
+
+        if (logoFile.isEmpty() || bannerFile.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "Store logo and banner are required.");
+            return "redirect:/account/dashboard";
+        }
 
         try {
 

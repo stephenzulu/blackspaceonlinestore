@@ -4,299 +4,168 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" th:href="@{'/uploads/favicon/' + ${siteSettings.siteFavicon}}">
-
     <title>All Stores | Black Space Store</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-
     <style>
+        body { background: #F6F6F4; }
+        .page-hero {
+            background: #F6F6F4; padding: 24px 0 16px;
+        }
+        .page-hero h1 { font-weight: 700; font-size: 1.5rem; color: #0E0E11; margin: 0; }
+        .page-hero p.lead { color: #8A8A93 !important; font-size: 0.88rem; margin: 4px 0 0; }
+        .section-title { font-weight: 700; font-size: 1.4rem; margin-bottom: 8px; }
+        .section-subtitle { color: #8A8A93; font-size: 0.9rem; margin-bottom: 32px; }
+
         .store-card {
-            border: none;
-            border-radius: 12px;
-            overflow: hidden;
-            transition: transform 0.3s, opacity 0.3s;
-            flex-direction: column;
-            align-items: flex-start;
-            opacity: 1;
-            position: relative;
-            padding: 6px;
+            border: none; border-radius: 16px; overflow: hidden;
+            background: #fff; box-shadow: 0 2px 12px rgba(0,0,0,.05);
+            transition: transform .3s, box-shadow .3s;
+            text-decoration: none; color: #3A3A40; display: block;
         }
-        .store-card.hide {
-            opacity: 0;
-            display: none;
+        .store-card:hover { transform: translateY(-6px); box-shadow: 0 10px 30px rgba(0,0,0,.12); color: #3A3A40; }
+        .store-card .store-banner { height: 150px; width: 100%; object-fit: cover; }
+        .store-card:hover .store-banner { opacity: .9; }
+        .store-card .store-info {
+            padding: 12px 14px; display: flex; align-items: center; gap: 10px;
+            border-top: 1px solid #F0F0F0;
         }
-        .store-card:hover {
-            transform: translateY(-5px);
+        .store-card .store-logo {
+            width: 36px; height: 36px; border-radius: 10px; object-fit: cover;
+            border: 2px solid #E7E7EA; flex-shrink: 0;
         }
-        .store-card > a {
-            border-radius: 10px;
-            overflow: hidden;
-        }
-        .store-banner {
-            width: 100%;
-            height: 180px;
-            object-fit: cover;
-            display: block;
-        }
-        .store-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: rgba(255,255,255,0.7);
-            display: flex;
-            align-items: center;
-            padding: 5px 10px;
-        }
-        .store-logo {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: 2px solid #fff;
-            object-fit: cover;
-            flex-shrink: 0;
-        }
-        .store-name {
-            margin-left: 10px;
-            font-weight: 600;
-            font-size: 1rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        #storeSearch {
-            max-width: 400px;
-            width: 100%;
+        .store-card .store-name {
+            font-weight: 600; font-size: 0.88rem;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
 
-        /* Responsive adjustments */
+        .search-bar {
+            background: #fff; border-radius: 14px; padding: 12px 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,.05); display: flex; gap: 10px;
+            max-width: 500px; margin: 0 auto;
+        }
+        .search-bar .form-control {
+            border: 1px solid #E7E7EA; border-radius: 10px; font-size: 0.88rem;
+        }
+        .search-bar .form-control:focus {
+            border-color: #E8611D; box-shadow: 0 0 0 3px rgba(232,97,29,.1);
+        }
+
+        .trending-card {
+            border: none; border-radius: 14px; overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0,0,0,.05);
+            transition: transform .3s;
+        }
+        .trending-card:hover { transform: translateY(-4px); }
+
         @media (max-width: 576px) {
-            .store-banner {
-                height: 120px; /* smaller banner */
-            }
-            .store-logo {
-                width: 30px;
-                height: 30px;
-            }
-            .store-name {
-                font-size: 0.9rem;
-            }
-            .store-overlay {
-                padding: 3px 6px;
-            }
+            .page-hero { padding: 28px 0 20px; }
+            .page-hero h1 { font-size: 1.6rem; }
+            .store-card .store-banner { height: 120px; }
         }
     </style>
-
-
 </head>
 <body>
 
-<!-- Navbar -->
 <div th:replace="fragments/navbar :: topbar"></div>
 
-<!-- HERO SECTION -->
-<!-- HERO SECTION -->
-<section class="about-hero">
+<!-- Hero -->
+<section class="page-hero">
     <div class="container">
-        <h1 class="fw-bold"><i class="bi bi-shop me-2"></i>All Stores</h1>
-        <p class="lead mt-2" style="color:#fff;">
-            Browse and discover trusted local sellers
-        </p>
+        <div class="d-flex align-items-center gap-3">
+            <div class="d-inline-flex align-items-center justify-content-center" style="width:44px; height:44px; border-radius:12px; background:rgba(29,158,99,.12); flex-shrink:0;">
+                <i class="bi bi-shop" style="font-size:1.2rem; color:#1D9E63;"></i>
+            </div>
+            <div>
+                <h1>All Stores</h1>
+                <p class="lead mb-0">Browse and discover trusted local sellers</p>
+            </div>
+        </div>
     </div>
 </section>
-
 
 <!-- Breadcrumb -->
 <div class="container mt-3">
     <nav aria-label="breadcrumb">
-        <ol class="breadcrumb bg-light p-2 rounded">
-            <li class="breadcrumb-item">
-                <a th:href="@{/}">
-                    <i class="bi bi-house-door-fill me-1"></i>
-                </a>
-            </li>
-            <li class="breadcrumb-item active" aria-current="page">Stores</li>
+        <ol class="breadcrumb bg-white p-2 px-3 rounded-3 shadow-sm small mb-0">
+            <li class="breadcrumb-item"><a th:href="@{/}" style="color:#E8611D; text-decoration:none;"><i class="bi bi-house-door-fill"></i></a></li>
+            <li class="breadcrumb-item active">Stores</li>
         </ol>
     </nav>
 </div>
 
-<div class="container mt-4">
-    <h2 class="mb-4 text-center"><i class="bi bi-shop me-2 text-white"></i>All Stores</h2>
-
-    <!-- Search input -->
-    <!-- Search input with smaller buttons -->
-
-        <div class="mb-3 d-flex justify-content-center">
-            <form th:action="@{/stores}" method="get"
-                  class="d-flex w-100 gap-2 justify-content-center"
-                  style="max-width: 500px;"> <!-- increased max width -->
-
-                <!-- Search input -->
-                <input type="text"
-                       name="q"
-                       class="form-control form-control-sm flex-grow-1"
-                       placeholder="Search stores by name..."
-                       th:value="${q}">
-
-                <!-- Search button -->
-                <button type="submit" class="btn btn-primary btn-sm">
-                    Search
-                </button>
-
-                <!-- Reset button -->
-                <a th:href="@{/stores}" class="btn btn-secondary btn-sm">
-                    Reset
-                </a>
-
-            </form>
-        </div>
-
-
-
-
-
-
-
-    <!-- Stores wrapper -->
-    <div class="row g-3" id="storesWrapper">
-        <div th:each="store : ${stores}" class=" store-card col-6 col-sm-6 col-md-3  product-card ">
-                <a th:href="@{'/store/' + ${store.id}}" class="text-decoration-none text-dark d-block position-relative">
-                <!-- Banner -->
-                <img th:if="${store.storebanner != null and store.storebanner != ''}"
-                     th:src="@{'/uploads/stores/' + ${store.storebanner}}" class="img-fluid store-banner" alt="Store Banner"
-                     style="height: 150px; object-fit: cover; border-radius: 10px;">
-                <img th:unless="${store.storebanner != null and store.storebanner != ''}"
-                     th:src="@{/store/banner/banner.jpeg}" class="img-fluid store-banner" alt="Store Banner"
-                     style="height: 150px; object-fit: cover; border-radius: 10px;">
-
-                <!-- Logo & Name Overlay -->
-                <div class="store-overlay">
-                    <img th:if="${store.storelogo != null and store.storelogo != ''}"
-                         th:src="@{'/uploads/stores/' + ${store.storelogo}}" class="store-logo" alt="Store Logo">
-                    <img th:unless="${store.storelogo != null and store.storelogo != ''}"
-                         th:src="@{/store/logo/logo.jpeg}" class="store-logo" alt="Store Logo">
-                    <span class="store-name" th:text="${store.name}">Store Name</span>
-                </div>
-            </a>
-        </div>
-    </div>
-
-
-    <!-- Pagination -->
-    <nav class="mt-4" th:if="${totalPages > 1}">
-        <ul class="pagination justify-content-center">
-
-            <!-- Previous -->
-            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-                <a class="page-link"
-                   th:href="@{/stores(page=${currentPage - 1})}">
-                    Previous
-                </a>
-            </li>
-
-            <!-- Page Numbers -->
-            <li class="page-item"
-                th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
-                th:classappend="${i == currentPage} ? 'active'">
-                <a class="page-link"
-                   th:text="${i + 1}"
-                   th:href="@{/stores(page=${i})}">
-                </a>
-            </li>
-
-            <!-- Next -->
-            <li class="page-item"
-                th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
-                <a class="page-link"
-                   th:href="@{/stores(page=${currentPage + 1})}">
-                    Next
-                </a>
-            </li>
-
-        </ul>
-    </nav>
-
-
-</div>
-
-
-<style>
-
-    .about-hero {
-        background: linear-gradient(135deg, rgba(14,14,17,.85), rgba(58,58,64,.8)),
-                    url('/store/banner/store_banner.png') center/cover no-repeat;
-        color: white;
-        padding: 80px 0;
-        text-align: center;
-    }
-
-    .icon-box i {
-        font-size: 2rem;
-        color: #E8611D;
-    }
-
-    body { background: linear-gradient(180deg, #F6F6F4, #E7E7EA); }
-</style>
-
-
-
-<style>
-    /* Product Card Hover Effect */
-.product-card {
-    border-radius: 12px;
-    transition: all 0.35s ease;
-    cursor: pointer;
-    overflow: hidden;
-}
-
-/* Lift + shadow */
-.product-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.15);
-}
-
-/* Image zoom on hover */
-.product-card img {
-    transition: transform 0.4s ease;
-}
-
-.product-card:hover img {
-    transform: scale(1.08);
-}
-
-/* Button emphasis on hover */
-.product-card:hover .btn {
-    background-color: #E8611D;
-    color: #fff;
-    border-color: #E8611D;
-}
-
-</style>
-
-
-
-<!-- TOP PRODUCTS CAROUSEL -->
-<section class="py-4" style="background: linear-gradient(180deg, #FFFFFF, #F6F6F4);" th:if="${topProducts != null and !#lists.isEmpty(topProducts)}">
+<!-- Search & Grid -->
+<section class="py-4">
     <div class="container">
-        <h4 class="text-center mb-4">
-            <i class="bi bi-fire text-danger me-2"></i>Trending Products
-        </h4>
+        <!-- Search -->
+        <form th:action="@{/stores}" method="get" class="search-bar mb-4">
+            <input type="text" name="q" class="form-control flex-grow-1" placeholder="Search stores by name..." th:value="${q}">
+            <button type="submit" class="btn btn-sm" style="background:#0E0E11; color:#fff; border:none; border-radius:10px; padding:6px 18px;">
+                <i class="bi bi-search me-1"></i>Search
+            </button>
+            <a th:href="@{/stores}" class="btn btn-sm btn-light" style="border-radius:10px; padding:6px 14px;">Reset</a>
+        </form>
+
+        <!-- Stores Grid -->
+        <div class="row g-3">
+            <div th:each="store : ${stores}" class="col-6 col-sm-4 col-md-3">
+                <a th:href="@{'/store/' + ${store.id}}" class="store-card">
+                    <img loading="lazy" th:if="${store.storebanner != null and store.storebanner != ''}"
+                         th:src="@{'/uploads/stores/' + ${store.storebanner}}" class="store-banner" alt="Banner">
+                    <img loading="lazy" th:unless="${store.storebanner != null and store.storebanner != ''}"
+                         th:src="@{/store/banner/banner.jpeg}" class="store-banner" alt="Banner">
+                    <div class="store-info">
+                        <img loading="lazy" th:if="${store.storelogo != null and store.storelogo != ''}"
+                             th:src="@{'/uploads/stores/' + ${store.storelogo}}" class="store-logo" alt="Logo">
+                        <img loading="lazy" th:unless="${store.storelogo != null and store.storelogo != ''}"
+                             th:src="@{/store/logo/logo.jpeg}" class="store-logo" alt="Logo">
+                        <span class="store-name" th:text="${store.name}">Store Name</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Empty state -->
+        <div th:if="${#lists.isEmpty(stores)}" class="text-center py-5">
+            <i class="bi bi-shop" style="font-size:3rem; color:#E7E7EA;"></i>
+            <p class="text-muted mt-3">No stores found.</p>
+        </div>
+
+        <!-- Pagination -->
+        <nav class="mt-4" th:if="${totalPages > 1}">
+            <ul class="pagination justify-content-center">
+                <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                    <a class="page-link" th:href="@{/stores(page=${currentPage - 1})}">Previous</a>
+                </li>
+                <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}" th:classappend="${i == currentPage} ? 'active'">
+                    <a class="page-link" th:text="${i + 1}" th:href="@{/stores(page=${i})}"></a>
+                </li>
+                <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                    <a class="page-link" th:href="@{/stores(page=${currentPage + 1})}">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</section>
+
+<!-- Trending Products -->
+<section class="py-5" style="background:#fff;" th:if="${topProducts != null and !#lists.isEmpty(topProducts)}">
+    <div class="container text-center">
+        <span class="badge mb-2" style="background:rgba(232,97,29,.1); color:#E8611D; font-size:0.75rem; padding:6px 12px; border-radius:20px;">Trending</span>
+        <h2 class="section-title">Trending Products</h2>
+        <p class="section-subtitle">Popular products from our stores</p>
         <div id="topProductsCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
             <div class="carousel-inner">
-                <div th:each="product, stat : ${topProducts}"
-                     class="carousel-item"
-                     th:classappend="${stat.index == 0} ? ' active'">
+                <div th:each="product, stat : ${topProducts}" class="carousel-item" th:classappend="${stat.index == 0} ? ' active'">
                     <div class="d-flex justify-content-center px-3">
                         <div style="max-width:240px; width:100%;">
                             <a th:href="@{'/product/' + ${product.id}}" class="text-decoration-none text-dark">
-                                <div class="card shadow-sm mx-auto" style="border-radius:10px; overflow:hidden;">
-                                    <img th:src="@{'/uploads/products/images/' + ${#strings.arraySplit(product.imageurls, ',')[0]}}"
-                                         class="img-fluid" alt="product"
-                                         style="height:140px; object-fit:contain;">
-                                    <div class="card-body text-center p-2">
+                                <div class="trending-card bg-white mx-auto">
+                                    <img loading="lazy" th:src="@{'/uploads/products/images/' + ${#strings.arraySplit(product.imageurls, ',')[0]}}"
+                                         class="w-100" alt="product" style="height:140px; object-fit:contain; padding:8px;">
+                                    <div class="text-center p-2">
                                         <p class="text-truncate mb-1 small fw-semibold" th:text="${product.name}">Product</p>
-                                        <small class="fw-bold text-primary"
-                                              th:text="${product.currency + ' ' + #numbers.formatDecimal(product.price, 1, 'COMMA', 0, 'POINT')}"></small>
+                                        <small class="fw-bold" style="color:#E8611D;" th:text="${product.currency + ' ' + #numbers.formatDecimal(product.price, 1, 'COMMA', 0, 'POINT')}"></small>
                                     </div>
                                 </div>
                             </a>
@@ -305,18 +174,13 @@
                 </div>
             </div>
         </div>
-        <div class="mt-4 text-center">
-            <a th:href="@{/products}" class="btn btn-primary btn-sm px-4 py-2 rounded-pill shadow-sm">
-                <span>View All Products</span> <i class="bi bi-arrow-right-circle-fill ms-1"></i>
-            </a>
-        </div>
+        <a th:href="@{/products}" class="btn btn-sm mt-4" style="background:#0E0E11; color:#fff; border:none; border-radius:10px; padding:8px 24px;">
+            View All Products <i class="bi bi-arrow-right ms-1"></i>
+        </a>
     </div>
 </section>
 
-<!-- FOOTER -->
 <div th:replace="fragments/footer :: footer"></div>
-
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -59,10 +59,10 @@
         <div class="nav-section">Main</div>
         <ul class="nav flex-column">
             <li class="nav-item">
-                <a class="nav-link" href="/"><i class="bi bi-house-door"></i> Home</a>
+                <a class="nav-link" href="/"><i class="bi bi-house-door" style="color:#E8611D;"></i> Home</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/account/dashboard"><i class="bi bi-grid-1x2"></i> Dashboard</a>
+                <a class="nav-link" href="/account/dashboard"><i class="bi bi-grid-1x2" style="color:#3B82F6;"></i> Dashboard</a>
             </li>
         </ul>
 
@@ -70,7 +70,7 @@
         <div class="nav-section">Store</div>
         <ul class="nav flex-column">
             <li class="nav-item" th:if="${user.status == '1'}">
-                <a class="nav-link" href="/account/products"><i class="bi bi-box-seam"></i> My Products</a>
+                <a class="nav-link" href="/account/products"><i class="bi bi-box-seam" style="color:#F2B705;"></i> My Products</a>
             </li>
         </ul>
 
@@ -78,16 +78,16 @@
         <div class="nav-section">Billing</div>
         <ul class="nav flex-column">
             <li class="nav-item">
-                <a class="nav-link" href="/account/subscription"><i class="bi bi-credit-card-2-front"></i> Subscription</a>
+                <a class="nav-link" href="/account/subscription"><i class="bi bi-credit-card-2-front" style="color:#06B6D4;"></i> Subscription</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/account/payments"><i class="bi bi-wallet2"></i> Payment History</a>
+                <a class="nav-link" href="/account/payments"><i class="bi bi-wallet2" style="color:#0F7A4E;"></i> Payment History</a>
             </li>
         </ul>
 
         <!-- Footer -->
         <div class="sidebar-footer">
-            <a href="/logout"><i class="bi bi-box-arrow-left me-1"></i> Sign Out</a>
+            <a href="/logout"><i class="bi bi-box-arrow-left me-1" style="color:#C33636;"></i> Sign Out</a>
         </div>
     </div>
 </aside>
@@ -109,23 +109,23 @@
     <div class="offcanvas-body d-flex flex-column p-0">
         <div style="padding:12px 10px 6px; font-size:0.7rem; text-transform:uppercase; letter-spacing:1.5px; color:rgba(255,255,255,.35);">Main</div>
         <ul class="nav flex-column">
-            <li class="nav-item"><a class="nav-link" href="/" style="color:rgba(255,255,255,.7); padding:9px 16px; margin:1px 10px; border-radius:8px; font-size:0.88rem;"><i class="bi bi-house-door me-2"></i>Home</a></li>
-            <li class="nav-item"><a class="nav-link" href="/account/dashboard" style="color:rgba(255,255,255,.7); padding:9px 16px; margin:1px 10px; border-radius:8px; font-size:0.88rem;"><i class="bi bi-grid-1x2 me-2"></i>Dashboard</a></li>
+            <li class="nav-item"><a class="nav-link" href="/" style="color:rgba(255,255,255,.7); padding:9px 16px; margin:1px 10px; border-radius:8px; font-size:0.88rem;"><i class="bi bi-house-door me-2" style="color:#E8611D;"></i>Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="/account/dashboard" style="color:rgba(255,255,255,.7); padding:9px 16px; margin:1px 10px; border-radius:8px; font-size:0.88rem;"><i class="bi bi-grid-1x2 me-2" style="color:#3B82F6;"></i>Dashboard</a></li>
         </ul>
 
         <div style="padding:12px 10px 6px; font-size:0.7rem; text-transform:uppercase; letter-spacing:1.5px; color:rgba(255,255,255,.35);">Store</div>
         <ul class="nav flex-column">
-            <li class="nav-item"><a class="nav-link" href="/account/products" style="color:rgba(255,255,255,.7); padding:9px 16px; margin:1px 10px; border-radius:8px; font-size:0.88rem;"><i class="bi bi-box-seam me-2"></i>My Products</a></li>
+            <li class="nav-item"><a class="nav-link" href="/account/products" style="color:rgba(255,255,255,.7); padding:9px 16px; margin:1px 10px; border-radius:8px; font-size:0.88rem;"><i class="bi bi-box-seam me-2" style="color:#F2B705;"></i>My Products</a></li>
         </ul>
 
         <div style="padding:12px 10px 6px; font-size:0.7rem; text-transform:uppercase; letter-spacing:1.5px; color:rgba(255,255,255,.35);">Billing</div>
         <ul class="nav flex-column">
-            <li class="nav-item"><a class="nav-link" href="/account/subscription" style="color:rgba(255,255,255,.7); padding:9px 16px; margin:1px 10px; border-radius:8px; font-size:0.88rem;"><i class="bi bi-credit-card-2-front me-2"></i>Subscription</a></li>
-            <li class="nav-item"><a class="nav-link" href="/account/payments" style="color:rgba(255,255,255,.7); padding:9px 16px; margin:1px 10px; border-radius:8px; font-size:0.88rem;"><i class="bi bi-wallet2 me-2"></i>Payment History</a></li>
+            <li class="nav-item"><a class="nav-link" href="/account/subscription" style="color:rgba(255,255,255,.7); padding:9px 16px; margin:1px 10px; border-radius:8px; font-size:0.88rem;"><i class="bi bi-credit-card-2-front me-2" style="color:#06B6D4;"></i>Subscription</a></li>
+            <li class="nav-item"><a class="nav-link" href="/account/payments" style="color:rgba(255,255,255,.7); padding:9px 16px; margin:1px 10px; border-radius:8px; font-size:0.88rem;"><i class="bi bi-wallet2 me-2" style="color:#0F7A4E;"></i>Payment History</a></li>
         </ul>
 
         <div class="mt-auto text-center p-3" style="border-top:1px solid rgba(255,255,255,.08);">
-            <a href="/logout" style="color:rgba(255,255,255,.5); font-size:0.8rem; text-decoration:none;"><i class="bi bi-box-arrow-left me-1"></i>Sign Out</a>
+            <a href="/logout" style="color:rgba(255,255,255,.5); font-size:0.8rem; text-decoration:none;"><i class="bi bi-box-arrow-left me-1" style="color:#C33636;"></i>Sign Out</a>
         </div>
     </div>
 </div>
