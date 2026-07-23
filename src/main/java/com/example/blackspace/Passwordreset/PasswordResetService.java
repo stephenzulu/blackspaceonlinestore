@@ -3,8 +3,10 @@ package com.example.blackspace.Passwordreset;
 import com.example.blackspace.Model.User;
 import com.example.blackspace.Repository.user.UserRepository;
 import com.example.blackspace.SMS.EmailService;
+import jakarta.persistence.EntityManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -16,19 +18,24 @@ public class PasswordResetService {
     private final UserRepository userRepo;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
+    private final EntityManager entityManager;
 
     public PasswordResetService(
             PasswordResetTokenRepository tokenRepo,
             UserRepository userRepo,
-            PasswordEncoder passwordEncoder, EmailService emailService) {
+            PasswordEncoder passwordEncoder, EmailService emailService,
+            EntityManager entityManager) {
         this.tokenRepo = tokenRepo;
         this.userRepo = userRepo;
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
+        this.entityManager = entityManager;
     }
 
+    @Transactional
     public String createResetToken(User user) {
         tokenRepo.deleteByUser(user); // invalidate old tokens
+        entityManager.flush(); // ensure delete is executed before insert
 
         PasswordResetToken token = new PasswordResetToken();
         token.setToken(UUID.randomUUID().toString());
@@ -45,6 +52,7 @@ public class PasswordResetService {
                 .isPresent();
     }
 
+    @Transactional
     public void resetPassword(String token, String newPassword) {
         PasswordResetToken resetToken = tokenRepo.findByToken(token)
                 .filter(t -> t.getExpiryDate().isAfter(LocalDateTime.now()))

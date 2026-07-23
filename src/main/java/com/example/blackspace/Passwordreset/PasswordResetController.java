@@ -39,36 +39,38 @@ public class PasswordResetController {
             RedirectAttributes redirect,
             HttpServletRequest request) {
 
-        userRepo.findByEmail(email).ifPresent(user -> {
-            String token = resetService.createResetToken(user);
-            String baseUrl = request.getScheme() + "://" + request.getServerName();
-            int port = request.getServerPort();
-            if (port != 80 && port != 443) {
-                baseUrl += ":" + port;
-            }
-            String link = baseUrl + "/reset-password?token=" + token;
+        try {
+            var userOpt = userRepo.findByEmail(email);
+            if (userOpt.isPresent()) {
+                var user = userOpt.get();
+                String token = resetService.createResetToken(user);
 
-            String html = buildBrandedEmail(
-                "Password Reset Request",
-                "<p style='font-size:16px;color:#3A3A40;'>We received a request to reset your password for your <strong>BlackSpace Online Store</strong> account.</p>"
-                + "<div style='text-align:center;margin:24px 0;'>"
-                + "<a href='" + link + "' style='display:inline-block;padding:14px 36px;"
-                + "background:linear-gradient(135deg,#E8611D,#B8480F);color:#fff;text-decoration:none;"
-                + "border-radius:10px;font-weight:600;font-size:15px;'>Reset My Password</a>"
-                + "</div>"
-                + "<p style='color:#8A8A93;font-size:13px;'>This link will expire in <strong>30 minutes</strong>.</p>"
-                + "<p style='color:#8A8A93;font-size:12px;'>If you didn't request this, you can safely ignore this email.</p>"
-            );
-            try {
-                emailService.sendHtmlEmail(
-                        user.getEmail(),
-                        "BlackSpace - Password Reset",
-                        html
+                String baseUrl = request.getScheme() + "://" + request.getServerName();
+                int port = request.getServerPort();
+                if (port != 80 && port != 443) {
+                    baseUrl += ":" + port;
+                }
+                String link = baseUrl + "/reset-password?token=" + token;
+
+                String html = buildBrandedEmail(
+                    "Password Reset Request",
+                    "<p style='font-size:16px;color:#3A3A40;'>We received a request to reset your password for your <strong>BlackSpace Online Store</strong> account.</p>"
+                    + "<div style='text-align:center;margin:24px 0;'>"
+                    + "<a href='" + link + "' style='display:inline-block;padding:14px 36px;"
+                    + "background:linear-gradient(135deg,#E8611D,#B8480F);color:#fff;text-decoration:none;"
+                    + "border-radius:10px;font-weight:600;font-size:15px;'>Reset My Password</a>"
+                    + "</div>"
+                    + "<p style='color:#8A8A93;font-size:13px;'>This link will expire in <strong>30 minutes</strong>.</p>"
+                    + "<p style='color:#8A8A93;font-size:12px;'>If you didn't request this, you can safely ignore this email.</p>"
                 );
-            } catch (Exception e) {
-                System.err.println("Failed to send reset email: " + e.getMessage());
+
+                emailService.sendHtmlEmail(user.getEmail(), "BlackSpace - Password Reset", html);
             }
-        });
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirect.addFlashAttribute("error", "Something went wrong. Please try again.");
+            return "redirect:/forgot-password";
+        }
 
         redirect.addFlashAttribute("message",
                 "If the email exists, a reset link has been sent.");
