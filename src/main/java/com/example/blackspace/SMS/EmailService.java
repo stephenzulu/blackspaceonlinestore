@@ -36,17 +36,20 @@ public class EmailService {
     }
 
     public void sendHtmlEmail(String to, String subject, String htmlContent) throws MessagingException {
+        System.out.println("[EmailService] Sending email to: " + to + " | Subject: " + subject);
         MimeMessage message = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
         try {
             helper.setFrom(new InternetAddress(fromEmail, FROM_NAME, "UTF-8"));
         } catch (java.io.UnsupportedEncodingException e) {
             helper.setFrom(fromEmail);
         }
+        helper.setReplyTo(fromEmail);
         helper.setTo(to);
         helper.setSubject(subject);
         helper.setText(htmlContent, true);
         mailSender.send(message);
+        System.out.println("[EmailService] Email sent successfully to: " + to);
     }
 
 }
