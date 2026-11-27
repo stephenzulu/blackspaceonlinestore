@@ -7,6 +7,11 @@ function newReference() {
     return 'ref-' + Date.now() + '-' + rand;
 }
 
+function preventRefresh(e) {
+    e.preventDefault();
+    e.returnValue = 'Payment is in progress. Are you sure you want to leave?';
+}
+
 function selectPlan(subscriptionId) {
     var config = window.LENCO_CONFIG;
     if (!config || !config.publicKey) {
@@ -33,6 +38,17 @@ function selectPlan(subscriptionId) {
             Swal.fire('Error', 'Payment widget failed to load. Please refresh the page.', 'error');
             return;
         }
+
+        window.addEventListener('beforeunload', preventRefresh);
+
+        Swal.fire({
+            title: 'Processing Payment...',
+            html: '<p>Please <strong>do not refresh</strong> or close this page.<br>Wait while your payment is being processed.</p>',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showConfirmButton: false,
+            didOpen: function() { Swal.showLoading(); }
+        });
 
         LencoPay.getPaid({
             key: config.publicKey,
@@ -64,6 +80,7 @@ function selectPlan(subscriptionId) {
                 })
                 .then(function(res) { return res.json(); })
                 .then(function(result) {
+                    window.removeEventListener('beforeunload', preventRefresh);
                     if (result.success) {
                         Swal.fire({
                             icon: 'success',
@@ -83,6 +100,7 @@ function selectPlan(subscriptionId) {
                 });
             },
             onClose: function() {
+                window.removeEventListener('beforeunload', preventRefresh);
                 Swal.fire('Cancelled', 'Payment was cancelled.', 'info');
             },
             onConfirmationPending: function() {

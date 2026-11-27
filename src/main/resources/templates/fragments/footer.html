@@ -1,7 +1,8 @@
 
 <!-- FOOTER -->
-<div th:fragment="footer" xmlns:th="http://www.w3.org/1999/xhtml" class="d-none d-md-block">
+<div th:fragment="footer" xmlns:th="http://www.w3.org/1999/xhtml">
 
+<div class="d-none d-md-block">
 <footer id="site-footer" class="text-white pt-5 pb-3"
         style="background: #0E0E11;">
     <div class="container">
@@ -92,5 +93,11 @@
     .social-twitter:hover { background: #333 !important; }
 </style>
 
-</div>
+</div><!-- end d-none d-md-block -->
+
+<!-- BlackSpace AI Chatbot (visible on all screen sizes) -->
+<div th:replace="~{fragments/chatbot :: chatbot}"></div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</div><!-- end th:fragment="footer" -->

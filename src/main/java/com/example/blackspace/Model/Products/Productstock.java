@@ -3,7 +3,9 @@ package com.example.blackspace.Model.Products;
 
 import com.example.blackspace.Model.Stores.Store;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -14,6 +16,8 @@ public class Productstock {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Product name is required")
+    @Size(max = 150, message = "Product name must be less than 150 characters")
     @Column(name = "name", length = 150)
     private String name;
 
@@ -30,9 +34,12 @@ public class Productstock {
     @Column(name = "description", columnDefinition = "LONGTEXT")
     private String description;
 
+    @NotBlank(message = "Price is required")
     @Column(name = "price", precision = 10, scale = 2)
     private String price;
 
+    @NotBlank(message = "Category is required")
+    @Size(max = 100, message = "Category must be less than 100 characters")
     @Column(name = "category",length = 100)
     private String category;
 

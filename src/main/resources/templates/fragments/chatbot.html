@@ -1,0 +1,602 @@
+<!-- BlackSpace AI Chatbot Widget -->
+<div th:fragment="chatbot" xmlns:th="http://www.w3.org/1999/xhtml">
+
+<style>
+/* ── Chatbot toggle button ── */
+.chatbot-toggle {
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    z-index: 10000;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #E8611D, #B8480F);
+    border: none;
+    color: #fff;
+    font-size: 26px;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(232,97,29,.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: heartbeat 1.5s ease-in-out infinite;
+}
+@keyframes heartbeat {
+    0%   { transform: scale(1);    box-shadow: 0 4px 16px rgba(232,97,29,.4); }
+    14%  { transform: scale(1.15); box-shadow: 0 6px 28px rgba(232,97,29,.6); }
+    28%  { transform: scale(1);    box-shadow: 0 4px 16px rgba(232,97,29,.4); }
+    42%  { transform: scale(1.1);  box-shadow: 0 5px 22px rgba(232,97,29,.5); }
+    56%  { transform: scale(1);    box-shadow: 0 4px 16px rgba(232,97,29,.4); }
+    100% { transform: scale(1);    box-shadow: 0 4px 16px rgba(232,97,29,.4); }
+}
+.chatbot-toggle:hover { animation-play-state: paused; transform: scale(1.15); box-shadow: 0 6px 24px rgba(232,97,29,.5); }
+.chatbot-toggle .badge-dot {
+    position: absolute; top: 6px; right: 6px;
+    width: 12px; height: 12px; border-radius: 50%;
+    background: #0F7A4E; border: 2px solid #fff;
+}
+
+/* ── Chatbot panel ── */
+.chatbot-panel {
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    z-index: 10001;
+    width: 380px;
+    max-width: calc(100vw - 24px);
+    height: 540px;
+    max-height: calc(100vh - 120px);
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 8px 40px rgba(0,0,0,.18);
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    font-family: inherit;
+}
+.chatbot-panel.open { display: flex; }
+
+/* Header */
+.chatbot-header {
+    background: linear-gradient(135deg, #0E0E11, #2a2a30);
+    color: #fff;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+.chatbot-header .avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: #E8611D; display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+}
+.chatbot-header .info { flex: 1; }
+.chatbot-header .info h6 { margin: 0; font-size: 14px; font-weight: 600; color: #fff !important; }
+.chatbot-header .info small { font-size: 11px; color: #aaa !important; }
+.chatbot-header .close-btn {
+    background: none; border: none; color: #fff; font-size: 20px; cursor: pointer; padding: 4px;
+}
+
+/* Messages area */
+.chatbot-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: #f8f8f6;
+}
+
+/* Message bubbles */
+.chat-msg { max-width: 88%; display: flex; flex-direction: column; }
+.chat-msg.bot { align-self: flex-start; }
+.chat-msg.user { align-self: flex-end; }
+
+.chat-msg .bubble {
+    padding: 10px 14px;
+    border-radius: 14px;
+    font-size: 13.5px;
+    line-height: 1.5;
+    word-wrap: break-word;
+}
+.chat-msg.bot .bubble { background: #fff; color: #333; border: 1px solid #eee; border-bottom-left-radius: 4px; }
+.chat-msg.user .bubble { background: #E8611D; color: #fff; border-bottom-right-radius: 4px; }
+
+/* Product cards in chat */
+.chat-products {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 8px;
+}
+.chat-product-card {
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform .15s, box-shadow .15s;
+    text-decoration: none;
+    color: inherit;
+}
+.chat-product-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,.1); }
+.chat-product-card img {
+    width: 100%; height: 90px; object-fit: cover; background: #f0f0f0;
+}
+.chat-product-card .card-body { padding: 8px; }
+.chat-product-card .card-body .name {
+    font-size: 12px; font-weight: 500; display: -webkit-box;
+    -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.chat-product-card .card-body .price {
+    font-size: 12px; font-weight: 600; color: #E8611D; margin-top: 2px;
+}
+
+/* Suggestion chips */
+.chat-suggestions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.chat-chip {
+    background: #fff; border: 1px solid #E8611D; color: #E8611D;
+    border-radius: 20px; padding: 5px 12px; font-size: 12px; font-weight: 500;
+    cursor: pointer; transition: all .15s; white-space: nowrap;
+}
+.chat-chip:hover { background: #E8611D; color: #fff; }
+
+/* Input area */
+.chatbot-input {
+    padding: 10px 12px;
+    border-top: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #fff;
+    flex-shrink: 0;
+}
+.chatbot-input input {
+    flex: 1; border: 1px solid #ddd; border-radius: 20px;
+    padding: 8px 14px; font-size: 13.5px; outline: none;
+    transition: border-color .2s;
+}
+.chatbot-input input:focus { border-color: #E8611D; }
+
+.chatbot-input .action-btn {
+    width: 36px; height: 36px; border-radius: 50%; border: none;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 16px; transition: background .2s;
+    flex-shrink: 0;
+}
+.chatbot-input .btn-send { background: #E8611D; color: #fff; }
+.chatbot-input .btn-send:hover { background: #B8480F; }
+.chatbot-input .btn-voice { background: #f0f0f0; color: #333; }
+.chatbot-input .btn-voice:hover { background: #e0e0e0; }
+.chatbot-input .btn-voice.recording { background: #C33636; color: #fff; animation: pulse-rec 1s infinite; }
+.chatbot-input .btn-image { background: #f0f0f0; color: #333; }
+.chatbot-input .btn-image:hover { background: #e0e0e0; }
+
+@keyframes pulse-rec { 0%, 100% { opacity: 1; } 50% { opacity: .6; } }
+
+/* Typing indicator */
+.typing-indicator { display: flex; gap: 4px; padding: 8px 14px; }
+.typing-indicator span {
+    width: 7px; height: 7px; border-radius: 50%; background: #bbb;
+    animation: typing-bounce .6s infinite alternate;
+}
+.typing-indicator span:nth-child(2) { animation-delay: .2s; }
+.typing-indicator span:nth-child(3) { animation-delay: .4s; }
+@keyframes typing-bounce { to { transform: translateY(-4px); opacity: .5; } }
+
+/* Image preview */
+.image-preview {
+    position: relative;
+    margin: 4px 0;
+    display: inline-block;
+}
+.image-preview img {
+    max-width: 160px; max-height: 120px; border-radius: 10px; border: 1px solid #ddd;
+}
+
+/* Dark mode */
+body.dark-mode .chatbot-panel { background: #1e1e22; }
+body.dark-mode .chatbot-messages { background: #18181b; }
+body.dark-mode .chat-msg.bot .bubble { background: #2a2a30; color: #e0e0e0; border-color: #3a3a40; }
+body.dark-mode .chat-product-card { background: #2a2a30; border-color: #3a3a40; }
+body.dark-mode .chat-product-card .card-body .name { color: #e0e0e0; }
+body.dark-mode .chat-chip { background: #2a2a30; border-color: #E8611D; color: #E8611D; }
+body.dark-mode .chat-chip:hover { background: #E8611D; color: #fff; }
+body.dark-mode .chatbot-input { background: #1e1e22; border-top-color: #3a3a40; }
+body.dark-mode .chatbot-input input { background: #2a2a30; border-color: #3a3a40; color: #e0e0e0; }
+body.dark-mode .chatbot-input .btn-voice,
+body.dark-mode .chatbot-input .btn-image { background: #2a2a30; color: #e0e0e0; }
+
+/* Mobile adjustments */
+@media (max-width: 480px) {
+    .chatbot-panel {
+        width: calc(100vw - 16px);
+        height: calc(100vh - 100px);
+        bottom: 80px;
+        right: 8px;
+        border-radius: 12px;
+    }
+    .chatbot-toggle { bottom: 78px; right: 14px; }
+}
+</style>
+
+<!-- Toggle button -->
+<button class="chatbot-toggle" id="chatbotToggle" aria-label="Open AI Assistant">
+    <i class="bi bi-robot"></i>
+    <span class="badge-dot"></span>
+</button>
+
+<!-- Chat panel -->
+<div class="chatbot-panel" id="chatbotPanel">
+    <!-- Header -->
+    <div class="chatbot-header">
+        <div class="avatar"><i class="bi bi-robot"></i></div>
+        <div class="info">
+            <h6>BlackSpace AI</h6>
+            <span class="fs-6">Search by text, voice or image</span>
+        </div>
+        <button class="close-btn" id="chatbotClose"><i class="bi bi-x-lg"></i></button>
+    </div>
+
+    <!-- Messages -->
+    <div class="chatbot-messages" id="chatbotMessages"></div>
+
+    <!-- Input -->
+    <div class="chatbot-input">
+        <button class="action-btn btn-image" id="chatbotImageBtn" title="Search by image">
+            <i class="bi bi-camera"></i>
+        </button>
+        <input type="text" id="chatbotInput" placeholder="Ask me anything..." autocomplete="off">
+        <button class="action-btn btn-voice" id="chatbotVoiceBtn" title="Voice search">
+            <i class="bi bi-mic"></i>
+        </button>
+        <button class="action-btn btn-send" id="chatbotSendBtn" title="Send">
+            <i class="bi bi-send-fill"></i>
+        </button>
+        <input type="file" id="chatbotImageInput" accept="image/*" style="display:none">
+    </div>
+</div>
+
+<script>
+(function() {
+    const toggle = document.getElementById('chatbotToggle');
+    const panel = document.getElementById('chatbotPanel');
+    const closeBtn = document.getElementById('chatbotClose');
+    const messagesEl = document.getElementById('chatbotMessages');
+    const input = document.getElementById('chatbotInput');
+    const sendBtn = document.getElementById('chatbotSendBtn');
+    const voiceBtn = document.getElementById('chatbotVoiceBtn');
+    const imageBtn = document.getElementById('chatbotImageBtn');
+    const imageInput = document.getElementById('chatbotImageInput');
+
+    let isOpen = false;
+    let isFirstOpen = true;
+
+    // ── Toggle panel ──
+    toggle.addEventListener('click', () => {
+        isOpen = !isOpen;
+        panel.classList.toggle('open', isOpen);
+        toggle.style.display = isOpen ? 'none' : 'flex';
+        if (isOpen && isFirstOpen) {
+            isFirstOpen = false;
+            showBotMessage({
+                message: "Hi! I'm the **BlackSpace AI Assistant**. I can help you find products by text, voice, or image. What are you looking for?",
+                products: [],
+                suggestions: ["Show me trending products", "Latest products", "Browse categories"]
+            });
+        }
+        if (isOpen) input.focus();
+    });
+
+    closeBtn.addEventListener('click', () => {
+        isOpen = false;
+        panel.classList.remove('open');
+        toggle.style.display = 'flex';
+    });
+
+    // ── Send message ──
+    function sendMessage(text) {
+        if (!text || !text.trim()) return;
+        appendUserBubble(text);
+        input.value = '';
+        showTyping();
+
+        fetch('/api/chatbot/message', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: text })
+        })
+        .then(r => r.json())
+        .then(data => { removeTyping(); showBotMessage(data); })
+        .catch(() => { removeTyping(); appendBotBubble("Sorry, something went wrong. Please try again."); });
+    }
+
+    sendBtn.addEventListener('click', () => sendMessage(input.value));
+    input.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendMessage(input.value); });
+
+    // ── Voice search (Web Speech API) ──
+    let recognition = null;
+    let isRecording = false;
+    let hasMicPermission = false;
+
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRecognition();
+        recognition.lang = 'en-US';
+        recognition.continuous = false;
+        recognition.interimResults = true;
+
+        let lastTranscript = '';
+        let voiceSent = false;
+
+        recognition.onresult = function(event) {
+            let transcript = '';
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                transcript = event.results[i][0].transcript;
+            }
+            lastTranscript = transcript;
+            input.value = transcript;
+            if (event.results[event.results.length - 1].isFinal) {
+                voiceSent = true;
+                sendMessage(transcript);
+            }
+        };
+
+        recognition.onend = function() {
+            // Auto-send if we got text but it wasn't sent yet (no final result fired)
+            if (!voiceSent && lastTranscript.trim()) {
+                sendMessage(lastTranscript);
+            }
+            isRecording = false;
+            voiceBtn.classList.remove('recording');
+            voiceBtn.innerHTML = '<i class="bi bi-mic"></i>';
+            lastTranscript = '';
+            voiceSent = false;
+        };
+
+        recognition.onerror = function(event) {
+            isRecording = false;
+            voiceBtn.classList.remove('recording');
+            voiceBtn.innerHTML = '<i class="bi bi-mic"></i>';
+            if (event.error === 'not-allowed') {
+                appendBotBubble("Microphone access denied. Please allow microphone permission in your browser settings and try again.");
+            } else if (event.error === 'network') {
+                appendBotBubble("Voice search requires an internet connection. Please check your connection and try again.");
+            } else if (event.error === 'no-speech') {
+                appendBotBubble("I didn't hear anything. Click the mic and speak clearly.");
+            } else if (event.error === 'aborted') {
+                // User cancelled, no message needed
+            } else {
+                appendBotBubble("Voice error: " + event.error + ". Try using HTTPS or Chrome on localhost.");
+            }
+        };
+    }
+
+    async function startVoice() {
+        // Request mic permission first
+        if (!hasMicPermission) {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                stream.getTracks().forEach(t => t.stop()); // release immediately
+                hasMicPermission = true;
+            } catch(e) {
+                appendBotBubble("Microphone access denied. Please allow microphone permission in your browser settings.");
+                return;
+            }
+        }
+        isRecording = true;
+        lastTranscript = '';
+        voiceSent = false;
+        voiceBtn.classList.add('recording');
+        voiceBtn.innerHTML = '<i class="bi bi-stop-fill"></i>';
+        appendBotBubble("Listening... Speak now.");
+        try {
+            recognition.start();
+        } catch(e) {
+            isRecording = false;
+            voiceBtn.classList.remove('recording');
+            voiceBtn.innerHTML = '<i class="bi bi-mic"></i>';
+            appendBotBubble("Could not start voice recognition. Make sure you're using Chrome or Edge.");
+        }
+    }
+
+    voiceBtn.addEventListener('click', () => {
+        if (!recognition) {
+            appendBotBubble("Voice search is not supported in your browser. Please use Chrome or Edge.");
+            return;
+        }
+        if (isRecording) {
+            recognition.stop();
+        } else {
+            startVoice();
+        }
+    });
+
+    // ── Image search ──
+    imageBtn.addEventListener('click', () => imageInput.click());
+
+    imageInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        imageInput.value = '';
+
+        // Show user preview
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+            appendUserImage(ev.target.result);
+            showTyping();
+
+            // Client-side image analysis using the image content
+            analyzeImage(file, ev.target.result);
+        };
+        reader.readAsDataURL(file);
+    });
+
+    function analyzeImage(file, dataUrl) {
+        // Extract visual keywords from filename and use basic color/type detection
+        const name = file.name.toLowerCase().replace(/\.[^.]+$/, '').replace(/[_\-\d]+/g, ' ').trim();
+        const labels = [];
+
+        if (name && name.length > 2) {
+            labels.push(...name.split(/\s+/).filter(w => w.length > 2));
+        }
+
+        // Create a canvas to analyze dominant colors
+        const img = new Image();
+        img.onload = function() {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 50;
+            canvas.height = 50;
+            ctx.drawImage(img, 0, 0, 50, 50);
+
+            try {
+                const imageData = ctx.getImageData(0, 0, 50, 50).data;
+                const colors = detectDominantColors(imageData);
+                labels.push(...colors);
+            } catch(e) { /* cross-origin, skip */ }
+
+            if (labels.length === 0) {
+                labels.push('product');
+            }
+
+            // Send labels to backend
+            fetch('/api/chatbot/image', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ labels: [...new Set(labels)].slice(0, 5) })
+            })
+            .then(r => r.json())
+            .then(data => { removeTyping(); showBotMessage(data); })
+            .catch(() => { removeTyping(); appendBotBubble("Sorry, I couldn't process that image. Try describing what you see instead."); });
+        };
+        img.src = dataUrl;
+    }
+
+    function detectDominantColors(data) {
+        let r = 0, g = 0, b = 0, count = 0;
+        for (let i = 0; i < data.length; i += 16) { // sample every 4th pixel
+            r += data[i]; g += data[i+1]; b += data[i+2]; count++;
+        }
+        r = Math.round(r/count); g = Math.round(g/count); b = Math.round(b/count);
+
+        const colors = [];
+        if (r > 180 && g < 100 && b < 100) colors.push('red');
+        else if (r < 100 && g > 150 && b < 100) colors.push('green');
+        else if (r < 100 && g < 100 && b > 180) colors.push('blue');
+        else if (r > 200 && g > 200 && b < 100) colors.push('yellow');
+        else if (r > 180 && g > 100 && b < 80) colors.push('orange');
+        else if (r > 150 && g < 80 && b > 150) colors.push('purple');
+        else if (r > 180 && g > 100 && b > 150) colors.push('pink');
+        else if (r > 200 && g > 200 && b > 200) colors.push('white');
+        else if (r < 60 && g < 60 && b < 60) colors.push('black');
+        else if (Math.abs(r-g) < 30 && Math.abs(g-b) < 30) colors.push('grey');
+        return colors;
+    }
+
+    // ── Render helpers ──
+    function appendUserBubble(text) {
+        const div = document.createElement('div');
+        div.className = 'chat-msg user';
+        div.innerHTML = '<div class="bubble">' + escapeHtml(text) + '</div>';
+        messagesEl.appendChild(div);
+        scrollToBottom();
+    }
+
+    function appendUserImage(dataUrl) {
+        const div = document.createElement('div');
+        div.className = 'chat-msg user';
+        div.innerHTML = '<div class="image-preview"><img src="' + dataUrl + '" alt="Uploaded image"></div>';
+        messagesEl.appendChild(div);
+        scrollToBottom();
+    }
+
+    function appendBotBubble(text) {
+        const div = document.createElement('div');
+        div.className = 'chat-msg bot';
+        div.innerHTML = '<div class="bubble">' + renderMarkdown(text) + '</div>';
+        messagesEl.appendChild(div);
+        scrollToBottom();
+    }
+
+    function showBotMessage(data) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'chat-msg bot';
+
+        let html = '<div class="bubble">' + renderMarkdown(data.message) + '</div>';
+
+        // Product cards
+        if (data.products && data.products.length > 0) {
+            html += '<div class="chat-products">';
+            data.products.forEach(p => {
+                const price = p.price ? ((p.currency || '') + ' ' + p.price) : '';
+                html += '<a href="/product/' + p.id + '" class="chat-product-card">'
+                    + '<img src="' + escapeHtml(p.image) + '" alt="' + escapeHtml(p.name) + '" loading="lazy" onerror="this.src=\'/images/default.png\'">'
+                    + '<div class="card-body">'
+                    + '<div class="name">' + escapeHtml(p.name) + '</div>'
+                    + '<div class="price">' + escapeHtml(price) + '</div>'
+                    + '</div></a>';
+            });
+            html += '</div>';
+        }
+
+        // Suggestion chips
+        if (data.suggestions && data.suggestions.length > 0) {
+            html += '<div class="chat-suggestions">';
+            data.suggestions.forEach(s => {
+                html += '<span class="chat-chip" data-query="' + escapeHtml(s) + '">' + escapeHtml(s) + '</span>';
+            });
+            html += '</div>';
+        }
+
+        wrapper.innerHTML = html;
+        messagesEl.appendChild(wrapper);
+
+        // Chip click handlers
+        wrapper.querySelectorAll('.chat-chip').forEach(chip => {
+            chip.addEventListener('click', () => sendMessage(chip.dataset.query));
+        });
+
+        scrollToBottom();
+    }
+
+    function showTyping() {
+        const div = document.createElement('div');
+        div.className = 'chat-msg bot typing';
+        div.innerHTML = '<div class="bubble"><div class="typing-indicator"><span></span><span></span><span></span></div></div>';
+        messagesEl.appendChild(div);
+        scrollToBottom();
+    }
+
+    function removeTyping() {
+        const el = messagesEl.querySelector('.typing');
+        if (el) el.remove();
+    }
+
+    function scrollToBottom() {
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+
+    function renderMarkdown(text) {
+        if (!text) return '';
+        // Simple markdown: bold, newlines
+        return escapeHtml(text)
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\n\n/g, '<br><br>')
+            .replace(/\n- /g, '<br>• ')
+            .replace(/\n/g, '<br>');
+    }
+})();
+</script>
+
+</div>

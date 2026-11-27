@@ -13,7 +13,8 @@ import com.example.blackspace.Service.Store.StoreService;
 import com.example.blackspace.Service.Subscription.SubscriptionService;
 import com.example.blackspace.Service.User.UserService;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,18 +26,19 @@ import java.util.Optional;
 
 @Controller
 public class DashboardController {
-    @Autowired
-    private StoreService storeService;
+    private static final Logger log = LoggerFactory.getLogger(DashboardController.class);
 
+    private final StoreService storeService;
     private final UserService userService;
     private final ProductstockService productstockService;
     private final PaymentService paymentService;
     private final PageVisitService pageVisitService;
     private final SubscriptionService subscriptionService;
 
-    public DashboardController(UserService userService, ProductstockService productstockService,
-                               PaymentService paymentService, PageVisitService pageVisitService,
-                               SubscriptionService subscriptionService) {
+    public DashboardController(StoreService storeService, UserService userService,
+                               ProductstockService productstockService, PaymentService paymentService,
+                               PageVisitService pageVisitService, SubscriptionService subscriptionService) {
+        this.storeService = storeService;
         this.userService = userService;
         this.productstockService = productstockService;
         this.paymentService = paymentService;
@@ -155,10 +157,9 @@ public class DashboardController {
         Optional<Payment> paymentOpt = paymentService.getLatestPayment(username);
         boolean subscriptionActive = paymentService.isSubscriptionEnabled(username);
 
-        // DEBUG (watch console)
-        System.out.println("Payment found: " + paymentOpt.isPresent());
+        log.debug("Payment found: {}", paymentOpt.isPresent());
         paymentOpt.ifPresent(p ->
-                System.out.println("Enabled=" + p.getEnabled() + ", Type=" + p.getPaymentType())
+                log.debug("Enabled={}, Type={}", p.getEnabled(), p.getPaymentType())
         );
 
 

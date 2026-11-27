@@ -5,12 +5,16 @@ import com.example.blackspace.MemberStoreSubscription.MemberStoreSubscription;
 import com.example.blackspace.MemberStoreSubscription.MemberStoreSubscriptionRepository;
 import com.example.blackspace.SMS.EmailService;
 import jakarta.mail.MessagingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class StoreSubscriptionEmailService {
+
+    private static final Logger log = LoggerFactory.getLogger(StoreSubscriptionEmailService.class);
 
     private final MemberStoreSubscriptionRepository subscriptionRepository;
     private final EmailService emailService;
@@ -28,7 +32,7 @@ public class StoreSubscriptionEmailService {
                 subscriptionRepository.findByStore_IdAndActiveTrue(storeId);
 
         if (subscribers.isEmpty()) {
-            System.out.println("No subscribers found for store_id=" + storeId);
+            log.info("No subscribers found for store_id={}", storeId);
             return;
         }
 
@@ -39,10 +43,9 @@ public class StoreSubscriptionEmailService {
                         subject,
                         htmlContent
                 );
-                System.out.println("Email sent to: " + sub.getEmail());
+                log.info("Email sent to: {}", sub.getEmail());
             } catch (MessagingException e) {
-                System.err.println("Failed to send email to: " + sub.getEmail());
-                e.printStackTrace();
+                log.error("Failed to send email to: {}", sub.getEmail(), e);
             }
         }
     }

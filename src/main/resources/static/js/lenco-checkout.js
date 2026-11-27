@@ -68,6 +68,32 @@
 
         setStatus("Opening payment window…");
 
+        function preventRefresh(e) {
+            e.preventDefault();
+            e.returnValue = 'Payment is in progress. Are you sure you want to leave?';
+        }
+        window.addEventListener('beforeunload', preventRefresh);
+
+        var overlay = document.createElement('div');
+        overlay.id = 'payment-overlay';
+        overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:9999;display:flex;align-items:center;justify-content:center;';
+        overlay.innerHTML = '<div style="background:#fff;padding:30px 40px;border-radius:15px;text-align:center;max-width:400px;">'
+            + '<div style="font-size:2.5rem;margin-bottom:10px;">&#9888;&#65039;</div>'
+            + '<h3 style="margin:0 0 10px;">Payment in Progress</h3>'
+            + '<p style="color:#666;">Please <strong>do not refresh</strong> or close this page.<br>Wait while your payment is being processed.</p>'
+            + '<div style="margin-top:15px;"><div style="width:40px;height:40px;border:4px solid #eee;border-top:4px solid #E8611D;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto;"></div></div>'
+            + '</div>';
+        var style = document.createElement('style');
+        style.textContent = '@keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}';
+        document.head.appendChild(style);
+        document.body.appendChild(overlay);
+
+        function removeOverlay() {
+            window.removeEventListener('beforeunload', preventRefresh);
+            var el = document.getElementById('payment-overlay');
+            if (el) el.remove();
+        }
+
         LencoPay.getPaid({
             key: config.publicKey,
             reference: newReference(),
@@ -81,9 +107,11 @@
                 phone: document.getElementById("phone").value
             },
             onSuccess: function (response) {
+                removeOverlay();
                 verifyOnServer(response.reference);
             },
             onClose: function () {
+                removeOverlay();
                 setStatus("Payment window closed before completion.");
             },
             onConfirmationPending: function () {

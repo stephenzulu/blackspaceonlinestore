@@ -41,6 +41,13 @@ public interface ProductsRepository extends JpaRepository<Productstock, Long> {
     @Query("SELECT p FROM Productstock p WHERE p.username IN (SELECT s.username FROM Store s WHERE s.active = true) ORDER BY p.createdAt DESC")
     List<Productstock> findAllByActiveStoreOrderByCreatedAtDesc();
 
+    @Query("SELECT p FROM Productstock p WHERE " +
+           "LOWER(p.name) LIKE LOWER(CONCAT('%', :q, '%')) OR " +
+           "LOWER(p.category) LIKE LOWER(CONCAT('%', :q, '%')) OR " +
+           "LOWER(p.description) LIKE LOWER(CONCAT('%', :q, '%')) OR " +
+           "LOWER(p.shortdescription) LIKE LOWER(CONCAT('%', :q, '%'))")
+    List<Productstock> searchAllFields(@Param("q") String query);
+
 
 
 

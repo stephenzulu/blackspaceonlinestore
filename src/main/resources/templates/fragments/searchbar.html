@@ -1,0 +1,275 @@
+<!-- Uniform Search Bar Fragment -->
+<div th:fragment="searchbar" xmlns:th="http://www.w3.org/1999/xhtml">
+
+<style>
+.bs-search-section { padding: 24px 0 16px; }
+.bs-search-wrap {
+    max-width: 580px; margin: 0 auto; position: relative;
+}
+.bs-search-bar {
+    display: flex; align-items: center; gap: 0;
+    background: #fff; border: 2px solid #E7E7EA; border-radius: 16px;
+    padding: 4px 4px 4px 18px;
+    box-shadow: 0 2px 12px rgba(0,0,0,.05);
+    transition: border-color .2s, box-shadow .2s;
+}
+.bs-search-bar:focus-within {
+    border-color: #E8611D;
+    box-shadow: 0 4px 20px rgba(232,97,29,.12);
+}
+.bs-search-bar input {
+    flex: 1; border: none; outline: none; background: none;
+    font-size: 0.95rem; padding: 10px 0; color: #3A3A40;
+    min-width: 0;
+}
+.bs-search-bar input::placeholder { color: #B0B0B8; }
+.bs-search-bar .search-btn {
+    background: linear-gradient(135deg, #0E0E11, #3A3A40);
+    color: #fff; border: none; border-radius: 12px;
+    padding: 10px 20px; font-size: 0.88rem; font-weight: 600;
+    cursor: pointer; display: flex; align-items: center; gap: 6px;
+    transition: all .2s; white-space: nowrap; flex-shrink: 0;
+}
+.bs-search-bar .search-btn:hover {
+    background: linear-gradient(135deg, #3A3A40, #0E0E11);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(14,14,17,.25);
+}
+.bs-search-hint {
+    text-align: center; margin-top: 10px; font-size: 0.78rem; color: #8A8A93;
+}
+.bs-search-hint i { color: #E8611D; }
+
+/* Suggestions dropdown */
+.bs-suggestions {
+    position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+    background: #fff; border: 1px solid #E7E7EA; border-radius: 14px;
+    box-shadow: 0 8px 28px rgba(0,0,0,.12); z-index: 1060;
+    max-height: 360px; overflow-y: auto; display: none;
+}
+.bs-suggestions a {
+    display: flex; align-items: center; padding: 10px 16px;
+    text-decoration: none; color: #3A3A40;
+    border-bottom: 1px solid #F6F6F4; transition: background .15s;
+}
+.bs-suggestions a:last-child { border-bottom: none; }
+.bs-suggestions a:hover { background: #FFF5F0; }
+.bs-suggestions img {
+    width: 42px; height: 42px; object-fit: cover; border-radius: 8px;
+    margin-right: 12px; flex-shrink: 0; background: #F6F6F4;
+}
+.bs-suggestions .s-name { font-weight: 500; font-size: 0.88rem; }
+.bs-suggestions .s-price { font-size: 0.8rem; color: #E8611D; font-weight: 600; }
+.bs-suggestions .s-empty {
+    padding: 16px; text-align: center; color: #B0B0B8; font-size: 0.88rem;
+}
+
+/* Dark mode */
+body.dark-mode .bs-search-bar { background: #2a2a30; border-color: #3a3a40; }
+body.dark-mode .bs-search-bar input { color: #e0e0e0; }
+body.dark-mode .bs-search-bar input::placeholder { color: #666; }
+body.dark-mode .bs-suggestions { background: #2a2a30; border-color: #3a3a40; }
+body.dark-mode .bs-suggestions a { color: #e0e0e0; border-bottom-color: #3a3a40; }
+body.dark-mode .bs-suggestions a:hover { background: #333; }
+body.dark-mode .bs-search-hint { color: #666; }
+
+@media (max-width: 576px) {
+    .bs-search-bar { border-radius: 12px; padding: 4px 4px 4px 14px; }
+    .bs-search-bar .search-btn { padding: 10px 14px; font-size: 0.82rem; }
+    .bs-search-bar .search-btn span { display: none; }
+}
+</style>
+
+<section class="bs-search-section">
+    <div class="container">
+        <div class="bs-search-wrap">
+            <form th:action="@{/products/search}" method="get" class="bs-search-bar">
+                <i class="bi bi-search" style="color:#B0B0B8; font-size:1.1rem; flex-shrink:0;"></i>
+                <input type="text" name="q" id="bsSearchInput"
+                       placeholder="Search products, categories, stores..."
+                       autocomplete="off" th:value="${q}">
+                <button type="submit" class="search-btn">
+                    <i class="bi bi-search"></i>
+                    <span>Search</span>
+                </button>
+            </form>
+            <div id="bsSuggestions" class="bs-suggestions"></div>
+            <p class="bs-search-hint">
+                <i class="bi bi-robot me-1"></i> Try our AI assistant — click the
+                <i class="bi bi-robot" style="color:#E8611D;"></i> button for voice &amp; image search
+            </p>
+        </div>
+    </div>
+</section>
+
+<script>
+(function() {
+    var inp = document.getElementById('bsSearchInput');
+    var box = document.getElementById('bsSuggestions');
+    if (!inp || !box) return;
+    var timer;
+    inp.addEventListener('input', function() {
+        clearTimeout(timer);
+        var q = inp.value.trim();
+        if (q.length < 2) { box.style.display = 'none'; return; }
+        timer = setTimeout(function() {
+            fetch('/api/products/suggest?q=' + encodeURIComponent(q))
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    if (!data.length) {
+                        box.innerHTML = '<div class="s-empty">No results for "' + q + '"</div>';
+                        box.style.display = 'block'; return;
+                    }
+                    var h = '';
+                    data.forEach(function(i) {
+                        h += '<a href="/product/' + i.id + '">'
+                            + '<img src="' + i.image + '" alt="" onerror="this.src=\'/images/default.png\'">'
+                            + '<div><div class="s-name">' + i.name + '</div>'
+                            + '<div class="s-price">' + (i.currency||'') + ' ' + Number(i.price).toLocaleString() + '</div></div></a>';
+                    });
+                    box.innerHTML = h;
+                    box.style.display = 'block';
+                })
+                .catch(function() { box.style.display = 'none'; });
+        }, 300);
+    });
+    document.addEventListener('click', function(e) {
+        if (!inp.contains(e.target) && !box.contains(e.target)) box.style.display = 'none';
+    });
+    inp.addEventListener('focus', function() {
+        if (inp.value.trim().length >= 2 && box.innerHTML) box.style.display = 'block';
+    });
+})();
+</script>
+
+</div>
+
+<!-- Store Search Bar Fragment (same design, searches stores) -->
+<div th:fragment="storesearchbar" xmlns:th="http://www.w3.org/1999/xhtml">
+
+<style>
+.bs-search-section { padding: 24px 0 16px; }
+.bs-search-wrap { max-width: 580px; margin: 0 auto; position: relative; }
+.bs-search-bar {
+    display: flex; align-items: center; gap: 0;
+    background: #fff; border: 2px solid #E7E7EA; border-radius: 16px;
+    padding: 4px 4px 4px 18px;
+    box-shadow: 0 2px 12px rgba(0,0,0,.05);
+    transition: border-color .2s, box-shadow .2s;
+}
+.bs-search-bar:focus-within { border-color: #1D9E63; box-shadow: 0 4px 20px rgba(29,158,99,.12); }
+.bs-search-bar input {
+    flex: 1; border: none; outline: none; background: none;
+    font-size: 0.95rem; padding: 10px 0; color: #3A3A40; min-width: 0;
+}
+.bs-search-bar input::placeholder { color: #B0B0B8; }
+.bs-search-bar .search-btn {
+    background: linear-gradient(135deg, #0E0E11, #3A3A40);
+    color: #fff; border: none; border-radius: 12px;
+    padding: 10px 20px; font-size: 0.88rem; font-weight: 600;
+    cursor: pointer; display: flex; align-items: center; gap: 6px;
+    transition: all .2s; white-space: nowrap; flex-shrink: 0;
+}
+.bs-search-bar .search-btn:hover {
+    background: linear-gradient(135deg, #3A3A40, #0E0E11);
+    transform: translateY(-1px); box-shadow: 0 4px 12px rgba(14,14,17,.25);
+}
+.bs-search-hint { text-align: center; margin-top: 10px; font-size: 0.78rem; color: #8A8A93; }
+.bs-search-hint i { color: #1D9E63; }
+.bs-suggestions {
+    position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+    background: #fff; border: 1px solid #E7E7EA; border-radius: 14px;
+    box-shadow: 0 8px 28px rgba(0,0,0,.12); z-index: 1060;
+    max-height: 360px; overflow-y: auto; display: none;
+}
+.bs-suggestions a {
+    display: flex; align-items: center; padding: 10px 16px;
+    text-decoration: none; color: #3A3A40;
+    border-bottom: 1px solid #F6F6F4; transition: background .15s;
+}
+.bs-suggestions a:last-child { border-bottom: none; }
+.bs-suggestions a:hover { background: #F0FAF5; }
+.bs-suggestions img {
+    width: 42px; height: 42px; object-fit: cover; border-radius: 8px;
+    margin-right: 12px; flex-shrink: 0; background: #F6F6F4;
+}
+.bs-suggestions .s-name { font-weight: 500; font-size: 0.88rem; }
+.bs-suggestions .s-sub { font-size: 0.78rem; color: #8A8A93; }
+.bs-suggestions .s-empty { padding: 16px; text-align: center; color: #B0B0B8; font-size: 0.88rem; }
+body.dark-mode .bs-search-bar { background: #2a2a30; border-color: #3a3a40; }
+body.dark-mode .bs-search-bar input { color: #e0e0e0; }
+body.dark-mode .bs-suggestions { background: #2a2a30; border-color: #3a3a40; }
+body.dark-mode .bs-suggestions a { color: #e0e0e0; border-bottom-color: #3a3a40; }
+body.dark-mode .bs-suggestions a:hover { background: #333; }
+@media (max-width: 576px) {
+    .bs-search-bar { border-radius: 12px; padding: 4px 4px 4px 14px; }
+    .bs-search-bar .search-btn { padding: 10px 14px; font-size: 0.82rem; }
+    .bs-search-bar .search-btn span { display: none; }
+}
+</style>
+
+<section class="bs-search-section">
+    <div class="container">
+        <div class="bs-search-wrap">
+            <form th:action="@{/stores}" method="get" class="bs-search-bar">
+                <i class="bi bi-shop" style="color:#B0B0B8; font-size:1.1rem; flex-shrink:0;"></i>
+                <input type="text" name="q" id="storeSearchInput"
+                       placeholder="Search stores by name..."
+                       autocomplete="off" th:value="${q}">
+                <button type="submit" class="search-btn">
+                    <i class="bi bi-search"></i>
+                    <span>Search</span>
+                </button>
+            </form>
+            <div id="storeSuggestions" class="bs-suggestions"></div>
+            <p class="bs-search-hint">
+                <i class="bi bi-shop me-1"></i> Discover trusted local stores
+                <span th:if="${q != null and !q.isEmpty()}">
+                    &mdash; <a th:href="@{/stores}" style="color:#1D9E63; text-decoration:none;">Clear search</a>
+                </span>
+            </p>
+        </div>
+    </div>
+</section>
+
+<script>
+(function() {
+    var inp = document.getElementById('storeSearchInput');
+    var box = document.getElementById('storeSuggestions');
+    if (!inp || !box) return;
+    var timer;
+    inp.addEventListener('input', function() {
+        clearTimeout(timer);
+        var q = inp.value.trim();
+        if (q.length < 2) { box.style.display = 'none'; return; }
+        timer = setTimeout(function() {
+            fetch('/api/stores/suggest?q=' + encodeURIComponent(q))
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    if (!data.length) {
+                        box.innerHTML = '<div class="s-empty">No stores found for "' + q + '"</div>';
+                        box.style.display = 'block'; return;
+                    }
+                    var h = '';
+                    data.forEach(function(s) {
+                        h += '<a href="/store/' + s.id + '">'
+                            + '<img src="' + s.logo + '" alt="" onerror="this.src=\'/store/logo/logo.jpeg\'">'
+                            + '<div><div class="s-name">' + s.name + '</div>'
+                            + '<div class="s-sub"><i class="bi bi-shop me-1"></i>Visit store</div></div></a>';
+                    });
+                    box.innerHTML = h;
+                    box.style.display = 'block';
+                })
+                .catch(function() { box.style.display = 'none'; });
+        }, 300);
+    });
+    document.addEventListener('click', function(e) {
+        if (!inp.contains(e.target) && !box.contains(e.target)) box.style.display = 'none';
+    });
+    inp.addEventListener('focus', function() {
+        if (inp.value.trim().length >= 2 && box.innerHTML) box.style.display = 'block';
+    });
+})();
+</script>
+
+</div>

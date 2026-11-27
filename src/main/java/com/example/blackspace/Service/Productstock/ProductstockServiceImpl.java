@@ -1,11 +1,11 @@
 package com.example.blackspace.Service.Productstock;
 
+import com.example.blackspace.Config.FileUploadUtil;
 import com.example.blackspace.Model.Products.Productstock;
 import com.example.blackspace.Model.Stores.Store;
 import com.example.blackspace.Repository.user.ProductsRepository;
 import com.example.blackspace.Service.Store.StoreService;
-import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,15 +26,16 @@ import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 @Service
+@Transactional(readOnly = true)
 public class ProductstockServiceImpl implements ProductstockService {
 
+    private final StoreService storeService;
+    private final ProductsRepository productsRepository;
 
-    @Autowired
-    private StoreService storeService;
-
-    @Autowired
-    private ProductsRepository productsRepository;
-
+    public ProductstockServiceImpl(StoreService storeService, ProductsRepository productsRepository) {
+        this.storeService = storeService;
+        this.productsRepository = productsRepository;
+    }
 
     private final String IMAGE_DIR = new File("uploads/products/images/").getAbsolutePath() + "/";
     private final String DOC_DIR = new File("uploads/products/audio/").getAbsolutePath() + "/";
@@ -47,6 +48,7 @@ public class ProductstockServiceImpl implements ProductstockService {
 
 
     @Override
+    @Transactional
     public Productstock addProductstock(Productstock productstock, MultipartFile[] images, MultipartFile audiourl) throws IOException {
 
         Path imagePath = Paths.get(IMAGE_DIR);
@@ -54,11 +56,12 @@ public class ProductstockServiceImpl implements ProductstockService {
         Files.createDirectories(imagePath);
         Files.createDirectories(docPath);
 
-        // Save multiple images (compressed)
+        // Validate and save multiple images (compressed)
         if (images != null && images.length > 0) {
             StringBuilder filenames = new StringBuilder();
             for (MultipartFile image : images) {
                 if (!image.isEmpty()) {
+                    FileUploadUtil.validateImage(image);
                     String savedName = compressAndSaveImage(image, imagePath);
                     filenames.append(savedName).append(",");
                 }
@@ -67,9 +70,10 @@ public class ProductstockServiceImpl implements ProductstockService {
             productstock.setImageurls(filenames.length() > 0 ? filenames.substring(0, filenames.length() - 1) : null);
         }
 
-        // Save audio
+        // Validate and save audio
         if (audiourl != null && !audiourl.isEmpty()) {
-            String audioName = UUID.randomUUID() + "_" + audiourl.getOriginalFilename();
+            FileUploadUtil.validateAudio(audiourl);
+            String audioName = FileUploadUtil.sanitizeFilename(audiourl.getOriginalFilename(), ".mp3");
             Files.copy(audiourl.getInputStream(), docPath.resolve(audioName), StandardCopyOption.REPLACE_EXISTING);
             productstock.setAudiourl(audioName);
         }
@@ -91,6 +95,7 @@ public class ProductstockServiceImpl implements ProductstockService {
 
 
     @Override
+    @Transactional
     public Productstock updateProductstock(Productstock productstock, MultipartFile[] newImages, MultipartFile audiourl) throws IOException {
         Path imagePath = Paths.get(IMAGE_DIR);
         Path docPath = Paths.get(DOC_DIR);
@@ -101,10 +106,11 @@ public class ProductstockServiceImpl implements ProductstockService {
         String existingImages = productstock.getImageurls() != null ? productstock.getImageurls() : "";
         StringBuilder filenames = new StringBuilder(existingImages);
 
-        // Save new images (compressed) and append
+        // Validate, save new images (compressed) and append
         if (newImages != null && newImages.length > 0) {
             for (MultipartFile image : newImages) {
                 if (!image.isEmpty()) {
+                    FileUploadUtil.validateImage(image);
                     String savedName = compressAndSaveImage(image, imagePath);
                     if (filenames.length() > 0 && !filenames.toString().endsWith(",")) {
                         filenames.append(",");
@@ -116,9 +122,10 @@ public class ProductstockServiceImpl implements ProductstockService {
 
         productstock.setImageurls(filenames.length() > 0 ? filenames.toString() : null);
 
-        // Save audio if provided
+        // Validate and save audio if provided
         if (audiourl != null && !audiourl.isEmpty()) {
-            String audioName = UUID.randomUUID() + "_" + audiourl.getOriginalFilename();
+            FileUploadUtil.validateAudio(audiourl);
+            String audioName = FileUploadUtil.sanitizeFilename(audiourl.getOriginalFilename(), ".mp3");
             Files.copy(audiourl.getInputStream(), docPath.resolve(audioName), StandardCopyOption.REPLACE_EXISTING);
             productstock.setAudiourl(audioName);
         }
@@ -201,6 +208,7 @@ public class ProductstockServiceImpl implements ProductstockService {
 
 
     @Override
+    @Transactional
     public Productstock saveProduct(Productstock product) {
         return productsRepository.save(product); // saves updates to DB
     }

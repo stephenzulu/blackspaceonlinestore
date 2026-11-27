@@ -3,6 +3,7 @@ package com.example.blackspace.Service.PageVisit;
 import com.example.blackspace.Model.PageVisit;
 import com.example.blackspace.Repository.PageVisitRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -10,6 +11,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
+@Transactional(readOnly = true)
 public class PageVisitServiceImpl implements PageVisitService {
 
     private final PageVisitRepository pageVisitRepository;
@@ -19,6 +21,7 @@ public class PageVisitServiceImpl implements PageVisitService {
     }
 
     @Override
+    @Transactional
     public void recordVisit(String pagePath, String ipAddress, String userAgent) {
         PageVisit visit = new PageVisit();
         visit.setPagePath(pagePath);

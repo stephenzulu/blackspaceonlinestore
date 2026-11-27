@@ -39,18 +39,6 @@
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
 
-        .search-bar {
-            background: #fff; border-radius: 14px; padding: 12px 16px;
-            box-shadow: 0 2px 12px rgba(0,0,0,.05); display: flex; gap: 10px;
-            max-width: 500px; margin: 0 auto;
-        }
-        .search-bar .form-control {
-            border: 1px solid #E7E7EA; border-radius: 10px; font-size: 0.88rem;
-        }
-        .search-bar .form-control:focus {
-            border-color: #E8611D; box-shadow: 0 0 0 3px rgba(232,97,29,.1);
-        }
-
         .trending-card {
             border: none; border-radius: 14px; overflow: hidden;
             box-shadow: 0 2px 12px rgba(0,0,0,.05);
@@ -94,19 +82,12 @@
     </nav>
 </div>
 
-<!-- Search & Grid -->
+<!-- Store Search -->
+<div th:replace="~{fragments/searchbar :: storesearchbar}"></div>
+
+<!-- Stores Grid -->
 <section class="py-4">
     <div class="container">
-        <!-- Search -->
-        <form th:action="@{/stores}" method="get" class="search-bar mb-4">
-            <input type="text" name="q" class="form-control flex-grow-1" placeholder="Search stores by name..." th:value="${q}">
-            <button type="submit" class="btn btn-sm" style="background:#0E0E11; color:#fff; border:none; border-radius:10px; padding:6px 18px;">
-                <i class="bi bi-search me-1"></i>Search
-            </button>
-            <a th:href="@{/stores}" class="btn btn-sm btn-light" style="border-radius:10px; padding:6px 14px;">Reset</a>
-        </form>
-
-        <!-- Stores Grid -->
         <div class="row g-3">
             <div th:each="store : ${stores}" class="col-6 col-sm-4 col-md-3">
                 <a th:href="@{'/store/' + ${store.id}}" class="store-card">

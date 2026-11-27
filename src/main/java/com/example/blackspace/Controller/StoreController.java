@@ -8,6 +8,8 @@ import com.example.blackspace.Service.Store.StoreService;
 import com.example.blackspace.Service.User.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +29,7 @@ import java.util.Set;
 
 @Controller
 public class StoreController {
+    private static final Logger log = LoggerFactory.getLogger(StoreController.class);
 
     private final UserService userService;
 
@@ -99,17 +102,8 @@ public class StoreController {
 
         int pageSize = 12;
 
-        // 1️⃣ Get all stores
-        List<Store> allStores = storeService.getAllStores();
-
-        // 2️⃣ Apply search filter (if provided)
-        if (q != null && !q.trim().isEmpty()) {
-            String search = q.toLowerCase();
-            allStores = allStores.stream()
-                    .filter(store -> store.getName() != null &&
-                            store.getName().toLowerCase().contains(search))
-                    .toList();
-        }
+        // 1️⃣ Get stores (searched or all, descending by created date)
+        List<Store> allStores = storeService.searchStores(q);
 
         // 3️⃣ Pagination logic
         int totalStores = allStores.size();
@@ -141,6 +135,24 @@ public class StoreController {
 
 
 
+
+    @GetMapping("/api/stores/suggest")
+    @ResponseBody
+    public List<java.util.Map<String, Object>> suggestStores(@RequestParam(value = "q", required = false) String query) {
+        if (query == null || query.isBlank()) {
+            return List.of();
+        }
+        List<Store> results = storeService.searchStores(query);
+        return results.stream().limit(8).map(s -> {
+            java.util.Map<String, Object> item = new java.util.LinkedHashMap<>();
+            item.put("id", s.getId());
+            item.put("name", s.getName());
+            String logo = (s.getStorelogo() != null && !s.getStorelogo().isEmpty())
+                    ? "/uploads/stores/" + s.getStorelogo() : "/store/logo/logo.jpeg";
+            item.put("logo", logo);
+            return item;
+        }).toList();
+    }
 
     @GetMapping("/admin/stores")
     public String manageStores(Model model,HttpSession session) {
@@ -183,7 +195,7 @@ public class StoreController {
             storeService.saveStore(store);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Failed to add store via admin", e);
         }
 
         return "redirect:/admin/stores";
@@ -295,7 +307,7 @@ public class StoreController {
             storeService.saveStore(store);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Failed to create user store", e);
         }
 
         return "redirect:/account/dashboard";

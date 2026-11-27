@@ -1,12 +1,14 @@
 package com.example.blackspace.Service.Store;
 
 
+import com.example.blackspace.Config.FileUploadUtil;
 import com.example.blackspace.Model.Products.Productstock;
 import com.example.blackspace.Model.Stores.Store;
 
 import com.example.blackspace.Repository.user.ProductsRepository;
 import com.example.blackspace.Repository.user.StoreRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.IIOImage;
@@ -27,6 +29,7 @@ import java.util.Iterator;
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 public class StoreServiceImpl implements StoreService {
 
     private static final String UPLOAD_DIR = "uploads/stores/";
@@ -45,6 +48,19 @@ public class StoreServiceImpl implements StoreService {
     @Override
     public List<Store> getAllStores() {
         return storeRepository.findAll();
+    }
+
+    @Override
+    public List<Store> getAllStoresDesc() {
+        return storeRepository.findAllByOrderByCreatedAtDesc();
+    }
+
+    @Override
+    public List<Store> searchStores(String query) {
+        if (query == null || query.isBlank()) {
+            return storeRepository.findAllByOrderByCreatedAtDesc();
+        }
+        return storeRepository.findByNameContainingIgnoreCaseOrderByCreatedAtDesc(query);
     }
 
     @Override
@@ -77,12 +93,14 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
+    @Transactional
     public void saveStore(Store store) {
         storeRepository.save(store);
     }
 
     @Override
     public String saveImage(MultipartFile file) {
+        FileUploadUtil.validateImage(file);
         try {
             File uploadDir = new File(UPLOAD_DIR);
             if (!uploadDir.exists()) uploadDir.mkdirs();
@@ -149,6 +167,7 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
+    @Transactional
     public void deleteStore(Long id) {
         storeRepository.deleteById(id);
     }
@@ -161,6 +180,7 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
+    @Transactional
     public void updateStore(Store store) {
         storeRepository.save(store);
     }

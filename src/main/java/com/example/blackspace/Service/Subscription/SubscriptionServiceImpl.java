@@ -9,14 +9,19 @@ import com.example.blackspace.Model.Subscription;
 import com.example.blackspace.Repository.PaymentRepository;
 import com.example.blackspace.Repository.SubscriptionRepository;
 import com.example.blackspace.Repository.user.StoreRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 public class SubscriptionServiceImpl implements SubscriptionService {
+
+    private static final Logger log = LoggerFactory.getLogger(SubscriptionServiceImpl.class);
 
     private final SubscriptionRepository subscriptionRepository;
 
@@ -35,6 +40,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
 
     @Override
+    @Transactional
     public Subscription saveSubscription(Subscription subscription) {
         if (subscriptionRepository.findByName(subscription.getName()) != null) {
             throw new RuntimeException("Subscription with name '" + subscription.getName() + "' already exists.");
@@ -44,6 +50,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     //SubscriptionServiceImpl.java
     @Override
+    @Transactional
     public Subscription updateSubscription(Subscription subscription) {
         Subscription existing = subscriptionRepository.findByName(subscription.getName());
         if (existing != null && !existing.getId().equals(subscription.getId())) {
@@ -53,6 +60,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
 
     @Override
+    @Transactional
     public void deleteSubscription(Long id) {
         subscriptionRepository.deleteById(id);
     }
@@ -115,8 +123,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         store.setNumberofproducts(subscription.getNumberofproducts());
         store.setDurationtimeupdate(LocalDateTime.now().plusDays(durationDays));
 
-        System.out.println("futureDate: " + store.getDurationindays() +
-                ", expiry: " + store.getDurationtimeupdate());
+        log.debug("Subscription upgraded - duration: {} days, expiry: {}", store.getDurationindays(), store.getDurationtimeupdate());
 
         storeRepository.save(store);
 

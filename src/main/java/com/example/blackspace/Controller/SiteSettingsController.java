@@ -5,6 +5,8 @@ import com.example.blackspace.Model.User;
 import com.example.blackspace.Repository.SiteSettingsRepository;
 import com.example.blackspace.Service.User.UserService;
 import jakarta.servlet.http.HttpSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +20,7 @@ import java.nio.file.Paths;
 
 @Controller
 public class SiteSettingsController {
+    private static final Logger log = LoggerFactory.getLogger(SiteSettingsController.class);
 
     private final SiteSettingsRepository settingsRepo;
     private final UserService userService;
@@ -71,7 +74,7 @@ public class SiteSettingsController {
                 logoFile.transferTo(uploadPath.resolve(filename).toFile());
                 settings.setSiteLogo(filename);
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error("Failed to upload site logo", e);
             }
         }
 
@@ -90,7 +93,7 @@ public class SiteSettingsController {
                 faviconFile.transferTo(uploadsPath.resolve(filename).toFile());
                 settings.setSiteFavicon(filename);
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error("Failed to upload site favicon", e);
             }
         }
 

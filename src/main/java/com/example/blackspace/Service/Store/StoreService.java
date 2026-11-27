@@ -22,6 +22,10 @@ public interface StoreService {
 
     List<Store> getAllStores();
 
+    List<Store> getAllStoresDesc();
+
+    List<Store> searchStores(String query);
+
     List<Store> getActiveStores();
 
 

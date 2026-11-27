@@ -5,6 +5,8 @@ import com.example.blackspace.Recaptcha.RecaptchaService;
 import com.example.blackspace.Repository.user.UserRepository;
 import com.example.blackspace.SMS.EmailService;
 import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +16,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class PasswordResetController {
+    private static final Logger log = LoggerFactory.getLogger(PasswordResetController.class);
 
     private final UserRepository userRepo;
     private final PasswordResetService resetService;
@@ -85,7 +88,7 @@ public class PasswordResetController {
 
             emailService.sendHtmlEmail(user.getEmail(), "BlackSpace - Password Reset", html);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Failed to process forgot-password request for email: {}", email, e);
             redirect.addFlashAttribute("error", "Something went wrong. Please try again.");
             return "redirect:/forgot-password";
         }

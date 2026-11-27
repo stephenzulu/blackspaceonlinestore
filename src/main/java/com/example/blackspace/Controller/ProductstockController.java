@@ -17,7 +17,8 @@ import com.example.blackspace.Service.Subscription.SubscriptionService;
 import com.example.blackspace.Service.User.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -34,35 +35,29 @@ import java.util.*;
 
 @Controller
 public class ProductstockController {
+    private static final Logger log = LoggerFactory.getLogger(ProductstockController.class);
+
     private final CategoryService categoryService;
     private final UserService userService;
-
     private final StoreService storeService;
-
-
     private final StoreSubscriptionEmailService emailService;
+    private final PaymentService paymentService;
+    private final ProductstockService productstockService;
+    private final SubscriptionService subscriptionService;
+    private final UserRepository userRepository;
 
-
-    @Autowired
-    private PaymentService paymentService ;
-
-    @Autowired
-    private ProductstockService productstockService ;
-
-
-    @Autowired
-    private SubscriptionService subscriptionService ;
-
-
-
-    @Autowired
-    private UserRepository userRepository;
-
-    public ProductstockController(CategoryService categoryService, UserService userService, StoreService storeService, StoreSubscriptionEmailService emailService) {
+    public ProductstockController(CategoryService categoryService, UserService userService,
+                                  StoreService storeService, StoreSubscriptionEmailService emailService,
+                                  PaymentService paymentService, ProductstockService productstockService,
+                                  SubscriptionService subscriptionService, UserRepository userRepository) {
         this.categoryService = categoryService;
         this.userService = userService;
         this.storeService = storeService;
         this.emailService = emailService;
+        this.paymentService = paymentService;
+        this.productstockService = productstockService;
+        this.subscriptionService = subscriptionService;
+        this.userRepository = userRepository;
     }
 
     // Store landing page (no products displayed initially)
@@ -150,7 +145,7 @@ public class ProductstockController {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Failed to update product via admin", e);
             redirectAttributes.addFlashAttribute("successMessage", "Failed to update!");
         }
 
@@ -209,7 +204,7 @@ public class ProductstockController {
             emailService.sendEmailToStoreSubscribers(storeId, subject, html);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Failed to update user product", e);
             redirectAttributes.addFlashAttribute("error", "Failed to update!");
         }
 
@@ -281,7 +276,7 @@ public class ProductstockController {
 
 
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Failed to upload files when adding product via admin", e);
             redirectAttributes.addFlashAttribute("error", "Failed to upload files.");
         }
 
@@ -537,7 +532,7 @@ public String users(Model model, Principal principal,HttpSession session) {
 
 
 
-    return "/users/products"; // Thymeleaf template
+    return "users/products"; // Thymeleaf template
 }
 
 
@@ -600,7 +595,7 @@ public String users(Model model, Principal principal,HttpSession session) {
         // storeid is STRING (e.g. BC_02) → NO parsing
         Store store = storeService.getStoreByid(Long.valueOf((product.getStoreid())));
 
-        System.out.println("storeidnumber"+product.getStoreid());
+        log.debug("storeidnumber: {}", product.getStoreid());
 
         // Keep a Set of product IDs viewed in this session
         @SuppressWarnings("unchecked")

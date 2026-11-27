@@ -2,6 +2,7 @@ package com.example.blackspace.Model.Stores;
 
 import com.example.blackspace.Model.Products.Productstock;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -12,6 +13,8 @@ public class Store {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Store name is required")
+    @Size(max = 100, message = "Store name must be less than 100 characters")
     @Column(name = "name", unique = true, length = 100)
     private String name;
 

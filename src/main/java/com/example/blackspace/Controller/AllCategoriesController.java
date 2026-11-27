@@ -6,6 +6,8 @@ import com.example.blackspace.Repository.CategoryRepository;
 import com.example.blackspace.Service.Category.CategoryService;
 import com.example.blackspace.Service.User.UserService;
 import jakarta.servlet.http.HttpSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +20,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 @Controller
 public class AllCategoriesController {
+    private static final Logger log = LoggerFactory.getLogger(AllCategoriesController.class);
+
     private final UserService userService;
 
     private final CategoryService categoryService;
@@ -84,7 +88,7 @@ public class AllCategoriesController {
             categoryService.saveCategory(category);
             redirectAttributes.addFlashAttribute("success", "Category added successfully!");
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Failed to upload category image", e);
             redirectAttributes.addFlashAttribute("error", "Failed to upload image!");
         }
 
@@ -136,7 +140,7 @@ public class AllCategoriesController {
             redirectAttributes.addFlashAttribute("success", "Category updated successfully!");
 
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Failed to update category", e);
             redirectAttributes.addFlashAttribute("error", "Failed to update category!");
         }
 

@@ -6,9 +6,11 @@ import com.example.blackspace.Recaptcha.RecaptchaConfig;
 import com.example.blackspace.SMS.EmailService;
 import com.example.blackspace.Service.User.UserService;
 import jakarta.mail.MessagingException;
+import jakarta.validation.Valid;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -51,10 +53,16 @@ public class RegistrationController {
 
     @PostMapping
     public String registerUser(
-            @ModelAttribute User user,
+            @Valid @ModelAttribute User user,
+            BindingResult bindingResult,
             @RequestParam("confirmPassword") String confirmPassword,
             RedirectAttributes redirectAttributes
     ) {
+
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("error", bindingResult.getFieldError().getDefaultMessage());
+            return "redirect:/register";
+        }
 
         if (!user.getPassword().equals(confirmPassword)) {
             redirectAttributes.addFlashAttribute("error", "Passwords do not match");

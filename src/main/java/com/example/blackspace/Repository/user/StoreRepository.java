@@ -14,4 +14,8 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
 
     List<Store> findByActiveTrue();
 
+    List<Store> findAllByOrderByCreatedAtDesc();
+
+    List<Store> findByNameContainingIgnoreCaseOrderByCreatedAtDesc(String name);
+
 }

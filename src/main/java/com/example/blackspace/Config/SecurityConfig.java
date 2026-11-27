@@ -2,26 +2,31 @@ package com.example.blackspace.Config;
 
 
 import com.example.blackspace.Recaptcha.RecaptchaFilter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @Configuration
 public class SecurityConfig {
 
+    private final CustomLogoutHandler customLogoutHandler;
 
-    @Autowired
-    private CustomLogoutHandler customLogoutHandler;
+    public SecurityConfig(CustomLogoutHandler customLogoutHandler) {
+        this.customLogoutHandler = customLogoutHandler;
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, RecaptchaFilter recaptchaFilter) throws Exception {
 
         http
-                .csrf(csrf -> csrf.disable())
+                .csrf(csrf -> csrf
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        .ignoringRequestMatchers("/api/**", "/ipn/**", "/callback/**")
+                )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/",
@@ -49,6 +54,8 @@ public class SecurityConfig {
                                 "/api/products/**",
                                 "/api/payments/**",
                                 "/api/subscription/**",
+                                "/api/chatbot/**",
+                                "/api/stores/**",
                                 "/api/pesapal/**",
                                 "/pay/**",
                                 "/ipn/**",

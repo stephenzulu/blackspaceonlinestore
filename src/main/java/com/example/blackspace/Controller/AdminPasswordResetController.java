@@ -8,6 +8,8 @@ import com.example.blackspace.SMS.EmailService;
 import com.example.blackspace.Service.User.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +19,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class AdminPasswordResetController {
+    private static final Logger log = LoggerFactory.getLogger(AdminPasswordResetController.class);
 
     private final PasswordResetTokenRepository tokenRepo;
     private final PasswordResetService resetService;
@@ -96,7 +99,7 @@ public class AdminPasswordResetController {
             emailService.sendHtmlEmail(user.getEmail(), "BlackSpace - Password Reset", html);
             redirect.addFlashAttribute("success", "Password reset link sent to " + email);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Failed to send password reset link for email: {}", email, e);
             redirect.addFlashAttribute("error", "Failed to send reset link. Please try again.");
         }
 
