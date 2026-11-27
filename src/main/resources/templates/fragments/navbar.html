@@ -149,6 +149,32 @@
             <!-- Right actions -->
             <div class="d-flex gap-2 align-items-center" id="mainNavbar2">
 
+                <!-- Language Selector -->
+                <div style="position:relative;">
+                    <button class="btn btn-icon" id="langToggleBtn" title="Change Language" style="font-size:1.1rem;">
+                        <i class="bi bi-translate"></i>
+                    </button>
+                    <div id="langMenu" style="display:none;position:absolute;right:0;top:100%;margin-top:8px;min-width:200px;background:#fff;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,0.12);border:1px solid #eee;padding:8px;z-index:1060;">
+                        <div style="font-weight:700;font-size:0.8rem;color:#888;padding:4px 12px;">Select Language</div>
+                        <a class="lang-option" href="#" data-lang="en" style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;text-decoration:none;color:#333;">
+                            <span style="font-size:1.2rem;">🇬🇧</span> English</a>
+                        <a class="lang-option" href="#" data-lang="bem" style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;text-decoration:none;color:#333;">
+                            <span style="font-size:1.2rem;">🇿🇲</span> Bemba</a>
+                        <a class="lang-option" href="#" data-lang="nya" style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;text-decoration:none;color:#333;">
+                            <span style="font-size:1.2rem;">🇿🇲</span> Nyanja</a>
+                        <a class="lang-option" href="#" data-lang="toi" style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;text-decoration:none;color:#333;">
+                            <span style="font-size:1.2rem;">🇿🇲</span> Tonga</a>
+                        <a class="lang-option" href="#" data-lang="loz" style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;text-decoration:none;color:#333;">
+                            <span style="font-size:1.2rem;">🇿🇲</span> Lozi</a>
+                        <a class="lang-option" href="#" data-lang="kqn" style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;text-decoration:none;color:#333;">
+                            <span style="font-size:1.2rem;">🇿🇲</span> Kaonde</a>
+                        <a class="lang-option" href="#" data-lang="lun" style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;text-decoration:none;color:#333;">
+                            <span style="font-size:1.2rem;">🇿🇲</span> Lunda</a>
+                        <a class="lang-option" href="#" data-lang="lue" style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;text-decoration:none;color:#333;">
+                            <span style="font-size:1.2rem;">🇿🇲</span> Luvale</a>
+                    </div>
+                </div>
+
                 <!-- Dark Mode Toggle -->
                 <button class="btn btn-icon" id="darkModeToggleNav" onclick="toggleDarkMode()" title="Toggle Dark Mode">
                     <i class="bi bi-moon-fill"></i>
@@ -411,6 +437,283 @@
             });
         }
     </script>
+
+    <!-- Language Translation Script -->
+    <script>
+    (function() {
+        const translations = {
+            en: {
+                home: 'Home', stores: 'Stores', categories: 'Categories', products: 'Products',
+                about: 'About', help: 'Help', login: 'Login', logout: 'Logout', account: 'Account',
+                admin: 'Admin', search: 'Search products, stores...', trending: 'Trending',
+                latest_stores: 'Latest Stores', why_sell: 'Why Sell With Black Space',
+                create_account: 'Create Account', any_product: 'Any Product or Service',
+                all_business: 'All Business Sizes', sell_from_home: 'Sell From Home',
+                safe_secure: 'Safe & Secure', support_247: '24/7 Support',
+                create_free_store: 'Create Free Store', view: 'View', discover: 'Discover Products or Services Near You',
+                shop_local: 'Shop directly from local stores', meet_zuri: 'Meet Zuri, Your Smart Shopping Assistant',
+                ai_subtitle: 'Search by typing, speaking, or snapping a photo — our AI finds exactly what you need',
+                chat_ai: 'Chat with AI', voice_search: 'Voice Search', image_search: 'Image Search',
+                quick_search: 'Quick search:', trending_products: 'Trending products',
+                latest_arrivals: 'Latest arrivals', browse_categories: 'Browse categories', best_deals: 'Best deals'
+            },
+            bem: {
+                home: 'Kuciila', stores: 'Amasitolo', categories: 'Amashifi', products: 'Ifipe',
+                about: 'Pa Ifwe', help: 'Ubwafwilisho', login: 'Injila', logout: 'Fuma', account: 'Akaunti',
+                admin: 'Umukalamba', search: 'Fwaya ifipe, amasitolo...', trending: 'Ifishishimisha',
+                latest_stores: 'Amasitolo Ayapya', why_sell: 'Cinshi Mukashitisha ku Black Space',
+                create_account: 'Pangeni Akaunti', any_product: 'Icipe Conse Nangu Amenso',
+                all_business: 'Ubukulu Bonse', sell_from_home: 'Shitisheni ku Ng\'anda',
+                safe_secure: 'Ukucingililwa', support_247: 'Ubwafwilisho Inshita Yonse',
+                create_free_store: 'Pangeni Isitolo Fya Bure', view: 'Moneni', discover: 'Sangeni Ifipe Nangu Amenso Mupepi',
+                shop_local: 'Shiteni ku masitolo ya mupepi', meet_zuri: 'Sangeni Zuri, Kabwafwilisho Wenu',
+                ai_subtitle: 'Fwayeni mu kulemba, ukuamba, nangu ukuibomba ifoto',
+                chat_ai: 'Landeni na AI', voice_search: 'Fwayeni mu Kwamba', image_search: 'Fwayeni mu Cifanso',
+                quick_search: 'Fwaya:', trending_products: 'Ifipe ifishishimisha',
+                latest_arrivals: 'Ifipe ifipya', browse_categories: 'Moneni amashifi', best_deals: 'Amabasiketi ayawama'
+            },
+            nya: {
+                home: 'Kunyumba', stores: 'Masitolo', categories: 'Magulu', products: 'Katundu',
+                about: 'Za Ife', help: 'Thandizo', login: 'Lowani', logout: 'Tulukani', account: 'Akaunti',
+                admin: 'Woyang\'anira', search: 'Funani katundu, masitolo...', trending: 'Zokondedwa',
+                latest_stores: 'Masitolo Atsopano', why_sell: 'Chifukwa Chogulitsira ku Black Space',
+                create_account: 'Pangani Akaunti', any_product: 'Katundu Aliyense Kapena Ntchito',
+                all_business: 'Bizinesi Zonse', sell_from_home: 'Gulitsani Kunyumba',
+                safe_secure: 'Otetezedwa', support_247: 'Thandizo Nthawi Zonse',
+                create_free_store: 'Pangani Sitolo Yaulere', view: 'Onani', discover: 'Pezani Katundu Kapena Ntchito Pafupi',
+                shop_local: 'Gulani ku masitolo apafupi', meet_zuri: 'Kumana ndi Zuri, Wothandiza Wanu',
+                ai_subtitle: 'Funani polembera, polankhula, kapena kutenga chithunzi',
+                chat_ai: 'Lankhulani ndi AI', voice_search: 'Funani Polankhula', image_search: 'Funani ndi Chithunzi',
+                quick_search: 'Funani:', trending_products: 'Katundu wokondedwa',
+                latest_arrivals: 'Katundu watsopano', browse_categories: 'Onani magulu', best_deals: 'Zogulitsa zabwino'
+            },
+            toi: {
+                home: 'Ku Ng\'anda', stores: 'Zitoolo', categories: 'Zibunga', products: 'Zintu',
+                about: 'Atala Andiswe', help: 'Lugwasyo', login: 'Injila', logout: 'Zwa', account: 'Akaunti',
+                admin: 'Sikuliida', search: 'Yanduula zintu, zitoolo...', trending: 'Ziyandika',
+                latest_stores: 'Zitoolo Zipya', why_sell: 'Nkaambo Nzi Kuzuzikizya ku Black Space',
+                create_account: 'Panga Akaunti', any_product: 'Cintu Cili Coonse',
+                all_business: 'Bizinesi Zyoonse', sell_from_home: 'Uzya Ku Ng\'anda',
+                safe_secure: 'Kucingilila', support_247: 'Lugwasyo Ciindi Coonse',
+                create_free_store: 'Panga Sitoolo Yabure', view: 'Bona', discover: 'Yanduula Zintu Mupepi',
+                shop_local: 'Ula ku zitoolo zyamupepi', meet_zuri: 'Zibana a Zuri, Mugwasyi Wako',
+                ai_subtitle: 'Yanduula mukulemba, kwamba, naa kujata cifaniso',
+                chat_ai: 'Ambula a AI', voice_search: 'Yanduula mu Kwamba', image_search: 'Yanduula mu Cifaniso',
+                quick_search: 'Yanduula:', trending_products: 'Zintu ziyandika',
+                latest_arrivals: 'Zintu zipya', browse_categories: 'Bona zibunga', best_deals: 'Zibotu'
+            },
+            loz: {
+                home: 'Kwa Ndu', stores: 'Masitoло', categories: 'Likalulo', products: 'Lika',
+                about: 'Ka Luna', help: 'Tuso', login: 'Kena', logout: 'Zwa', account: 'Akaunti',
+                admin: 'Muzamaisі', search: 'Bata lika, masitolo...', trending: 'Zeratwa',
+                latest_stores: 'Masitolo Amanca', why_sell: 'Ki Kabakalani Kulekisa ku Black Space',
+                create_account: 'Panga Akaunti', any_product: 'Nto Ifi Kamba',
+                all_business: 'Lipisinisi Kaufela', sell_from_home: 'Lekisa kwa Ndu',
+                safe_secure: 'Kusilelezwa', support_247: 'Tuso Nako Kaufela',
+                create_free_store: 'Panga Sitolo Yemahala', view: 'Bona', discover: 'Fumana Lika kamba Musebezi Fakaufi',
+                shop_local: 'Leka kwa masitolo a fakaufi', meet_zuri: 'Kopana ni Zuri, Mutusi wa Hao',
+                ai_subtitle: 'Bata ka kuñola, kubulela, kamba kuunga siñolo',
+                chat_ai: 'Bulela ni AI', voice_search: 'Bata ka Kubulela', image_search: 'Bata ka Siñolo',
+                quick_search: 'Bata:', trending_products: 'Lika zeratwa',
+                latest_arrivals: 'Lika zenca', browse_categories: 'Bona likalulo', best_deals: 'Lika zende'
+            },
+            kqn: {
+                home: 'Kunyumba', stores: 'Bitulo', categories: 'Bishiiko', products: 'Bintu',
+                about: 'Bya Betu', help: 'Bwikwashi', login: 'Injila', logout: 'Puma', account: 'Akaunti',
+                admin: 'Mfumu', search: 'Keba bintu, bitulo...', trending: 'Bikondwa',
+                latest_stores: 'Bitulo Bipya', why_sell: 'Kinshi Kushitisha ku Black Space',
+                create_account: 'Panga Akaunti', any_product: 'Kintu Kyonse',
+                all_business: 'Binongo Byonse', sell_from_home: 'Shitisha Kunyumba',
+                safe_secure: 'Bulemi', support_247: 'Bwikwashi Binobino',
+                create_free_store: 'Panga Situlo Kya Bure', view: 'Mona', discover: 'Sanga Bintu Mupepi',
+                shop_local: 'Ula ku bitulo bya mupepi', meet_zuri: 'Sanga Zuri, Mukwashi Wobe',
+                ai_subtitle: 'Keba mu kulemba, kwamba, nangwa kuibomba foto',
+                chat_ai: 'Amba na AI', voice_search: 'Keba mu Kwamba', image_search: 'Keba mu Foto',
+                quick_search: 'Keba:', trending_products: 'Bintu bikondwa',
+                latest_arrivals: 'Bintu bipya', browse_categories: 'Mona bishiiko', best_deals: 'Bintu biwama'
+            },
+            lun: {
+                home: 'Kushiku', stores: 'Atullu', categories: 'Ahela', products: 'Yuma',
+                about: 'Hatu', help: 'Kwasha', login: 'Injila', logout: 'Humuka', account: 'Akaunti',
+                admin: 'Mwanta', search: 'Tonda yuma, atullu...', trending: 'Yakondama',
+                latest_stores: 'Atullu Apya', why_sell: 'Mwaku Nshi Kutunda ku Black Space',
+                create_account: 'Panga Akaunti', any_product: 'Chuma Chonse',
+                all_business: 'Binashu Byonse', sell_from_home: 'Tunda Kushiku',
+                safe_secure: 'Kulama', support_247: 'Kwasha Mashika Onse',
+                create_free_store: 'Panga Situlu Kwa Mahala', view: 'Mona', discover: 'Tonda Yuma Mupepi',
+                shop_local: 'Ula ku atullu a mupepi', meet_zuri: 'Mona Zuri, Mukwashi Wenu',
+                ai_subtitle: 'Tonda mu kulemba, kwamba, nanga kuibomba foto',
+                chat_ai: 'Amba na AI', voice_search: 'Tonda mu Kwamba', image_search: 'Tonda mu Foto',
+                quick_search: 'Tonda:', trending_products: 'Yuma yakondama',
+                latest_arrivals: 'Yuma yapya', browse_categories: 'Mona ahela', best_deals: 'Yuma yawahi'
+            },
+            lue: {
+                home: 'Kushimba', stores: 'Vitulo', categories: 'Vishiko', products: 'Vintu',
+                about: 'Vyetu', help: 'Kwasha', login: 'Injila', logout: 'Humuka', account: 'Akaunti',
+                admin: 'Mwane', search: 'Sakula vintu, vitulo...', trending: 'Vikondwa',
+                latest_stores: 'Vitulo Vipya', why_sell: 'Mwaku Nshi Kushitisha ku Black Space',
+                create_account: 'Panga Akaunti', any_product: 'Chintu Chose',
+                all_business: 'Vinongo Vyose', sell_from_home: 'Shitisha Kushimba',
+                safe_secure: 'Kulama', support_247: 'Kwasha Meze Ose',
+                create_free_store: 'Panga Situlo Chamahala', view: 'Mona', discover: 'Sakula Vintu Mupepi',
+                shop_local: 'Ula ku vitulo vya mupepi', meet_zuri: 'Mona Zuri, Mukwashi Wove',
+                ai_subtitle: 'Sakula mu kulemba, kwamba, nanga kuibomba foto',
+                chat_ai: 'Amba na AI', voice_search: 'Sakula mu Kwamba', image_search: 'Sakula mu Foto',
+                quick_search: 'Sakula:', trending_products: 'Vintu vikondwa',
+                latest_arrivals: 'Vintu vipya', browse_categories: 'Mona vishiko', best_deals: 'Vintu vyawama'
+            }
+        };
+
+        // Translation mapping: data-i18n attribute value -> translation key
+        function applyTranslation(lang) {
+            const t = translations[lang] || translations['en'];
+            localStorage.setItem('bsLang', lang);
+
+            // Translate elements with data-i18n attribute
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (t[key]) {
+                    if (el.tagName === 'INPUT') {
+                        el.placeholder = t[key];
+                    } else {
+                        el.textContent = t[key];
+                    }
+                }
+            });
+
+            // Highlight active language
+            document.querySelectorAll('.lang-option').forEach(opt => {
+                opt.classList.remove('active');
+                opt.style.background = '';
+                if (opt.dataset.lang === lang) {
+                    opt.classList.add('active');
+                    opt.style.background = 'rgba(232,97,29,0.1)';
+                    opt.style.fontWeight = '600';
+                } else {
+                    opt.style.fontWeight = '';
+                }
+            });
+        }
+
+        // Add data-i18n attributes to translatable elements
+        function tagTranslatableElements() {
+            // Navbar links
+            const navMap = {
+                'Home': 'home', 'Stores': 'stores', 'Categories': 'categories',
+                'Products': 'products', 'About': 'about', 'Help': 'help',
+                'Login': 'login', 'Logout': 'logout', 'Account': 'account', 'Admin': 'admin'
+            };
+            document.querySelectorAll('a, button, span').forEach(el => {
+                const text = el.textContent.trim();
+                Object.keys(navMap).forEach(key => {
+                    if (text === key && !el.querySelector('*:not(i)')) {
+                        el.setAttribute('data-i18n', navMap[key]);
+                    }
+                });
+            });
+
+            // Page-specific elements by common text patterns
+            const pageMap = {
+                'Trending': 'trending',
+                'Latest Stores': 'latest_stores',
+                'Why Sell With Black Space': 'why_sell',
+                'Create Account': 'create_account',
+                'Any Product or Service': 'any_product',
+                'All Business Sizes': 'all_business',
+                'Sell From Home': 'sell_from_home',
+                'Safe & Secure': 'safe_secure',
+                '24/7 Support': 'support_247',
+                'Create Free Store': 'create_free_store',
+                'Discover Products or Services Near You': 'discover',
+                'Shop directly from local stores': 'shop_local',
+                'Meet Zuri, Your Smart Shopping Assistant': 'meet_zuri',
+                'Chat with AI': 'chat_ai',
+                'Voice Search': 'voice_search',
+                'Image Search': 'image_search',
+                'Quick search:': 'quick_search',
+                'Trending products': 'trending_products',
+                'Latest arrivals': 'latest_arrivals',
+                'Browse categories': 'browse_categories',
+                'Best deals': 'best_deals'
+            };
+            document.querySelectorAll('h1,h2,h3,h4,h5,h6,p,span,small,button,a').forEach(el => {
+                const text = el.textContent.trim();
+                Object.keys(pageMap).forEach(key => {
+                    if (text === key) {
+                        el.setAttribute('data-i18n', pageMap[key]);
+                    }
+                });
+            });
+
+            // Search inputs
+            document.querySelectorAll('input[type="text"], input[type="search"]').forEach(el => {
+                if (el.placeholder && el.placeholder.toLowerCase().includes('search')) {
+                    el.setAttribute('data-i18n', 'search');
+                }
+            });
+
+            // View buttons
+            document.querySelectorAll('a.view-details-btn, button.view-details-btn').forEach(el => {
+                if (el.textContent.trim() === 'View') {
+                    el.setAttribute('data-i18n', 'view');
+                }
+            });
+        }
+
+        // Language menu toggle
+        document.addEventListener('click', function(e) {
+            const toggleBtn = document.getElementById('langToggleBtn');
+            const menu = document.getElementById('langMenu');
+            if (!toggleBtn || !menu) return;
+
+            // Toggle menu on button click
+            if (e.target.closest('#langToggleBtn')) {
+                e.preventDefault();
+                menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+                return;
+            }
+
+            // Handle language selection
+            const opt = e.target.closest('.lang-option');
+            if (opt) {
+                e.preventDefault();
+                const lang = opt.dataset.lang;
+                tagTranslatableElements();
+                applyTranslation(lang);
+                menu.style.display = 'none';
+                return;
+            }
+
+            // Close menu when clicking outside
+            if (!e.target.closest('#langMenu')) {
+                menu.style.display = 'none';
+            }
+        });
+
+        // Apply saved language on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const saved = localStorage.getItem('bsLang');
+            if (saved && saved !== 'en') {
+                tagTranslatableElements();
+                applyTranslation(saved);
+            } else {
+                document.querySelectorAll('.lang-option').forEach(opt => {
+                    if (opt.dataset.lang === 'en') {
+                        opt.style.background = 'rgba(232,97,29,0.1)';
+                        opt.style.fontWeight = '600';
+                    }
+                });
+            }
+        });
+    })();
+    </script>
+
+    <style>
+        .lang-option:hover {
+            background: rgba(232,97,29,0.08) !important;
+            color: #E8611D !important;
+        }
+    </style>
 
     <style>
         /* Bottom buttons container */

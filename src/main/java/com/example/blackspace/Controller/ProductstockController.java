@@ -616,7 +616,10 @@ public String users(Model model, Principal principal,HttpSession session) {
 
         model.addAttribute("product", product);
         model.addAttribute("store", store);
-        model.addAttribute("currentUrl", request.getRequestURL().toString()); // Pass URL
+        String requestUrl = request.getRequestURL().toString();
+        model.addAttribute("currentUrl", requestUrl);
+        String baseUrl = requestUrl.substring(0, requestUrl.indexOf('/', requestUrl.indexOf("//") + 2));
+        model.addAttribute("baseUrl", baseUrl);
 
         //  Similar products (same category)
         List<Productstock> similarProducts =

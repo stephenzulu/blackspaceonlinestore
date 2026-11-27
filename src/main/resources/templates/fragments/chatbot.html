@@ -298,8 +298,11 @@ body.dark-mode .chatbot-input .btn-image { background: #2a2a30; color: #e0e0e0; 
     });
 
     // ── Send message ──
-    function sendMessage(text) {
+    let lastSearchWasVoice = false;
+
+    function sendMessage(text, fromVoice) {
         if (!text || !text.trim()) return;
+        lastSearchWasVoice = !!fromVoice;
         appendUserBubble(text);
         input.value = '';
         showTyping();
@@ -314,8 +317,8 @@ body.dark-mode .chatbot-input .btn-image { background: #2a2a30; color: #e0e0e0; 
         .catch(() => { removeTyping(); appendBotBubble("Sorry, something went wrong. Please try again."); });
     }
 
-    sendBtn.addEventListener('click', () => sendMessage(input.value));
-    input.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendMessage(input.value); });
+    sendBtn.addEventListener('click', () => sendMessage(input.value, false));
+    input.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendMessage(input.value, false); });
 
     // ── Voice search (Web Speech API) ──
     let recognition = null;
@@ -341,14 +344,14 @@ body.dark-mode .chatbot-input .btn-image { background: #2a2a30; color: #e0e0e0; 
             input.value = transcript;
             if (event.results[event.results.length - 1].isFinal) {
                 voiceSent = true;
-                sendMessage(transcript);
+                sendMessage(transcript, true);
             }
         };
 
         recognition.onend = function() {
             // Auto-send if we got text but it wasn't sent yet (no final result fired)
             if (!voiceSent && lastTranscript.trim()) {
-                sendMessage(lastTranscript);
+                sendMessage(lastTranscript, true);
             }
             isRecording = false;
             voiceBtn.classList.remove('recording');
@@ -522,6 +525,76 @@ body.dark-mode .chatbot-input .btn-image { background: #2a2a30; color: #e0e0e0; 
         scrollToBottom();
     }
 
+    // ── Text-to-Speech ──
+    let isSpeaking = false;
+
+    // Pick natural-sounding voice for Zuri
+    let chatZuriVoice = null;
+    function loadChatZuriVoice() {
+        if (!('speechSynthesis' in window)) return;
+        const voices = window.speechSynthesis.getVoices();
+        if (!voices.length) return;
+        const preferred = [
+            'samantha', 'karen', 'moira', 'tessa', 'fiona', 'victoria',
+            'google uk english female', 'google us english',
+            'microsoft zira', 'microsoft jenny', 'microsoft aria',
+            'english female', 'female'
+        ];
+        for (const pref of preferred) {
+            const match = voices.find(v => v.name.toLowerCase().includes(pref) && v.lang.startsWith('en'));
+            if (match) { chatZuriVoice = match; return; }
+        }
+        chatZuriVoice = voices.find(v => v.lang.startsWith('en')) || voices[0];
+    }
+    if ('speechSynthesis' in window) {
+        loadChatZuriVoice();
+        window.speechSynthesis.onvoiceschanged = loadChatZuriVoice;
+    }
+
+    function speakText(text) {
+        if (!('speechSynthesis' in window) || !text) return;
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 0.95;
+        utterance.pitch = 1.1;
+        utterance.volume = 1;
+        utterance.lang = 'en-US';
+        if (chatZuriVoice) utterance.voice = chatZuriVoice;
+        utterance.onstart = () => { isSpeaking = true; };
+        utterance.onend = () => { isSpeaking = false; updateSpeakerButtons(); };
+        utterance.onerror = () => { isSpeaking = false; updateSpeakerButtons(); };
+        window.speechSynthesis.speak(utterance);
+    }
+
+    function stopSpeaking() {
+        window.speechSynthesis.cancel();
+        isSpeaking = false;
+        updateSpeakerButtons();
+    }
+
+    function updateSpeakerButtons() {
+        document.querySelectorAll('.chat-speak-btn').forEach(btn => {
+            btn.innerHTML = '<i class="bi bi-volume-up"></i>';
+            btn.title = 'Listen';
+        });
+    }
+
+    function buildSpeechText(data) {
+        let speech = data.message || '';
+        if (data.products && data.products.length > 0) {
+            speech += '. I found ' + data.products.length + ' product' + (data.products.length > 1 ? 's' : '') + '. ';
+            data.products.slice(0, 5).forEach((p, i) => {
+                speech += (i + 1) + '. ' + p.name;
+                if (p.price) speech += ', priced at ' + (p.currency || '') + ' ' + p.price;
+                speech += '. ';
+            });
+            if (data.products.length > 5) {
+                speech += 'And ' + (data.products.length - 5) + ' more.';
+            }
+        }
+        return speech;
+    }
+
     function showBotMessage(data) {
         const wrapper = document.createElement('div');
         wrapper.className = 'chat-msg bot';
@@ -543,6 +616,14 @@ body.dark-mode .chatbot-input .btn-image { background: #2a2a30; color: #e0e0e0; 
             html += '</div>';
         }
 
+        // Speaker button
+        if ('speechSynthesis' in window) {
+            html += '<div style="text-align:right;margin-top:6px;">'
+                + '<button class="chat-speak-btn" title="Listen" style="background:none;border:none;color:#E8611D;cursor:pointer;font-size:1.1rem;padding:4px 8px;border-radius:8px;transition:background .2s;"'
+                + ' onmouseover="this.style.background=\'rgba(232,97,29,0.1)\'" onmouseout="this.style.background=\'none\'">'
+                + '<i class="bi bi-volume-up"></i></button></div>';
+        }
+
         // Suggestion chips
         if (data.suggestions && data.suggestions.length > 0) {
             html += '<div class="chat-suggestions">';
@@ -555,12 +636,39 @@ body.dark-mode .chatbot-input .btn-image { background: #2a2a30; color: #e0e0e0; 
         wrapper.innerHTML = html;
         messagesEl.appendChild(wrapper);
 
+        // Speaker button handler
+        const speakBtn = wrapper.querySelector('.chat-speak-btn');
+        if (speakBtn) {
+            const speechText = buildSpeechText(data);
+            speakBtn.addEventListener('click', () => {
+                if (isSpeaking) {
+                    stopSpeaking();
+                } else {
+                    updateSpeakerButtons();
+                    speakBtn.innerHTML = '<i class="bi bi-stop-fill"></i>';
+                    speakBtn.title = 'Stop';
+                    speakText(speechText);
+                }
+            });
+        }
+
         // Chip click handlers
         wrapper.querySelectorAll('.chat-chip').forEach(chip => {
-            chip.addEventListener('click', () => sendMessage(chip.dataset.query));
+            chip.addEventListener('click', () => sendMessage(chip.dataset.query, false));
         });
 
         scrollToBottom();
+
+        // Auto-speak only when search was initiated by voice
+        if (lastSearchWasVoice && 'speechSynthesis' in window) {
+            const speechText = buildSpeechText(data);
+            speakText(speechText);
+            if (speakBtn) {
+                speakBtn.innerHTML = '<i class="bi bi-stop-fill"></i>';
+                speakBtn.title = 'Stop';
+            }
+        }
+        lastSearchWasVoice = false;
     }
 
     function showTyping() {

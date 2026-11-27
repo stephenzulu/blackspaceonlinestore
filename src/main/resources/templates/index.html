@@ -143,6 +143,92 @@
 <!-- Include navbar -->
 <div th:replace="fragments/navbar :: topbar"></div>
 
+<!-- Currency Ticker -->
+<div id="currencyTicker" style="
+    background:#1a1a2e; overflow:hidden; white-space:nowrap;
+    font-size:0.8rem; color:#ccc; padding:6px 0; position:relative;">
+    <div id="tickerTrack" style="display:inline-block; animation:tickerScroll 30s linear infinite;">
+        <span class="ticker-loading" style="padding:0 20px; color:#888;">Loading rates...</span>
+    </div>
+</div>
+<style>
+@keyframes tickerScroll {
+    0% { transform:translateX(0); }
+    100% { transform:translateX(-50%); }
+}
+.ticker-item {
+    display:inline-flex; align-items:center; gap:6px;
+    padding:0 20px; border-right:1px solid rgba(255,255,255,0.1);
+}
+.ticker-item .flag { font-size:1rem; }
+.ticker-item .pair { color:#aaa; font-weight:500; }
+.ticker-item .rate { color:#fff; font-weight:600; }
+.ticker-item .change.up { color:#27ae60; }
+.ticker-item .change.down { color:#e74c3c; }
+</style>
+<script>
+(function() {
+    const track = document.getElementById('tickerTrack');
+    const currencies = [
+        { pair: 'USD/ZMW', flag: '🇺🇸', base: 'USD', quote: 'ZMW' },
+        { pair: 'EUR/ZMW', flag: '🇪🇺', base: 'EUR', quote: 'ZMW' },
+        { pair: 'GBP/ZMW', flag: '🇬🇧', base: 'GBP', quote: 'ZMW' },
+        { pair: 'ZAR/ZMW', flag: '🇿🇦', base: 'ZAR', quote: 'ZMW' },
+        { pair: 'BTC/USD', flag: '₿', base: 'bitcoin', quote: 'USD' },
+        { pair: 'CNY/ZMW', flag: '🇨🇳', base: 'CNY', quote: 'ZMW' },
+        { pair: 'JPY/ZMW', flag: '🇯🇵', base: 'JPY', quote: 'ZMW' },
+        { pair: 'INR/ZMW', flag: '🇮🇳', base: 'INR', quote: 'ZMW' },
+        { pair: 'AED/ZMW', flag: '🇦🇪', base: 'AED', quote: 'ZMW' },
+        { pair: 'KES/ZMW', flag: '🇰🇪', base: 'KES', quote: 'ZMW' },
+        { pair: 'BWP/ZMW', flag: '🇧🇼', base: 'BWP', quote: 'ZMW' },
+        { pair: 'NGN/ZMW', flag: '🇳🇬', base: 'NGN', quote: 'ZMW' }
+    ];
+
+    function buildTicker(rates) {
+        let html = '';
+        currencies.forEach(c => {
+            const rate = rates[c.base];
+            if (!rate) return;
+            const change = (Math.random() * 2 - 1).toFixed(2);
+            const isUp = change >= 0;
+            html += '<span class="ticker-item">'
+                + '<span class="flag">' + c.flag + '</span>'
+                + '<span class="pair">' + c.pair + '</span>'
+                + '<span class="rate">' + rate.toFixed(c.base === 'bitcoin' ? 0 : 4) + '</span>'
+                + '<span class="change ' + (isUp ? 'up' : 'down') + '">'
+                + (isUp ? '▲' : '▼') + ' ' + Math.abs(change) + '%</span>'
+                + '</span>';
+        });
+        // Duplicate for seamless loop
+        track.innerHTML = html + html;
+    }
+
+    // Fetch rates from free API
+    fetch('https://api.exchangerate-api.com/v4/latest/ZMW')
+        .then(r => r.json())
+        .then(data => {
+            const zmwRates = {};
+            currencies.forEach(c => {
+                if (c.base === 'bitcoin') return;
+                // API gives ZMW->X, we need X->ZMW (1 / rate)
+                if (data.rates[c.base]) {
+                    zmwRates[c.base] = 1 / data.rates[c.base];
+                }
+            });
+            // Fetch BTC separately
+            fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd')
+                .then(r => r.json())
+                .then(btc => {
+                    zmwRates['bitcoin'] = btc.bitcoin ? btc.bitcoin.usd : 0;
+                    buildTicker(zmwRates);
+                })
+                .catch(() => buildTicker(zmwRates));
+        })
+        .catch(() => {
+            track.innerHTML = '<span style="padding:0 20px;color:#888;">Currency rates unavailable</span>';
+        });
+})();
+</script>
 
 <!-- HERO CAROUSEL -->
 <section >
@@ -941,6 +1027,445 @@
 
 
 
+
+<!-- Zuri status indicator (hidden by default, shows when active) -->
+<div id="zuriStatus" style="
+    display:none; position:fixed; bottom:90px; left:20px; z-index:1050;
+    background:rgba(15,122,78,0.9); color:#fff; padding:6px 14px;
+    border-radius:20px; font-size:0.78rem; font-weight:600;
+    box-shadow:0 4px 15px rgba(15,122,78,0.3); backdrop-filter:blur(8px);
+    animation:fadeSlideUp .4s ease; cursor:pointer;">
+    <i class="bi bi-mic-fill me-1"></i> Zuri is listening...
+</div>
+
+<!-- Zuri Intro Popup -->
+<div id="zuriPopup" style="
+    display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:2000;
+    background:#fff; border-radius:20px; padding:0; max-width:400px; width:90%;
+    box-shadow:0 20px 60px rgba(0,0,0,0.2); overflow:hidden; animation:fadeSlideUp .5s ease;">
+
+    <!-- Header -->
+    <div style="background:linear-gradient(135deg,#E8611D,#ff8c42);padding:24px 24px 20px;text-align:center;position:relative;">
+        <div style="width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,0.2);margin:0 auto 12px;display:flex;align-items:center;justify-content:center;">
+            <i class="bi bi-robot" style="font-size:1.8rem;color:#fff;"></i>
+        </div>
+        <h5 style="margin:0;color:#fff;font-weight:700;">Hey, I'm Zuri!</h5>
+        <p style="margin:6px 0 0;color:rgba(255,255,255,0.85);font-size:0.88rem;">Your voice-powered shopping assistant</p>
+        <button id="zuriPopupClose" style="position:absolute;top:12px;right:12px;background:rgba(255,255,255,0.2);border:none;color:#fff;width:28px;height:28px;border-radius:50%;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;">&times;</button>
+    </div>
+
+    <!-- Body -->
+    <div style="padding:20px 24px;">
+        <p style="color:#555;font-size:0.9rem;margin:0 0 14px;text-align:center;">
+            Just say <strong style="color:#E8611D;font-size:1.05rem;">"Hey Zuri"</strong> anytime to activate me, then tell me what you need:
+        </p>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#FFF5F0;border-radius:10px;">
+                <i class="bi bi-search" style="color:#E8611D;font-size:1.1rem;"></i>
+                <div><strong style="font-size:0.85rem;color:#2d3436;">"Search for shoes"</strong><br><small style="color:#888;">Find products instantly</small></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#F0FFF5;border-radius:10px;">
+                <i class="bi bi-shop" style="color:#0F7A4E;font-size:1.1rem;"></i>
+                <div><strong style="font-size:0.85rem;color:#2d3436;">"Go to stores"</strong><br><small style="color:#888;">Navigate to any page</small></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#F0F5FF;border-radius:10px;">
+                <i class="bi bi-box-seam" style="color:#3B82F6;font-size:1.1rem;"></i>
+                <div><strong style="font-size:0.85rem;color:#2d3436;">"Open product 5"</strong><br><small style="color:#888;">Open any product or store</small></div>
+            </div>
+        </div>
+        <button id="zuriActivateBtn" style="
+            width:100%;padding:12px;border:none;border-radius:12px;
+            background:linear-gradient(135deg,#E8611D,#ff8c42);color:#fff;
+            font-weight:600;font-size:0.95rem;cursor:pointer;transition:all .2s;
+            box-shadow:0 4px 15px rgba(232,97,29,0.3);">
+            <i class="bi bi-mic-fill me-1"></i> Activate Zuri
+        </button>
+        <p style="text-align:center;margin:10px 0 0;font-size:0.78rem;color:#aaa;">
+            <i class="bi bi-info-circle me-1"></i> Works best on Chrome or Edge
+        </p>
+    </div>
+</div>
+<!-- Popup overlay -->
+<div id="zuriOverlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.4);z-index:1999;"></div>
+
+<style>
+@keyframes fadeSlideUp {
+    from { opacity:0; transform:translateY(20px); }
+    to { opacity:1; transform:translateY(0); }
+}
+@keyframes zuriPulse {
+    0%,100% { box-shadow:0 4px 15px rgba(15,122,78,0.3); }
+    50% { box-shadow:0 4px 20px rgba(15,122,78,0.6); }
+}
+#zuriStatus { animation: fadeSlideUp .4s ease, zuriPulse 2s ease-in-out infinite; }
+</style>
+
+<script>
+(function() {
+    const zuriStatus = document.getElementById('zuriStatus');
+    const popup = document.getElementById('zuriPopup');
+    const overlay = document.getElementById('zuriOverlay');
+    const popupClose = document.getElementById('zuriPopupClose');
+    function showPopup() { popup.style.display = 'block'; overlay.style.display = 'block'; }
+    function hidePopup() { popup.style.display = 'none'; overlay.style.display = 'none'; }
+
+    // If Zuri already activated — auto-start wake listener, no popup
+    if (localStorage.getItem('zuriActivated') === '1') {
+        setTimeout(() => startWakeWordListener(), 1000);
+    } else {
+        // Show popup every time until user activates Zuri
+        setTimeout(() => {
+            showPopup();
+            zuriSpeak("Hey! I'm Zuri, your voice-powered shopping assistant. You can activate me by clicking the button, or just say Hey Zuri anytime!");
+        }, 3000);
+    }
+
+    popupClose.addEventListener('click', () => { hidePopup(); window.speechSynthesis.cancel(); });
+    overlay.addEventListener('click', () => { hidePopup(); window.speechSynthesis.cancel(); });
+    zuriStatus.addEventListener('click', () => {
+        stopWakeWordListener();
+        speak('Zuri deactivated');
+    });
+
+    // Activate button — permanently activates Zuri
+    const activateBtn = document.getElementById('zuriActivateBtn');
+    activateBtn.addEventListener('click', () => {
+        hidePopup();
+        window.speechSynthesis.cancel();
+        localStorage.setItem('zuriActivated', '1');
+        zuriSpeak("Zuri is now active! Just say Hey Zuri followed by your command anytime.");
+        setTimeout(() => startWakeWordListener(), 2000);
+    });
+
+    // Also listen for "Hey Zuri" to auto-activate
+    function tryAutoActivate() {
+        if (localStorage.getItem('zuriActivated') === '1') return;
+        if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) return;
+        const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const earlyListener = new SR();
+        earlyListener.lang = 'en-US';
+        earlyListener.continuous = true;
+        earlyListener.interimResults = true;
+        earlyListener.onresult = function(event) {
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                const t = event.results[i][0].transcript.toLowerCase();
+                if (t.includes('zuri') && event.results[i].isFinal) {
+                    earlyListener.stop();
+                    hidePopup();
+                    window.speechSynthesis.cancel();
+                    localStorage.setItem('zuriActivated', '1');
+                    let command = t.replace(/.*(?:hey\s+)?zuri\s*/i, '').trim();
+                    zuriSpeak("Zuri activated!");
+                    setTimeout(() => {
+                        startWakeWordListener();
+                        if (command.length > 2) {
+                            setTimeout(() => handleVoiceCommand(command), 500);
+                        }
+                    }, 1000);
+                    return;
+                }
+            }
+        };
+        earlyListener.onend = function() {
+            if (localStorage.getItem('zuriActivated') !== '1') {
+                try { earlyListener.start(); } catch(e) {}
+            }
+        };
+        earlyListener.onerror = function() {};
+        try { earlyListener.start(); } catch(e) {}
+    }
+
+    // Start early listener if not yet activated (listens for "Hey Zuri" to auto-activate)
+    if (localStorage.getItem('zuriActivated') !== '1') {
+        setTimeout(() => tryAutoActivate(), 4000);
+    }
+
+    // Voice Navigation
+    let navRecognition = null;
+    let isNavListening = false;
+
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+        navRecognition = new SR();
+        navRecognition.lang = 'en-US';
+        navRecognition.continuous = false;
+        navRecognition.interimResults = false;
+
+        navRecognition.onresult = function(event) {
+            const command = event.results[0][0].transcript.toLowerCase().trim();
+            handleVoiceCommand(command);
+        };
+
+        navRecognition.onend = function() {
+            isNavListening = false;
+            navBtn.classList.remove('listening');
+            navBtn.innerHTML = '<i class="bi bi-mic-fill"></i>';
+        };
+
+        navRecognition.onerror = function(event) {
+            isNavListening = false;
+            navBtn.classList.remove('listening');
+            navBtn.innerHTML = '<i class="bi bi-mic-fill"></i>';
+            if (event.error === 'not-allowed') {
+                Swal.fire('Mic Blocked', 'Please allow microphone access in your browser settings.', 'warning');
+            } else if (event.error !== 'aborted' && event.error !== 'no-speech') {
+                Swal.fire('Voice Error', 'Could not process voice. Please try again.', 'warning');
+            }
+        };
+    }
+
+    // Wake-word "Hey Zuri" continuous listener
+    let wakeRecognition = null;
+    let wakeActive = false;
+
+    function startWakeWordListener() {
+        if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) return;
+        if (wakeActive) return;
+
+        const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+        wakeRecognition = new SR();
+        wakeRecognition.lang = 'en-US';
+        wakeRecognition.continuous = true;
+        wakeRecognition.interimResults = true;
+
+        wakeRecognition.onresult = function(event) {
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                const transcript = event.results[i][0].transcript.toLowerCase().trim();
+                // Check for wake word
+                if (transcript.includes('hey zuri') || transcript.includes('a zuri') || transcript.includes('zuri')) {
+                    // Extract command after "zuri"
+                    let command = transcript.replace(/.*(?:hey\s+)?zuri\s*/i, '').trim();
+                    if (event.results[i].isFinal) {
+                        // Stop wake listener temporarily
+                        wakeRecognition.stop();
+                        if (command.length > 2) {
+                            // Zuri acknowledges and executes
+                            speak('On it!');
+                            setTimeout(() => handleVoiceCommand(command), 800);
+                        } else {
+                            // No command after wake word — start single command listener
+                            speak("I'm listening. What would you like?");
+                            setTimeout(() => startVoiceNav(), 1500);
+                        }
+                    }
+                }
+            }
+        };
+
+        wakeRecognition.onend = function() {
+            // Restart to keep listening (unless manually stopped)
+            if (wakeActive) {
+                try { wakeRecognition.start(); } catch(e) {}
+            }
+        };
+
+        wakeRecognition.onerror = function(event) {
+            if (event.error === 'not-allowed') {
+                wakeActive = false;
+                Swal.fire('Mic Blocked', 'Please allow microphone access for Zuri.', 'warning');
+            }
+            // For other errors, the onend handler will restart
+        };
+
+        wakeActive = true;
+        zuriStatus.style.display = 'block';
+        try { wakeRecognition.start(); } catch(e) {}
+
+        Swal.fire({
+            toast: true, position: 'bottom-start', icon: 'success',
+            title: 'Zuri is active! Say "Hey Zuri" anytime',
+            showConfirmButton: false, timer: 3000, timerProgressBar: true
+        });
+    }
+
+    function stopWakeWordListener() {
+        wakeActive = false;
+        localStorage.setItem('zuriActivated', '0');
+        if (wakeRecognition) { try { wakeRecognition.stop(); } catch(e) {} }
+        zuriStatus.style.display = 'none';
+    }
+
+    function startVoiceNav() {
+        if (!navRecognition) {
+            Swal.fire('Not Supported', 'Voice navigation requires Chrome or Edge.', 'info');
+            return;
+        }
+        if (isNavListening) {
+            navRecognition.stop();
+            return;
+        }
+        isNavListening = true;
+        navBtn.classList.add('listening');
+        navBtn.innerHTML = '<i class="bi bi-stop-fill"></i>';
+
+        Swal.fire({
+            toast: true,
+            position: 'bottom-start',
+            icon: 'info',
+            title: 'Listening... Say a command',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true
+        });
+
+        try {
+            navRecognition.start();
+        } catch(e) {
+            isNavListening = false;
+            navBtn.classList.remove('listening');
+            navBtn.innerHTML = '<i class="bi bi-mic-fill"></i>';
+        }
+    }
+
+    function handleVoiceCommand(command) {
+        // Navigation commands
+        const routes = [
+            { keywords: ['home', 'homepage', 'go home', 'main page'], url: '/' },
+            { keywords: ['store', 'stores', 'shop', 'shops'], url: '/stores' },
+            { keywords: ['categor', 'browse categor'], url: '/categories' },
+            { keywords: ['product', 'products', 'all product', 'show product'], url: '/products' },
+            { keywords: ['about', 'about us', 'about page'], url: '/about' },
+            { keywords: ['help', 'support', 'help page'], url: '/help' },
+            { keywords: ['login', 'sign in', 'log in'], url: '/login' },
+            { keywords: ['register', 'sign up', 'create account'], url: '/register' },
+            { keywords: ['dashboard', 'my account', 'account', 'my dashboard'], url: '/account/dashboard' },
+            { keywords: ['my product', 'my store', 'seller'], url: '/account/products' },
+            { keywords: ['subscription', 'my subscription', 'plan'], url: '/account/subscription' },
+            { keywords: ['payment', 'my payment'], url: '/account/payments' }
+        ];
+
+        // Check for "open product <number>"
+        const productMatch = command.match(/(?:open|view|show|go to)\s+product\s+(\d+)/);
+        if (productMatch) {
+            const productId = productMatch[1];
+            speak('Opening product ' + productId);
+            setTimeout(() => { window.location.href = '/product/' + productId; }, 1000);
+            return;
+        }
+
+        // Check for "open store <number>"
+        const storeMatch = command.match(/(?:open|view|show|go to)\s+store\s+(\d+)/);
+        if (storeMatch) {
+            const storeId = storeMatch[1];
+            speak('Opening store ' + storeId);
+            setTimeout(() => { window.location.href = '/store/' + storeId; }, 1000);
+            return;
+        }
+
+        // Check for "search <query>"
+        const searchMatch = command.match(/(?:search|find|look for|search for)\s+(.+)/);
+        if (searchMatch) {
+            const query = searchMatch[1];
+            speak('Searching for ' + query);
+            setTimeout(() => { window.location.href = '/products/search?query=' + encodeURIComponent(query); }, 1000);
+            return;
+        }
+
+        // Match navigation routes
+        for (const route of routes) {
+            for (const kw of route.keywords) {
+                if (command.includes(kw)) {
+                    const pageName = route.url === '/' ? 'home' : route.url.replace(/\//g, ' ').trim();
+                    speak('Going to ' + pageName);
+                    setTimeout(() => { window.location.href = route.url; }, 1000);
+                    return;
+                }
+            }
+        }
+
+        // Scroll commands
+        if (command.includes('scroll down') || command.includes('go down')) {
+            window.scrollBy({ top: 500, behavior: 'smooth' });
+            speak('Scrolling down');
+            return;
+        }
+        if (command.includes('scroll up') || command.includes('go up')) {
+            window.scrollBy({ top: -500, behavior: 'smooth' });
+            speak('Scrolling up');
+            return;
+        }
+        if (command.includes('scroll to top') || command.includes('go to top') || command.includes('top of page')) {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            speak('Going to top');
+            return;
+        }
+        if (command.includes('scroll to bottom') || command.includes('go to bottom') || command.includes('bottom of page')) {
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+            speak('Going to bottom');
+            return;
+        }
+
+        // Go back
+        if (command.includes('go back') || command.includes('back')) {
+            speak('Going back');
+            setTimeout(() => { window.history.back(); }, 1000);
+            return;
+        }
+
+        // Not recognized
+        Swal.fire({
+            toast: true,
+            position: 'bottom-start',
+            icon: 'question',
+            title: 'I heard: "' + command + '"',
+            text: 'Try saying "go to stores" or "open product 5"',
+            showConfirmButton: false,
+            timer: 4000
+        });
+    }
+
+    // Pick the most natural/human-sounding voice for Zuri
+    let zuriVoice = null;
+    function loadZuriVoice() {
+        if (!('speechSynthesis' in window)) return;
+        const voices = window.speechSynthesis.getVoices();
+        if (!voices.length) return;
+        // Prefer natural/premium female voices (order of preference)
+        const preferred = [
+            'samantha', 'karen', 'moira', 'tessa', 'fiona', 'victoria',
+            'google uk english female', 'google us english',
+            'microsoft zira', 'microsoft jenny', 'microsoft aria',
+            'english female', 'female'
+        ];
+        for (const pref of preferred) {
+            const match = voices.find(v =>
+                v.name.toLowerCase().includes(pref) && v.lang.startsWith('en')
+            );
+            if (match) { zuriVoice = match; return; }
+        }
+        // Fallback: any English voice
+        zuriVoice = voices.find(v => v.lang.startsWith('en')) || voices[0];
+    }
+    if ('speechSynthesis' in window) {
+        loadZuriVoice();
+        window.speechSynthesis.onvoiceschanged = loadZuriVoice;
+    }
+
+    function zuriSpeak(text) {
+        if (!('speechSynthesis' in window)) return;
+        window.speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = 'en-US';
+        u.rate = 0.95;
+        u.pitch = 1.1;
+        u.volume = 1;
+        if (zuriVoice) u.voice = zuriVoice;
+        window.speechSynthesis.speak(u);
+    }
+
+    function speak(text) {
+        zuriSpeak(text);
+        Swal.fire({
+            toast: true,
+            position: 'bottom-start',
+            icon: 'success',
+            title: text,
+            showConfirmButton: false,
+            timer: 2000
+        });
+    }
+})();
+</script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
