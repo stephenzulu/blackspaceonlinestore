@@ -235,8 +235,8 @@ body.dark-mode .chatbot-input .btn-image { background: #2a2a30; color: #e0e0e0; 
     <div class="chatbot-header">
         <div class="avatar"><i class="bi bi-robot"></i></div>
         <div class="info">
-            <h6>BlackSpace AI</h6>
-            <span class="fs-6">Search by text, voice or image</span>
+            <h6>Zuri</h6>
+            <span class="fs-6">Your Smart Shopping Assistant</span>
         </div>
         <button class="close-btn" id="chatbotClose"><i class="bi bi-x-lg"></i></button>
     </div>
@@ -283,9 +283,9 @@ body.dark-mode .chatbot-input .btn-image { background: #2a2a30; color: #e0e0e0; 
         if (isOpen && isFirstOpen) {
             isFirstOpen = false;
             showBotMessage({
-                message: "Hi! I'm the **BlackSpace AI Assistant**. I can help you find products by text, voice, or image. What are you looking for?",
+                message: "Hey there! I'm **Zuri**, your personal shopping assistant at BlackSpace. I can help you discover products, find the best deals, and explore stores — just type, speak, or snap a photo! How can I help you today?",
                 products: [],
-                suggestions: ["Show me trending products", "Latest products", "Browse categories"]
+                suggestions: ["Show me trending products", "Latest products", "Browse categories", "Best deals near me"]
             });
         }
         if (isOpen) input.focus();
