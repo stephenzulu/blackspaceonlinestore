@@ -1088,6 +1088,16 @@
 <!-- Popup overlay -->
 <div id="zuriOverlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.4);z-index:1999;"></div>
 
+<!-- Floating "Meet Zuri" button (shown after popup is dismissed) -->
+<button id="zuriFloatingBtn" style="
+    display:none; position:fixed; bottom:160px; right:20px; z-index:1998;
+    background:linear-gradient(135deg,#E8611D,#ff8c42); color:#fff; border:none;
+    border-radius:50px; padding:10px 18px; font-weight:600; font-size:0.85rem;
+    cursor:pointer; box-shadow:0 4px 15px rgba(232,97,29,0.4);
+    transition:all .3s; animation:fadeSlideUp .5s ease;">
+    <i class="bi bi-robot me-1"></i> Meet Zuri
+</button>
+
 <style>
 @keyframes fadeSlideUp {
     from { opacity:0; transform:translateY(20px); }
@@ -1106,22 +1116,33 @@
     const popup = document.getElementById('zuriPopup');
     const overlay = document.getElementById('zuriOverlay');
     const popupClose = document.getElementById('zuriPopupClose');
-    function showPopup() { popup.style.display = 'block'; overlay.style.display = 'block'; }
+    const floatingBtn = document.getElementById('zuriFloatingBtn');
+    function showPopup() { popup.style.display = 'block'; overlay.style.display = 'block'; floatingBtn.style.display = 'none'; }
     function hidePopup() { popup.style.display = 'none'; overlay.style.display = 'none'; }
+    function dismissPopup() {
+        hidePopup();
+        window.speechSynthesis.cancel();
+        localStorage.setItem('zuriPopupDismissed', '1');
+        floatingBtn.style.display = 'block';
+    }
 
     // If Zuri already activated — auto-start wake listener, no popup
     if (localStorage.getItem('zuriActivated') === '1') {
         setTimeout(() => startWakeWordListener(), 1000);
+    } else if (localStorage.getItem('zuriPopupDismissed') === '1') {
+        // Popup was previously dismissed — show floating button instead
+        floatingBtn.style.display = 'block';
     } else {
-        // Show popup every time until user activates Zuri
+        // First visit — show popup
         setTimeout(() => {
             showPopup();
             zuriSpeak("Hey! I'm Zuri, your voice-powered shopping assistant. You can activate me by clicking the button, or just say Hey Zuri anytime!");
         }, 3000);
     }
 
-    popupClose.addEventListener('click', () => { hidePopup(); window.speechSynthesis.cancel(); });
-    overlay.addEventListener('click', () => { hidePopup(); window.speechSynthesis.cancel(); });
+    popupClose.addEventListener('click', dismissPopup);
+    overlay.addEventListener('click', dismissPopup);
+    floatingBtn.addEventListener('click', () => { showPopup(); });
     zuriStatus.addEventListener('click', () => {
         stopWakeWordListener();
         speak('Zuri deactivated');
@@ -1132,7 +1153,9 @@
     activateBtn.addEventListener('click', () => {
         hidePopup();
         window.speechSynthesis.cancel();
+        floatingBtn.style.display = 'none';
         localStorage.setItem('zuriActivated', '1');
+        localStorage.removeItem('zuriPopupDismissed');
         zuriSpeak("Zuri is now active! Just say Hey Zuri followed by your command anytime.");
         setTimeout(() => startWakeWordListener(), 2000);
     });
