@@ -205,6 +205,12 @@
             letter-spacing: 0.5px;
             font-weight: 600;
         }
+        @media (max-width: 576px) {
+            .brand-text { font-size: 13px; letter-spacing: 0; }
+        }
+        @media (min-width: 577px) and (max-width: 768px) {
+            .brand-text { font-size: 15px; }
+        }
 
         /* Nav links */
         .navbar .nav-link {
@@ -315,6 +321,17 @@
         @media (max-width: 576px) {
             .navbar .nav-link { font-size: 14px; }
             .btn-nav-action, .btn-nav-login, .btn-nav-logout { font-size: 14px; }
+        }
+
+        /* Mobile: keep logo and right actions in a single row */
+        @media (max-width: 991px) {
+            .navbar > .container {
+                flex-wrap: nowrap;
+            }
+            #mainNavbar2 {
+                margin-left: auto;
+                flex-shrink: 0;
+            }
         }
 
         .dropdown-menu { min-width: 150px; }

@@ -545,10 +545,19 @@
 
             <h3 th:text="${product.name}">Product Name</h3>
 
+            <button class="btn btn-outline-secondary btn-sm btn-compare mb-2"
+                    th:data-id="${product.id}"
+                    th:data-name="${product.name}"
+                    th:data-price="${product.currency + ' ' + #numbers.formatDecimal(product.price, 1, 'COMMA', 0, 'POINT')}"
+                    th:data-image="@{'/uploads/products/images/' + ${#strings.arraySplit(product.imageurls, ',')[0]}}"
+                    th:data-rating="${product.averageRating}"
+                    onclick="addToCompare(this)">
+                <i class="bi bi-arrow-left-right me-1"></i> Compare
+            </button>
+
             <p class="price">
                 <span th:text="${product.currency + ' ' + #numbers.formatDecimal(product.price, 1, 'COMMA', 0, 'POINT')}">0.00</span>
             </p>
-
 
             <hr>
 

@@ -144,27 +144,55 @@
 <div th:replace="fragments/navbar :: topbar"></div>
 
 <!-- Currency Ticker -->
-<div id="currencyTicker" style="
-    background:#1a1a2e; overflow:hidden; white-space:nowrap;
-    font-size:0.8rem; color:#ccc; padding:6px 0; position:relative;">
-    <div id="tickerTrack" style="display:inline-block; animation:tickerScroll 30s linear infinite;">
+<div id="currencyTicker" class="currency-ticker">
+    <div id="tickerTrack" class="ticker-track">
         <span class="ticker-loading" style="padding:0 20px; color:#888;">Loading rates...</span>
     </div>
 </div>
 <style>
+.currency-ticker {
+    background: #1a1a2e;
+    overflow: hidden;
+    white-space: nowrap;
+    font-size: 0.8rem;
+    color: #ccc;
+    padding: 6px 0;
+    position: relative;
+}
+.ticker-track {
+    display: inline-block;
+    animation: tickerScroll 30s linear infinite;
+}
 @keyframes tickerScroll {
-    0% { transform:translateX(0); }
-    100% { transform:translateX(-50%); }
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
 }
 .ticker-item {
-    display:inline-flex; align-items:center; gap:6px;
-    padding:0 20px; border-right:1px solid rgba(255,255,255,0.1);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 20px;
+    border-right: 1px solid rgba(255,255,255,0.1);
 }
-.ticker-item .flag { font-size:1rem; }
-.ticker-item .pair { color:#aaa; font-weight:500; }
-.ticker-item .rate { color:#fff; font-weight:600; }
-.ticker-item .change.up { color:#27ae60; }
-.ticker-item .change.down { color:#e74c3c; }
+.ticker-item .flag { font-size: 1rem; }
+.ticker-item .pair { color: #aaa; font-weight: 500; }
+.ticker-item .rate { color: #fff; font-weight: 600; }
+.ticker-item .change.up { color: #27ae60; }
+.ticker-item .change.down { color: #e74c3c; }
+
+/* Mobile ticker improvements */
+@media (max-width: 768px) {
+    .currency-ticker { font-size: 0.7rem; padding: 5px 0; }
+    .ticker-track { animation-duration: 20s; }
+    .ticker-item { gap: 4px; padding: 0 12px; }
+    .ticker-item .flag { font-size: 0.85rem; }
+}
+@media (max-width: 480px) {
+    .currency-ticker { font-size: 0.65rem; padding: 4px 0; }
+    .ticker-track { animation-duration: 15s; }
+    .ticker-item { gap: 3px; padding: 0 8px; }
+    .ticker-item .flag { font-size: 0.75rem; }
+}
 </style>
 <script>
 (function() {
@@ -473,7 +501,15 @@
                     <div class="card-body" >
                         <h6 th:text="${product.name}">Product Name</h6>
                         <p class="small text-muted" th:text="${product.category}"></p>
-
+                        <button class="btn btn-sm btn-compare mb-1"
+                                th:data-id="${product.id}"
+                                th:data-name="${product.name}"
+                                th:data-price="${product.currency + ' ' + #numbers.formatDecimal(product.price, 1, 'COMMA', 0, 'POINT')}"
+                                th:data-image="@{'/uploads/products/images/' + ${#strings.arraySplit(product.imageurls, ',')[0]}}"
+                                th:data-rating="${product.averageRating}"
+                                onclick="addToCompare(this)" title="Compare">
+                            <i class="bi bi-arrow-left-right me-1"></i>Compare
+                        </button>
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <span class="fw-bold text-primary"
                                   th:text="${product.currency + ' ' + #numbers.formatDecimal(product.price, 1, 'COMMA', 0, 'POINT')}"></span>
@@ -719,7 +755,15 @@
                            th:text="${product.category}">
                         </p>
 
-
+                        <button class="btn btn-sm btn-compare mb-1"
+                                th:data-id="${product.id}"
+                                th:data-name="${product.name}"
+                                th:data-price="${product.currency + ' ' + #numbers.formatDecimal(product.price, 1, 'COMMA', 0, 'POINT')}"
+                                th:data-image="@{'/uploads/products/images/' + ${#strings.arraySplit(product.imageurls, ',')[0]}}"
+                                th:data-rating="${product.averageRating}"
+                                onclick="addToCompare(this)" title="Compare">
+                            <i class="bi bi-arrow-left-right me-1"></i>Compare
+                        </button>
 
                         <div class="d-flex justify-content-between align-items-center">
                             <span class="fw-bold text-primary"

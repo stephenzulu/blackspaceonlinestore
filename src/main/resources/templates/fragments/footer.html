@@ -33,14 +33,8 @@
                     <a href="https://web.facebook.com/Blackspaceonlinestore" class="social-icon social-facebook">
                         <i class="bi bi-facebook"></i>
                     </a>
-                    <a href="https://www.linkedin.com/in/yourusername" target="_blank" class="social-icon social-linkedin">
+                    <a href="https://www.linkedin.com/company/74037959/admin/dashboard/" target="_blank" class="social-icon social-linkedin">
                         <i class="bi bi-linkedin"></i>
-                    </a>
-                    <a href="https://www.instagram.com/yourusername" target="_blank" class="social-icon social-instagram">
-                        <i class="bi bi-instagram"></i>
-                    </a>
-                    <a href="#" class="social-icon social-twitter">
-                        <i class="bi bi-twitter-x"></i>
                     </a>
                 </div>
             </div>
@@ -87,16 +81,15 @@
     .social-facebook:hover { background: #0d65d9 !important; }
     .social-linkedin { background: #0A66C2 !important; }
     .social-linkedin:hover { background: #084e96 !important; }
-    .social-instagram { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888) !important; }
-    .social-instagram:hover { background: linear-gradient(45deg, #e6683c, #dc2743, #cc2366, #bc1888, #8a3ab9) !important; }
-    .social-twitter { background: #000 !important; }
-    .social-twitter:hover { background: #333 !important; }
 </style>
 
 </div><!-- end d-none d-md-block -->
 
 <!-- BlackSpace AI Chatbot (visible on all screen sizes) -->
 <div th:replace="~{fragments/chatbot :: chatbot}"></div>
+
+<!-- Product Comparison Widget -->
+<div th:replace="~{fragments/compare :: compare}"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
