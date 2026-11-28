@@ -1038,66 +1038,6 @@
     <i class="bi bi-mic-fill me-1"></i> Zuri is listening...
 </div>
 
-<!-- Zuri Intro Popup -->
-<div id="zuriPopup" style="
-    display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:2000;
-    background:#fff; border-radius:20px; padding:0; max-width:400px; width:90%;
-    box-shadow:0 20px 60px rgba(0,0,0,0.2); overflow:hidden; animation:fadeSlideUp .5s ease;">
-
-    <!-- Header -->
-    <div style="background:linear-gradient(135deg,#E8611D,#ff8c42);padding:24px 24px 20px;text-align:center;position:relative;">
-        <div style="width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,0.2);margin:0 auto 12px;display:flex;align-items:center;justify-content:center;">
-            <i class="bi bi-robot" style="font-size:1.8rem;color:#fff;"></i>
-        </div>
-        <h5 style="margin:0;color:#fff;font-weight:700;">Hey, I'm Zuri!</h5>
-        <p style="margin:6px 0 0;color:rgba(255,255,255,0.85);font-size:0.88rem;">Your voice-powered shopping assistant</p>
-        <button id="zuriPopupClose" style="position:absolute;top:12px;right:12px;background:rgba(255,255,255,0.2);border:none;color:#fff;width:28px;height:28px;border-radius:50%;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;">&times;</button>
-    </div>
-
-    <!-- Body -->
-    <div style="padding:20px 24px;">
-        <p style="color:#555;font-size:0.9rem;margin:0 0 14px;text-align:center;">
-            Just say <strong style="color:#E8611D;font-size:1.05rem;">"Hey Zuri"</strong> anytime to activate me, then tell me what you need:
-        </p>
-        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">
-            <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#FFF5F0;border-radius:10px;">
-                <i class="bi bi-search" style="color:#E8611D;font-size:1.1rem;"></i>
-                <div><strong style="font-size:0.85rem;color:#2d3436;">"Search for shoes"</strong><br><small style="color:#888;">Find products instantly</small></div>
-            </div>
-            <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#F0FFF5;border-radius:10px;">
-                <i class="bi bi-shop" style="color:#0F7A4E;font-size:1.1rem;"></i>
-                <div><strong style="font-size:0.85rem;color:#2d3436;">"Go to stores"</strong><br><small style="color:#888;">Navigate to any page</small></div>
-            </div>
-            <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#F0F5FF;border-radius:10px;">
-                <i class="bi bi-box-seam" style="color:#3B82F6;font-size:1.1rem;"></i>
-                <div><strong style="font-size:0.85rem;color:#2d3436;">"Open product 5"</strong><br><small style="color:#888;">Open any product or store</small></div>
-            </div>
-        </div>
-        <button id="zuriActivateBtn" style="
-            width:100%;padding:12px;border:none;border-radius:12px;
-            background:linear-gradient(135deg,#E8611D,#ff8c42);color:#fff;
-            font-weight:600;font-size:0.95rem;cursor:pointer;transition:all .2s;
-            box-shadow:0 4px 15px rgba(232,97,29,0.3);">
-            <i class="bi bi-mic-fill me-1"></i> Activate Zuri
-        </button>
-        <p style="text-align:center;margin:10px 0 0;font-size:0.78rem;color:#aaa;">
-            <i class="bi bi-info-circle me-1"></i> Works best on Chrome or Edge
-        </p>
-    </div>
-</div>
-<!-- Popup overlay -->
-<div id="zuriOverlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.4);z-index:1999;"></div>
-
-<!-- Floating "Meet Zuri" button (shown after popup is dismissed) -->
-<button id="zuriFloatingBtn" style="
-    display:none; position:fixed; bottom:160px; right:20px; z-index:1998;
-    background:linear-gradient(135deg,#E8611D,#ff8c42); color:#fff; border:none;
-    border-radius:50px; padding:10px 18px; font-weight:600; font-size:0.85rem;
-    cursor:pointer; box-shadow:0 4px 15px rgba(232,97,29,0.4);
-    transition:all .3s; animation:fadeSlideUp .5s ease;">
-    <i class="bi bi-robot me-1"></i> Meet Zuri
-</button>
-
 <style>
 @keyframes fadeSlideUp {
     from { opacity:0; transform:translateY(20px); }
@@ -1113,94 +1053,17 @@
 <script>
 (function() {
     const zuriStatus = document.getElementById('zuriStatus');
-    const popup = document.getElementById('zuriPopup');
-    const overlay = document.getElementById('zuriOverlay');
-    const popupClose = document.getElementById('zuriPopupClose');
-    const floatingBtn = document.getElementById('zuriFloatingBtn');
-    function showPopup() { popup.style.display = 'block'; overlay.style.display = 'block'; floatingBtn.style.display = 'none'; }
-    function hidePopup() { popup.style.display = 'none'; overlay.style.display = 'none'; }
-    function dismissPopup() {
-        hidePopup();
-        window.speechSynthesis.cancel();
-        localStorage.setItem('zuriPopupDismissed', '1');
-        floatingBtn.style.display = 'block';
-    }
 
-    // If Zuri already activated — auto-start wake listener, no popup
+    // Auto-start wake listener if previously activated
     if (localStorage.getItem('zuriActivated') === '1') {
         setTimeout(() => startWakeWordListener(), 1000);
-    } else if (localStorage.getItem('zuriPopupDismissed') === '1') {
-        // Popup was previously dismissed — show floating button instead
-        floatingBtn.style.display = 'block';
-    } else {
-        // First visit — show popup
-        setTimeout(() => {
-            showPopup();
-            zuriSpeak("Hey! I'm Zuri, your voice-powered shopping assistant. You can activate me by clicking the button, or just say Hey Zuri anytime!");
-        }, 3000);
     }
 
-    popupClose.addEventListener('click', dismissPopup);
-    overlay.addEventListener('click', dismissPopup);
-    floatingBtn.addEventListener('click', () => { showPopup(); });
-    zuriStatus.addEventListener('click', () => {
-        stopWakeWordListener();
-        speak('Zuri deactivated');
-    });
-
-    // Activate button — permanently activates Zuri
-    const activateBtn = document.getElementById('zuriActivateBtn');
-    activateBtn.addEventListener('click', () => {
-        hidePopup();
-        window.speechSynthesis.cancel();
-        floatingBtn.style.display = 'none';
-        localStorage.setItem('zuriActivated', '1');
-        localStorage.removeItem('zuriPopupDismissed');
-        zuriSpeak("Zuri is now active! Just say Hey Zuri followed by your command anytime.");
-        setTimeout(() => startWakeWordListener(), 2000);
-    });
-
-    // Also listen for "Hey Zuri" to auto-activate
-    function tryAutoActivate() {
-        if (localStorage.getItem('zuriActivated') === '1') return;
-        if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) return;
-        const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-        const earlyListener = new SR();
-        earlyListener.lang = 'en-US';
-        earlyListener.continuous = true;
-        earlyListener.interimResults = true;
-        earlyListener.onresult = function(event) {
-            for (let i = event.resultIndex; i < event.results.length; i++) {
-                const t = event.results[i][0].transcript.toLowerCase();
-                if (t.includes('zuri') && event.results[i].isFinal) {
-                    earlyListener.stop();
-                    hidePopup();
-                    window.speechSynthesis.cancel();
-                    localStorage.setItem('zuriActivated', '1');
-                    let command = t.replace(/.*(?:hey\s+)?zuri\s*/i, '').trim();
-                    zuriSpeak("Zuri activated!");
-                    setTimeout(() => {
-                        startWakeWordListener();
-                        if (command.length > 2) {
-                            setTimeout(() => handleVoiceCommand(command), 500);
-                        }
-                    }, 1000);
-                    return;
-                }
-            }
-        };
-        earlyListener.onend = function() {
-            if (localStorage.getItem('zuriActivated') !== '1') {
-                try { earlyListener.start(); } catch(e) {}
-            }
-        };
-        earlyListener.onerror = function() {};
-        try { earlyListener.start(); } catch(e) {}
-    }
-
-    // Start early listener if not yet activated (listens for "Hey Zuri" to auto-activate)
-    if (localStorage.getItem('zuriActivated') !== '1') {
-        setTimeout(() => tryAutoActivate(), 4000);
+    if (zuriStatus) {
+        zuriStatus.addEventListener('click', () => {
+            stopWakeWordListener();
+            speak('Zuri deactivated');
+        });
     }
 
     // Voice Navigation

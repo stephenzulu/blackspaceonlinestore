@@ -150,30 +150,9 @@
             <div class="d-flex gap-2 align-items-center" id="mainNavbar2">
 
                 <!-- Language Selector -->
-                <div style="position:relative;">
-                    <button class="btn btn-icon" id="langToggleBtn" title="Change Language" style="font-size:1.1rem;">
-                        <i class="bi bi-translate"></i>
-                    </button>
-                    <div id="langMenu" style="display:none;position:absolute;right:0;top:100%;margin-top:8px;min-width:200px;background:#fff;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,0.12);border:1px solid #eee;padding:8px;z-index:1060;">
-                        <div style="font-weight:700;font-size:0.8rem;color:#888;padding:4px 12px;">Select Language</div>
-                        <a class="lang-option" href="#" data-lang="en" style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;text-decoration:none;color:#333;">
-                            <span style="font-size:1.2rem;">🇬🇧</span> English</a>
-                        <a class="lang-option" href="#" data-lang="bem" style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;text-decoration:none;color:#333;">
-                            <span style="font-size:1.2rem;">🇿🇲</span> Bemba</a>
-                        <a class="lang-option" href="#" data-lang="nya" style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;text-decoration:none;color:#333;">
-                            <span style="font-size:1.2rem;">🇿🇲</span> Nyanja</a>
-                        <a class="lang-option" href="#" data-lang="toi" style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;text-decoration:none;color:#333;">
-                            <span style="font-size:1.2rem;">🇿🇲</span> Tonga</a>
-                        <a class="lang-option" href="#" data-lang="loz" style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;text-decoration:none;color:#333;">
-                            <span style="font-size:1.2rem;">🇿🇲</span> Lozi</a>
-                        <a class="lang-option" href="#" data-lang="kqn" style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;text-decoration:none;color:#333;">
-                            <span style="font-size:1.2rem;">🇿🇲</span> Kaonde</a>
-                        <a class="lang-option" href="#" data-lang="lun" style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;text-decoration:none;color:#333;">
-                            <span style="font-size:1.2rem;">🇿🇲</span> Lunda</a>
-                        <a class="lang-option" href="#" data-lang="lue" style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;text-decoration:none;color:#333;">
-                            <span style="font-size:1.2rem;">🇿🇲</span> Luvale</a>
-                    </div>
-                </div>
+                <button class="btn btn-icon" id="langToggleBtn" title="Change Language" style="font-size:1.1rem;">
+                    <i class="bi bi-translate"></i>
+                </button>
 
                 <!-- Dark Mode Toggle -->
                 <button class="btn btn-icon" id="darkModeToggleNav" onclick="toggleDarkMode()" title="Toggle Dark Mode">
@@ -669,7 +648,8 @@
             // Toggle menu on button click
             if (e.target.closest('#langToggleBtn')) {
                 e.preventDefault();
-                menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+                var isVisible = window.getComputedStyle(menu).display !== 'none';
+                menu.style.display = isVisible ? 'none' : 'block';
                 return;
             }
 
@@ -713,6 +693,48 @@
             background: rgba(232,97,29,0.08) !important;
             color: #E8611D !important;
         }
+
+        /* Language menu — dropdown */
+        .lang-menu-dropdown {
+            display: none;
+            position: fixed;
+            right: 8px;
+            top: 56px;
+            min-width: 200px;
+            max-height: 70vh;
+            overflow-y: auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+            border: 1px solid #eee;
+            padding: 8px;
+            z-index: 1060;
+        }
+
+        /* Mobile — larger tap targets and full width */
+        @media (max-width: 768px) {
+            .lang-menu-dropdown {
+                right: 8px;
+                left: 8px;
+                top: auto;
+                bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+                width: auto;
+                min-width: auto;
+                padding: 12px;
+                border-radius: 16px;
+                box-shadow: 0 8px 30px rgba(0,0,0,0.18);
+                -webkit-overflow-scrolling: touch;
+            }
+            .lang-menu-dropdown .lang-option {
+                padding: 14px 16px !important;
+                font-size: 15px !important;
+                border-radius: 12px !important;
+                min-height: 48px;
+            }
+        }
+
+        body.dark-mode .lang-menu-dropdown { background: #1e1e22; border-color: #3a3a40; }
+        body.dark-mode .lang-menu-dropdown .lang-option { color: #e0e0e0 !important; }
     </style>
 
     <style>
@@ -1030,6 +1052,27 @@
             if ((e.ctrlKey || e.metaKey) && e.key === 'u') { e.preventDefault(); return false; }
         });
     </script>
+
+<!-- Language Menu (outside navbar to avoid stacking context clipping) -->
+<div id="langMenu" class="lang-menu-dropdown">
+    <div style="font-weight:700;font-size:0.8rem;color:#888;padding:4px 12px;">Select Language</div>
+    <a class="lang-option" href="#" data-lang="en" style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;text-decoration:none;color:#333;">
+        <span style="font-size:1.2rem;">🇬🇧</span> English</a>
+    <a class="lang-option" href="#" data-lang="bem" style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;text-decoration:none;color:#333;">
+        <span style="font-size:1.2rem;">🇿🇲</span> Bemba</a>
+    <a class="lang-option" href="#" data-lang="nya" style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;text-decoration:none;color:#333;">
+        <span style="font-size:1.2rem;">🇿🇲</span> Nyanja</a>
+    <a class="lang-option" href="#" data-lang="toi" style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;text-decoration:none;color:#333;">
+        <span style="font-size:1.2rem;">🇿🇲</span> Tonga</a>
+    <a class="lang-option" href="#" data-lang="loz" style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;text-decoration:none;color:#333;">
+        <span style="font-size:1.2rem;">🇿🇲</span> Lozi</a>
+    <a class="lang-option" href="#" data-lang="kqn" style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;text-decoration:none;color:#333;">
+        <span style="font-size:1.2rem;">🇿🇲</span> Kaonde</a>
+    <a class="lang-option" href="#" data-lang="lun" style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;text-decoration:none;color:#333;">
+        <span style="font-size:1.2rem;">🇿🇲</span> Lunda</a>
+    <a class="lang-option" href="#" data-lang="lue" style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;text-decoration:none;color:#333;">
+        <span style="font-size:1.2rem;">🇿🇲</span> Luvale</a>
+</div>
 
 </div>
 </body>
